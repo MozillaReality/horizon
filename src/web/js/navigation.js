@@ -1,24 +1,29 @@
-export default class Navigation {
-  constructor() {
-    this.newFrameTrigger = $('#new-frame-trigger');
+import * as AppFrame from '/js/app_frame.js';
 
-    this.appendFrame();
+export default class Navigation {
+
+  constructor() {
+    this.apps = [];
+    this.activeApp = null;
+    this.hud = $('#hud');
   }
 
   handleEvent(e) {
-    this.appendFrame();
+    if (e.target.dataset && e.target.dataset.action) {
+      this.activeApp['_handle_' + e.target.dataset.action](e);
+    }
   }
 
   appendFrame() {
-    var newFrame = document.createElement('iframe');
-    newFrame.setAttribute('src', 'http://mozilla.org')
-    newFrame.setAttribute('remote', 'true')
-    newFrame.setAttribute('mozbrowser', 'true')
-    newFrame.className = 'frame';
-    document.body.appendChild(newFrame);
+    var app = new AppFrame({
+      url: 'http://mozilla.org'
+    });
+    this.activeApp = app;
+    this.apps.push(app);
   }
 
   start() {
-    this.newFrameTrigger.addEventListener('click', this);
+    this.hud.addEventListener('click', this);
+    this.appendFrame();
   }
 }
