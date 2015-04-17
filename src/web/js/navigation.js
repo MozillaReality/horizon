@@ -37,9 +37,10 @@ export default class Navigation {
   }
 
   positionFrames() {
-    var frameWidth = 840;
+    var frameWidth = (window.innerWidth * 0.8) /* frame size */ + 40 /* padding */;
+    var centerAdjust = (window.innerWidth - frameWidth)/4 /* to center the frame */;
     for (var i = 0 ; i < this.apps.length; i++) {
-      var x = (i - this.activeAppIndex) * frameWidth;
+      var x = (i - this.activeAppIndex) * frameWidth + centerAdjust;
       this.apps[i].element.style.transform = `translateX(${x}px)`;
     }
   }
