@@ -1,0 +1,23 @@
+{
+  "name": "hiro-browser",
+  "description": "Hiro Browser",
+  "launch_path": "./index.html",
+  "type": "certified",
+  "role": "system",
+  "developer": {
+    "name": "Mozilla",
+    "url": "https://mozilla.org"
+  },
+  "permissions": {
+    "browser": {},
+    "embed-apps": {},
+    "systemXHR": {},
+    "settings": {
+       "access": "readwrite"
+    },
+    "geolocation": {},
+    "desktop-notification": {},
+    "audio-capture": {},
+    "video-capture": {}
+  }
+}
