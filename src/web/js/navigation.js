@@ -58,6 +58,7 @@ export default class Navigation {
   }
 
   start() {
+    window.addEventListener('resize', this.positionFrames.bind(this))
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.appendFrame();
