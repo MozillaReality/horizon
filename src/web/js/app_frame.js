@@ -5,7 +5,18 @@ var url = new Url();
 export default class AppFrame {
   constructor(config) {
     this.config = config;
+
+    // Mozbrowser events that we are interested in listening to.
+    this.browserEvents = ['mozbrowserclose', 'mozbrowsererror', 'mozbrowservisibilitychange',
+      'mozbrowserloadend', 'mozbrowserloadstart', 'mozbrowsertitlechange',
+      'mozbrowserlocationchange', 'mozbrowsermetachange', 'mozbrowsericonchange',
+      'mozbrowserasyncscroll', 'mozbrowsersecuritychange'];
+
     this.createFrame();
+  }
+
+  handleEvent(e) {
+    console.log('Got event', e.type);
   }
 
   _handle_back() {
@@ -33,11 +44,13 @@ export default class AppFrame {
     this.config.container.appendChild(element);
 
     this.element = element;
+
+    this.browserEvents.forEach(event => {
+      element.addEventListener(event, this);
+    });
   }
 
   navigate(value) {
-    window.alert('raw value is ' + value);
-    window.alert('value is ' + url.getUrlFromInput(value));
     this.element.setAttribute('src', url.getUrlFromInput(value));
   }
 }
