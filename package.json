@@ -19,7 +19,7 @@
     "node": "0.12.1"
   },
   "dependencies": {
-    "babel": "^4.7.16",
+    "babel": "^5.1.10",
     "del": "^1.1.1",
     "gulp": "3.8.x",
     "gulp-babel": "^4.0.0",
