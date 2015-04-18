@@ -64,6 +64,11 @@ export default class Navigation {
     }
   }
 
+  focusUrlbar() {
+    var urlbarInput = $('#urlbar input');
+    urlbarInput.focus();
+  }
+
   handleUrlEntry(e) {
     var urlbarInput = $('#urlbar input');
     e.preventDefault();
@@ -83,7 +88,8 @@ export default class Navigation {
 
     runtime.hotkeys.assign({
       'ctrl t': () => this.newFrame(),
-      'ctrl w': () => this.closeFrame()
+      'ctrl w': () => this.closeFrame(),
+      'ctrl l': () => this.focusUrlbar()
     });
   }
 }
