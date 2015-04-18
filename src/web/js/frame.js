@@ -50,6 +50,10 @@ export default class Frame {
     });
   }
 
+  close() {
+    this.element.parentNode.removeChild(this.element);
+  }
+
   navigate(value) {
     this.element.setAttribute('src', url.getUrlFromInput(value));
   }

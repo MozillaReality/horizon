@@ -20,20 +20,37 @@ export default class Navigation {
     if (!action) { return; }
 
     if (action === 'new') {
-      this.appendFrame();
+      this.newFrame();
       return;
     }
 
     this.activeFrame['_handle_' + e.target.dataset.action](e);
   }
 
-  appendFrame() {
+  /**
+   * Opens a new browsing frame.
+   */
+  newFrame() {
     var app = new Frame({
       url: 'http://mozilla.org',
       container: this.container
     });
     this.activeFrameIndex = this.frames.length;
     this.frames.push(app);
+
+    this.positionFrames();
+  }
+
+  /**
+   * Closes the currently active frame.
+   */
+  closeFrame() {
+    if (!this.activeFrame) { return; }
+
+    this.activeFrame.close();
+
+    this.frames.splice(this.activeFrameIndex, 1);
+    this.activeFrameIndex = this.activeFrameIndex > 0 ? this.activeFrameIndex - 1 : 0;
 
     this.positionFrames();
   }
@@ -58,10 +75,15 @@ export default class Navigation {
     this.activeFrame.navigate(url);
   }
 
-  start() {
+  start(runtime) {
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
-    this.appendFrame();
+    this.newFrame();
+
+    runtime.hotkeys.assign({
+      'ctrl t': () => this.newFrame(),
+      'ctrl w': () => this.closeFrame()
+    });
   }
 }

@@ -122,7 +122,6 @@ gulp.task('webserver', function() {
     }));
 });
 
-
 /**
  * The default task when `gulp` is run.
  * Adds a listener which will re-build on a file save.
@@ -135,7 +134,7 @@ gulp.task('default', function() {
  * Remove the distributable files.
  */
 gulp.task('clobber', function(cb) {
-  del('dist/', cb);
+  del('dist/**', cb);
 });
 
 /**
