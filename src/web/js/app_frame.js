@@ -1,3 +1,7 @@
+import * as Url from '/js/lib/url.js';
+
+var url = new Url();
+
 export default class AppFrame {
   constructor(config) {
     this.config = config;
@@ -29,5 +33,11 @@ export default class AppFrame {
     this.config.container.appendChild(element);
 
     this.element = element;
+  }
+
+  navigate(value) {
+    window.alert('raw value is ' + value);
+    window.alert('value is ' + url.getUrlFromInput(value));
+    this.element.setAttribute('src', url.getUrlFromInput(value));
   }
 }

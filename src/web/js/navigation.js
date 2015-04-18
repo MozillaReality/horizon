@@ -5,8 +5,10 @@ export default class Navigation {
   constructor() {
     this.apps = [];
     this.activeAppIndex = null;
+
     this.hud = $('#hud');
     this.container = $('#frames');
+    this.urlbar = $('#urlbar');
   }
 
   get activeApp() {
@@ -45,8 +47,19 @@ export default class Navigation {
     }
   }
 
+  handleUrlEntry(e) {
+    var urlbarInput = $('#urlbar input');
+    e.preventDefault();
+    this.navigate(urlbarInput.value);
+  }
+
+  navigate(url) {
+    this.activeApp.navigate(url);
+  }
+
   start() {
     this.hud.addEventListener('click', this);
+    this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.appendFrame();
   }
 }

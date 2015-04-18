@@ -62,6 +62,8 @@ gulp.task('copy-web-app', function() {
 gulp.task('babel', function() {
   var files = [
     WEB_ROOT + 'js/*.js',
+    WEB_ROOT + 'js/**/*.js',
+    '!' + WEB_ROOT + 'js/ext/*.js' // do not process external files
   ];
   try {
     return gulp.src(files)
