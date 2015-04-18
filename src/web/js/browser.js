@@ -1,8 +1,8 @@
-import * as Navigation from '/js/navigation.js';
+import * as FrameManager from '/js/frame_manager.js';
 import * as Utils from '/js/lib/utils.js';
 
 var runtime = {};
 runtime.utils = new Utils();
 
-runtime.navigation = new Navigation();
-runtime.navigation.start();
+runtime.frameManager = new FrameManager();
+runtime.frameManager.start();

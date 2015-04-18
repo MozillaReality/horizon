@@ -2,7 +2,7 @@ import * as Url from '/js/lib/url.js';
 
 var url = new Url();
 
-export default class AppFrame {
+export default class Frame {
   constructor(config) {
     this.config = config;
 

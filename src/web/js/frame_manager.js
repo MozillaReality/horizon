@@ -1,18 +1,18 @@
-import * as AppFrame from '/js/app_frame.js';
+import * as Frame from '/js/frame.js';
 
 export default class Navigation {
 
   constructor() {
-    this.apps = [];
-    this.activeAppIndex = null;
+    this.frames = [];
+    this.activeFrameIndex = null;
 
     this.hud = $('#hud');
     this.container = $('#frames');
     this.urlbar = $('#urlbar');
   }
 
-  get activeApp() {
-    return this.apps[this.activeAppIndex];
+  get activeFrame() {
+    return this.frames[this.activeFrameIndex];
   }
 
   handleEvent(e) {
@@ -24,16 +24,16 @@ export default class Navigation {
       return;
     }
 
-    this.activeApp['_handle_' + e.target.dataset.action](e);
+    this.activeFrame['_handle_' + e.target.dataset.action](e);
   }
 
   appendFrame() {
-    var app = new AppFrame({
+    var app = new Frame({
       url: 'http://mozilla.org',
       container: this.container
     });
-    this.activeAppIndex = this.apps.length;
-    this.apps.push(app);
+    this.activeFrameIndex = this.frames.length;
+    this.frames.push(app);
 
     this.positionFrames();
   }
@@ -41,9 +41,9 @@ export default class Navigation {
   positionFrames() {
     var frameWidth = (window.innerWidth * 0.8) /* frame size */ + 40 /* padding */;
     var centerAdjust = (window.innerWidth - frameWidth)/4 /* to center the frame */;
-    for (var i = 0 ; i < this.apps.length; i++) {
-      var x = (i - this.activeAppIndex) * frameWidth + centerAdjust;
-      this.apps[i].element.style.transform = `translateX(${x}px)`;
+    for (var i = 0 ; i < this.frames.length; i++) {
+      var x = (i - this.activeFrameIndex) * frameWidth + centerAdjust;
+      this.frames[i].element.style.transform = `translateX(${x}px)`;
     }
   }
 
@@ -51,14 +51,15 @@ export default class Navigation {
     var urlbarInput = $('#urlbar input');
     e.preventDefault();
     this.navigate(urlbarInput.value);
+    urlbarInput.blur();
   }
 
   navigate(url) {
-    this.activeApp.navigate(url);
+    this.activeFrame.navigate(url);
   }
 
   start() {
-    window.addEventListener('resize', this.positionFrames.bind(this))
+    window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.appendFrame();
