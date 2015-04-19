@@ -57,10 +57,14 @@ export default class Navigation {
 
   positionFrames() {
     var frameWidth = (window.innerWidth * 0.8) /* frame size */ + 40 /* padding */;
-    var centerAdjust = (window.innerWidth - frameWidth)/4 /* to center the frame */;
+    var centerAdjust = (window.innerWidth - frameWidth) / 4 /* to center the frame */;
     for (var i = 0 ; i < this.frames.length; i++) {
       var x = (i - this.activeFrameIndex) * frameWidth + centerAdjust;
-      this.frames[i].element.style.transform = `translateX(${x}px)`;
+      var distance = 1000;
+      var rotate = 20 * (i - this.activeFrameIndex) * -1;
+      this.frames[i].element.style.transform = `translateX(${x}px)
+        perspective(${distance}px)
+        rotateY(${rotate}deg)`;
     }
   }
 
