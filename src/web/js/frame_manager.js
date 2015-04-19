@@ -1,4 +1,4 @@
-import * as Frame from '/js/frame.js';
+import * as Frame from 'js/frame.js';
 
 export default class Navigation {
 
