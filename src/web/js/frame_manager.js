@@ -77,6 +77,9 @@ export default class Navigation {
   }
 
   navigate(url) {
+    if (!this.activeFrame) {
+      this.newFrame();
+    }
     this.activeFrame.navigate(url);
   }
 
