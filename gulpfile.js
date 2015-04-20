@@ -11,6 +11,7 @@ const ADDON_ROOT = './src/addon/';
 const STANDALONE_ROOT = './src/standalone/';
 const WEB_ROOT = './src/web/';
 const DIST_ROOT = './dist/';
+const DIST_ADDON_ROOT = './dist/addon/';
 const DIST_WEB_ROOT = './dist/web/';
 
 
@@ -41,7 +42,7 @@ gulp.task('pre-commit', function() {
 /**
  * Setup steps after an npm install.
  */
-gulp.task('install', ['copy-web-app', 'pre-commit']);
+gulp.task('install', ['copy-web-app', 'copy-addon', 'pre-commit']);
 
 
 /**
@@ -55,6 +56,12 @@ gulp.task('copy-web-app', function() {
     .pipe(gulp.dest(DIST_WEB_ROOT));
 });
 
+gulp.task('copy-addon', function() {
+  return gulp.src([
+      ADDON_ROOT + '**'
+    ])
+    .pipe(gulp.dest(DIST_ADDON_ROOT));
+});
 
 /**
  * converts javascript to es5. this allows us to use harmony classes and modules.
@@ -99,7 +106,7 @@ gulp.task('travis', ['lint', 'babel']);
  * Build the app.
  */
 gulp.task('build', function(cb) {
-  runSequence(['clobber'], ['copy-web-app'], ['babel', 'lint' ], cb);
+  runSequence(['clobber'], ['copy-web-app', 'copy-addon'], ['babel', 'lint' ], cb);
 });
 
 
