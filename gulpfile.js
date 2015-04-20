@@ -1,10 +1,11 @@
 var gulp = require('gulp');
 
-var runSequence = require('run-sequence');
-var webserver = require('gulp-webserver');
 var babel = require('gulp-babel');
 var del = require('del');
 var jshint = require('gulp-jshint');
+var runSequence = require('run-sequence');
+var zip = require('gulp-zip');
+var webserver = require('gulp-webserver');
 
 const SRC_ROOT = './src/';
 const ADDON_ROOT = './src/addon/';
@@ -95,6 +96,14 @@ gulp.task('zip', function() {
     .pipe(gulp.dest(DIST_ROOT));
 });
 
+/**
+ * Packages the addon into a zip.
+ */
+gulp.task('zip-addon', function() {
+  return gulp.src(DIST_ADDON_ROOT + '**')
+    .pipe(zip('vrbrowser-addon.xpi'))
+    .pipe(gulp.dest(__dirname));
+});
 
 /**
  * Runs travis tests
