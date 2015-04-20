@@ -44,6 +44,11 @@ We are currently using a fork of graphene with some minor modifications here: ht
 ### Running as an addon.
 TODO...
 
+### Packaging the addon.
+
+```
+gulp zip-addon
+```
 
 ## Deployment
 
