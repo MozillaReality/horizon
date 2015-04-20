@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://vrbrowser/skin/skin.css" type="text/css"?>
+<!DOCTYPE vrbrowser SYSTEM "chrome://vrbrowser/locale/translations.dtd">
+<overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script src="browser.js" />
+
+    <menupopup id="menu_ToolsPopup">
+      <menuitem label="&runvrbrowser;" key="browser-run-key" oncommand="vrbrowser.run()"/>
+    </menupopup>
+
+    <keyset>
+
+      <key id="browser-run-key" modifiers="accel alt shift" key="V" oncommand="vrbrowser.run()"/>
+    </keyset>
+
+    <statusbar id="status-bar">
+      <statusbarpanel id="browser-status-bar-icon" class="statusbarpanel-iconic" src="chrome://vrbrowser/skin/status-bar.png" tooltiptext="&runvrbrowser;" onclick="vrbrowser.run()" />
+    </statusbar>
+
+    <toolbarpalette id="BrowserToolbarPalette">
+      <toolbarbutton id="browser-toolbar-button" label="VRBrowser" tooltiptext="&runvrbrowser;" oncommand="vrbrowser.run()"/>
+    </toolbarpalette>
+</overlay>
