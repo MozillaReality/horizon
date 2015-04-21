@@ -1,4 +1,4 @@
-var browser = function () {
+var vrbrowser = function () {
   return {
     init: function () {
       gBrowser.addEventListener("load", function () {
@@ -8,8 +8,9 @@ var browser = function () {
 
     run: function () {
       dump('Trying to run() from extension.');
+      gBrowser.selectedTab = gBrowser.addTab('http://kevingrandon.github.io/browser/web/');
     }
   };
 }();
 
-window.addEventListener('load', browser.init, false);
+window.addEventListener('load', vrbrowser.init, false);
