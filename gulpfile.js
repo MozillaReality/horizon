@@ -43,7 +43,7 @@ gulp.task('pre-commit', function() {
 /**
  * Setup steps after an npm install.
  */
-gulp.task('install', ['copy-web-app', 'copy-addon', 'pre-commit']);
+gulp.task('install', ['copy-web-app', 'copy-addon-core', 'pre-commit']);
 
 
 /**
@@ -57,7 +57,7 @@ gulp.task('copy-web-app', function() {
     .pipe(gulp.dest(DIST_WEB_ROOT));
 });
 
-gulp.task('copy-addon', function() {
+gulp.task('copy-addon-core', function() {
   return gulp.src([
       ADDON_ROOT + '**'
     ])
@@ -99,7 +99,23 @@ gulp.task('zip', function() {
 /**
  * Packages the addon into a zip.
  */
-gulp.task('zip-addon', function() {
+gulp.task('zip-addon', function(cb) {
+  runSequence(['build'], ['copy-webapp-into-addon'], ['make-addon-zip' ], cb);
+});
+
+/**
+ * Copies app files into the addon.
+ * Necessary until we figure out the permission/docshell issues on desktop.
+ */
+gulp.task('copy-webapp-into-addon', function() {
+  //del(DIST_WEB_ROOT + '**');
+  return gulp.src([
+      DIST_WEB_ROOT + '**/*'
+    ], {base: DIST_WEB_ROOT})
+    .pipe(gulp.dest(DIST_ADDON_ROOT + 'content/app/'));
+});
+
+gulp.task('make-addon-zip', function() {
   return gulp.src(DIST_ADDON_ROOT + '**')
     .pipe(zip('vrbrowser-addon.xpi'))
     .pipe(gulp.dest(__dirname));
@@ -115,7 +131,7 @@ gulp.task('travis', ['lint', 'babel']);
  * Build the app.
  */
 gulp.task('build', function(cb) {
-  runSequence(['clobber'], ['copy-web-app', 'copy-addon'], ['babel', 'lint' ], cb);
+  runSequence(['clobber'], ['copy-web-app', 'copy-addon-core'], ['babel', 'lint' ], cb);
 });
 
 
