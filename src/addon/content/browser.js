@@ -139,11 +139,18 @@ var vrbrowser = function () {
           return;
         }
 
-        /*
+        var appsService = Cc['@mozilla.org/AppsService;1'].getService(Ci.nsIAppsService);
         var docShell = aWindow.QueryInterface(Ci.nsIInterfaceRequestor)
                             .getInterface(Ci.nsIDocShell);
+        var manifestUrl = origin + '/browser/web/manifest.webapp';
+        var manifest = appsService.getAppByManifestURL(manifestUrl);
+        var systemApp = manifest.QueryInterface(Ci.mozIApplication);
+
         console.log('Got docShell. App id is:', docShell.appId);
-        docShell.setIsApp(1);
+        console.log('Setting new id: ', systemApp.localId);
+
+        docShell.setIsApp(systemApp.localId);
+        /*
         //docShell.setIsBrowserInsideApp(1);
         console.log('Called setIsApp. App id: ', docShell.appId);
 
