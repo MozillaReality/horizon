@@ -1,6 +1,6 @@
 # Browser
 
-An experimental browser written using web standards.
+An experimental browser written using web standards. This browser can be run inside of a standalone Graphene build, or as an addon. Find the addon here: http://kevingrandon.github.io/browser/vrbrowser-addon.xpi
 
 ## Installation
 
