@@ -38,7 +38,6 @@ export default class Frame {
   createFrame() {
     var element = document.createElement('iframe');
     element.setAttribute('src', this.config.url);
-    element.setAttribute('remote', 'true');
     element.setAttribute('mozbrowser', 'true');
     element.className = 'frame';
     this.config.container.appendChild(element);
