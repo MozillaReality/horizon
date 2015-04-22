@@ -11,13 +11,6 @@
   "permissions": {
     "browser": {},
     "embed-apps": {},
-    "systemXHR": {},
-    "settings": {
-       "access": "readwrite"
-    },
-    "geolocation": {},
-    "desktop-notification": {},
-    "audio-capture": {},
-    "video-capture": {}
+    "systemXHR": {}
   }
 }
