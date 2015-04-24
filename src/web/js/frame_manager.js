@@ -9,6 +9,7 @@ export default class Navigation {
     this.hud = $('#hud');
     this.container = $('#frames');
     this.urlbar = $('#urlbar');
+    this.urlInput = $('#urlbar input');
   }
 
   get activeFrame() {
@@ -80,6 +81,10 @@ export default class Navigation {
     urlbarInput.blur();
   }
 
+  handleFocusUrlBar() {
+    this.urlInput.select();
+  }
+
   navigate(url) {
     if (!this.activeFrame) {
       this.newFrame();
@@ -91,6 +96,7 @@ export default class Navigation {
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
+    this.urlInput.addEventListener('focus', this.handleFocusUrlBar.bind(this));
     this.newFrame();
 
     runtime.hotkeys.assign({
