@@ -55,3 +55,13 @@ gulp zip-addon
 In production, the server is run like so:
 
     npm start
+
+
+## Developer Tools
+
+The easiest way to use developer tools with this project is to select the "Remote Runtime" option in WebIDE. To do so:
+
+* Open a Firefox Nightly browser.
+* Navigate to Tools -> Web Developer -> WebIDE
+* Click Select Runtime -> Remote Runtime
+* By default you should be able to connect to the running browser at: localhost:6000
