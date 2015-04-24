@@ -1,6 +1,6 @@
 Cu.import('resource://gre/modules/Services.jsm');
-Cu.import("resource://gre/modules/Webapps.jsm");
-Cu.import("resource://gre/modules/AppsUtils.jsm");
+Cu.import('resource://gre/modules/Webapps.jsm');
+Cu.import('resource://gre/modules/AppsUtils.jsm');
 
 var origin = 'http://kevingrandon.github.io';
 
@@ -13,23 +13,23 @@ var BrowserAppInstaller = {
    */
   loadManifest: function() {
     return new Promise((aResolve, aReject) => {
-      console.log("Loading manifest " + this.manifestUrl);
+      console.log('Loading manifest ' + this.manifestUrl);
 
-      let xhr =  Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+      let xhr =  Cc['@mozilla.org/xmlextras/xmlhttprequest;1']
                  .createInstance(Ci.nsIXMLHttpRequest);
       xhr.mozBackgroundRequest = true;
-      xhr.open("GET", this.manifestUrl);
-      xhr.responseType = "json";
-      xhr.addEventListener("load", () => {
+      xhr.open('GET', this.manifestUrl);
+      xhr.responseType = 'json';
+      xhr.addEventListener('load', () => {
         if (xhr.status >= 200 && xhr.status < 400) {
-          console.log("Success loading " + this.manifestUrl);
+          console.log('Success loading ' + this.manifestUrl);
           aResolve(xhr.response);
         } else {
-          aReject("Error loading " + this.manifestUrl);
+          aReject('Error loading ' + this.manifestUrl);
         }
       });
-      xhr.addEventListener("error", () => {
-        aReject("Error loading " + this.manifestUrl);
+      xhr.addEventListener('error', () => {
+        aReject('Error loading ' + this.manifestUrl);
       });
       xhr.send(null);
     });
@@ -47,7 +47,7 @@ var BrowserAppInstaller = {
     console.log('Startup url is:' + this.startupUrl);
 
     return new Promise((aResolve, aReject) => {
-      console.log("Origin is " + origin);
+      console.log('Origin is ' + origin);
       let appData = {
         app: {
           installOrigin: origin,
@@ -67,8 +67,8 @@ var BrowserAppInstaller = {
   },
 
   configure: function() {
-    Services.prefs.setCharPref("b2g.system_manifest_url", this.manifestUrl);
-    Services.prefs.setCharPref("b2g.system_startup_url", this.startupUrl);
+    Services.prefs.setCharPref('b2g.system_manifest_url', this.manifestUrl);
+    Services.prefs.setCharPref('b2g.system_startup_url', this.startupUrl);
     return Promise.resolve();
   },
 
@@ -108,10 +108,10 @@ function installButton(toolbarId, id, afterId) {
       }
 
       toolbar.insertItem(id, before);
-      toolbar.setAttribute("currentset", toolbar.currentSet);
-      document.persist(toolbar.id, "currentset");
+      toolbar.setAttribute('currentset', toolbar.currentSet);
+      document.persist(toolbar.id, 'currentset');
 
-      if (toolbarId == "addon-bar")
+      if (toolbarId == 'addon-bar')
           toolbar.collapsed = false;
   }
 }
