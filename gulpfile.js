@@ -99,7 +99,7 @@ gulp.task('zip', function() {
 /**
  * Packages the addon into a zip.
  */
-gulp.task('zip-addon', function(cb) {
+gulp.task('addon', function(cb) {
   runSequence(['build'], ['copy-webapp-into-addon'], ['make-addon-zip' ], cb);
 });
 

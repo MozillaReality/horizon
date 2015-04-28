@@ -48,8 +48,10 @@ TODO...
 
 ### Packaging the addon.
 
+This will build and package the addon into the .xpi file.
+
 ```
-gulp zip-addon
+gulp addon
 ```
 
 ## Deployment
