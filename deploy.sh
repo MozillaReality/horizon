@@ -3,7 +3,7 @@
 
 git checkout -b deploy
 gulp build
-gulp zip-addon
+gulp addon
 rm .gitignore
 git add dist
 git commit -m "Deployed to Github Pages"
