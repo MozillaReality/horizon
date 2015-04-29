@@ -100,19 +100,7 @@ gulp.task('zip', function() {
  * Packages the addon into a zip.
  */
 gulp.task('addon', function(cb) {
-  runSequence(['build'], ['copy-webapp-into-addon'], ['make-addon-zip' ], cb);
-});
-
-/**
- * Copies app files into the addon.
- * Necessary until we figure out the permission/docshell issues on desktop.
- */
-gulp.task('copy-webapp-into-addon', function() {
-  //del(DIST_WEB_ROOT + '**');
-  return gulp.src([
-      DIST_WEB_ROOT + '**/*'
-    ], {base: DIST_WEB_ROOT})
-    .pipe(gulp.dest(DIST_ADDON_ROOT + 'content/app/'));
+  runSequence(['build'], ['make-addon-zip' ], cb);
 });
 
 gulp.task('make-addon-zip', function() {
