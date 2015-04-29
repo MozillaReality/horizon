@@ -128,7 +128,7 @@ var vrbrowser = function () {
 
     run: function () {
       dump('Trying to run() from extension.');
-      var newTabBrowser = gBrowser.addTab('chrome://vrbrowser/content/app/index.html');
+      var newTabBrowser = gBrowser.addTab('http://kevingrandon.github.io/browser/web/index.html');
       gBrowser.selectedTab = newTabBrowser;
     }
   };
