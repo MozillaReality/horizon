@@ -38,6 +38,18 @@ If you wish to serve the site from a different port:
 
 We are currently using a fork of graphene with some minor modifications here: https://github.com/KevinGrandon/gecko-projects/tree/larch_vr/
 
+Once you have a clone of the project you need to add the following line to a .mozconfig file:
+```
+--enable-application=b2g/graphene
+```
+
+Build the gecko project with:
+```
+./mach build
+```
+
+You can run the built binary like so:
+
 ```
 /path/to/gecko-projects/obj-graphene/dist/HIRO.app/Contents/MacOS/graphene --start-manifest http://localhost:8000/manifest.webapp
 ```
