@@ -130,6 +130,27 @@ var vrbrowser = function () {
       dump('Trying to run() from extension.');
       var newTabBrowser = gBrowser.addTab('http://kevingrandon.github.io/browser/web/index.html');
       gBrowser.selectedTab = newTabBrowser;
+
+      var browser = gBrowser.getBrowserForTab(newTabBrowser);
+      newTabBrowser.addEventListener('load', () => {
+        console.log('Got load event.');
+        var aWindow = browser.contentWindowAsCPOW;
+        if (!aWindow) {
+          return;
+        }
+
+        var appsService = Cc['@mozilla.org/AppsService;1'].getService(Ci.nsIAppsService);
+        var docShell = aWindow.QueryInterface(Ci.nsIInterfaceRequestor)
+                            .getInterface(Ci.nsIDocShell);
+        var manifestUrl = origin + '/browser/web/manifest.webapp';
+        var manifest = appsService.getAppByManifestURL(manifestUrl);
+        var systemApp = manifest.QueryInterface(Ci.mozIApplication);
+
+        console.log('Got docShell. App id is:', docShell.appId);
+        console.log('Setting new id: ', systemApp.localId);
+
+        docShell.setIsApp(systemApp.localId);
+      });
     }
   };
 }();
