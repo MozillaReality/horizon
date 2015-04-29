@@ -127,10 +127,11 @@ var vrbrowser = function () {
     },
 
     run: function () {
-      dump('Trying to run() from extension.');
-      var newTabBrowser = gBrowser.addTab('http://kevingrandon.github.io/browser/web/index.html');
+      console.log('Trying to run() from extension.');
+      var newTabBrowser = gBrowser.addTab('chrome://vrbrowser/content/wrapper.html');
       gBrowser.selectedTab = newTabBrowser;
 
+      /*
       var browser = gBrowser.getBrowserForTab(newTabBrowser);
       newTabBrowser.addEventListener('load', () => {
         console.log('Got load event.');
@@ -150,7 +151,13 @@ var vrbrowser = function () {
         console.log('Setting new id: ', systemApp.localId);
 
         docShell.setIsApp(systemApp.localId);
+
+        var uri = Services.io.newURI(origin, null, null);
+        Services.perms.add(uri, 'embed-apps', Services.perms.ALLOW_ACTION);
+        Services.perms.add(uri, 'browser', Services.perms.ALLOW_ACTION);
+        Services.perms.add(uri, 'systemXHR', Services.perms.ALLOW_ACTION);
       });
+      */
     }
   };
 }();
