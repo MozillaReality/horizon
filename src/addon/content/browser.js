@@ -69,6 +69,12 @@ var BrowserAppInstaller = {
   configure: function() {
     Services.prefs.setCharPref('b2g.system_manifest_url', this.manifestUrl);
     Services.prefs.setCharPref('b2g.system_startup_url', this.startupUrl);
+    // Set a certified CSP preference, otherwise the default one is too strict.
+    Services.prefs.setCharPref('security.apps.certified.CSP.default', '');
+
+    Services.prefs.setBoolPref('dom.mozBrowserFramesEnabled', true);
+    Services.prefs.setBoolPref('dom.ipc.browser_frames.oop_by_default', false);
+    Services.prefs.setBoolPref('dom.webapps.useCurrentProfile', true);
     return Promise.resolve();
   },
 
@@ -127,9 +133,36 @@ var vrbrowser = function () {
     },
 
     run: function () {
-      dump('Trying to run() from extension.');
-      var newTabBrowser = gBrowser.addTab('chrome://vrbrowser/content/app/index.html');
+      console.log('Trying to run() from extension.');
+      var newTabBrowser = gBrowser.addTab('chrome://vrbrowser/content/wrapper.html');
       gBrowser.selectedTab = newTabBrowser;
+
+
+      var browser = gBrowser.getBrowserForTab(newTabBrowser);
+      newTabBrowser.addEventListener('load', () => {
+        console.log('Got load event.');
+        var aWindow = browser.contentWindowAsCPOW;
+        if (!aWindow) {
+          return;
+        }
+
+        var appsService = Cc['@mozilla.org/AppsService;1'].getService(Ci.nsIAppsService);
+        var docShell = aWindow.QueryInterface(Ci.nsIInterfaceRequestor)
+                            .getInterface(Ci.nsIDocShell);
+        var manifestUrl = origin + '/browser/web/manifest.webapp';
+        var manifest = appsService.getAppByManifestURL(manifestUrl);
+        var systemApp = manifest.QueryInterface(Ci.mozIApplication);
+
+        console.log('Got docShell. App id is:', docShell.appId);
+        console.log('Setting new id: ', systemApp.localId);
+
+        docShell.setIsApp(systemApp.localId);
+
+        var uri = Services.io.newURI(origin, null, null);
+        Services.perms.add(uri, 'embed-apps', Services.perms.ALLOW_ACTION);
+        Services.perms.add(uri, 'browser', Services.perms.ALLOW_ACTION);
+        Services.perms.add(uri, 'systemXHR', Services.perms.ALLOW_ACTION);
+      });
     }
   };
 }();
