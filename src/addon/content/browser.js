@@ -71,6 +71,9 @@ var BrowserAppInstaller = {
     Services.prefs.setCharPref('b2g.system_startup_url', this.startupUrl);
     // Set a certified CSP preference, otherwise the default one is too strict.
     Services.prefs.setCharPref('security.apps.certified.CSP.default', '');
+
+    Services.prefs.setBoolPref('dom.mozBrowserFramesEnabled', true);
+    Services.prefs.setBoolPref('dom.ipc.browser_frames.oop_by_default', true);
     return Promise.resolve();
   },
 
