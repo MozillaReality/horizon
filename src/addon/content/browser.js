@@ -74,6 +74,7 @@ var BrowserAppInstaller = {
 
     Services.prefs.setBoolPref('dom.mozBrowserFramesEnabled', true);
     Services.prefs.setBoolPref('dom.ipc.browser_frames.oop_by_default', false);
+    Services.prefs.setBoolPref('dom.webapps.useCurrentProfile', true);
     return Promise.resolve();
   },
 
