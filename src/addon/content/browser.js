@@ -69,6 +69,8 @@ var BrowserAppInstaller = {
   configure: function() {
     Services.prefs.setCharPref('b2g.system_manifest_url', this.manifestUrl);
     Services.prefs.setCharPref('b2g.system_startup_url', this.startupUrl);
+    // Set a certified CSP preference, otherwise the default one is too strict.
+    Services.prefs.setCharPref('security.apps.certified.CSP.default', '');
     return Promise.resolve();
   },
 
@@ -131,7 +133,7 @@ var vrbrowser = function () {
       var newTabBrowser = gBrowser.addTab('chrome://vrbrowser/content/wrapper.html');
       gBrowser.selectedTab = newTabBrowser;
 
-      /*
+
       var browser = gBrowser.getBrowserForTab(newTabBrowser);
       newTabBrowser.addEventListener('load', () => {
         console.log('Got load event.');
@@ -157,7 +159,7 @@ var vrbrowser = function () {
         Services.perms.add(uri, 'browser', Services.perms.ALLOW_ACTION);
         Services.perms.add(uri, 'systemXHR', Services.perms.ALLOW_ACTION);
       });
-      */
+
     }
   };
 }();
