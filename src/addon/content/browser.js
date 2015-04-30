@@ -73,7 +73,7 @@ var BrowserAppInstaller = {
     Services.prefs.setCharPref('security.apps.certified.CSP.default', '');
 
     Services.prefs.setBoolPref('dom.mozBrowserFramesEnabled', true);
-    Services.prefs.setBoolPref('dom.ipc.browser_frames.oop_by_default', true);
+    Services.prefs.setBoolPref('dom.ipc.browser_frames.oop_by_default', false);
     return Promise.resolve();
   },
 
@@ -162,7 +162,6 @@ var vrbrowser = function () {
         Services.perms.add(uri, 'browser', Services.perms.ALLOW_ACTION);
         Services.perms.add(uri, 'systemXHR', Services.perms.ALLOW_ACTION);
       });
-
     }
   };
 }();
