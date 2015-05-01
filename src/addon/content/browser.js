@@ -67,13 +67,22 @@ var BrowserAppInstaller = {
   },
 
   configure: function() {
+    // XXX: Probably not needed.
     Services.prefs.setCharPref('b2g.system_manifest_url', this.manifestUrl);
     Services.prefs.setCharPref('b2g.system_startup_url', this.startupUrl);
+
     // Set a certified CSP preference, otherwise the default one is too strict.
     Services.prefs.setCharPref('security.apps.certified.CSP.default', '');
 
+    // Enables mozbrower iframes.
     Services.prefs.setBoolPref('dom.mozBrowserFramesEnabled', true);
+
+    // In-process browser frames currently do not work on desktop.
+    // We could set this to true to enable it, but for now we just specify
+    // the 'remote' attribute for our browsers.
     Services.prefs.setBoolPref('dom.ipc.browser_frames.oop_by_default', false);
+
+    // Necessary to install permissions from an app installed in the local profile.
     Services.prefs.setBoolPref('dom.webapps.useCurrentProfile', true);
     return Promise.resolve();
   },
