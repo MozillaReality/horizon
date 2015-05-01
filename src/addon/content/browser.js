@@ -2,7 +2,7 @@ Cu.import('resource://gre/modules/Services.jsm');
 Cu.import('resource://gre/modules/Webapps.jsm');
 Cu.import('resource://gre/modules/AppsUtils.jsm');
 
-var origin = 'http://kevingrandon.github.io';
+var origin = 'http://mozvr.github.io';
 
 var BrowserAppInstaller = {
 
@@ -142,7 +142,7 @@ var vrbrowser = function () {
       installButton('nav-bar', 'vrbrowser-toolbar-button');
       installButton('addon-bar', 'vrbrowser-toolbar-button');
 
-      BrowserAppInstaller.install(origin + '/browser/web/manifest.webapp');
+      BrowserAppInstaller.install(origin + '/horizon/web/manifest.webapp');
     },
 
     run: function () {
@@ -162,7 +162,7 @@ var vrbrowser = function () {
         var appsService = Cc['@mozilla.org/AppsService;1'].getService(Ci.nsIAppsService);
         var docShell = aWindow.QueryInterface(Ci.nsIInterfaceRequestor)
                             .getInterface(Ci.nsIDocShell);
-        var manifestUrl = origin + '/browser/web/manifest.webapp';
+        var manifestUrl = origin + '/horizon/web/manifest.webapp';
         var manifest = appsService.getAppByManifestURL(manifestUrl);
         var systemApp = manifest.QueryInterface(Ci.mozIApplication);
 
