@@ -99,7 +99,7 @@ export default class Navigation {
     this.urlInput.addEventListener('focus', this.handleFocusUrlBar.bind(this));
     this.newFrame();
 
-    runtime.hotkeys.assign({
+    runtime.keyboardControl.assign({
       'ctrl t': () => this.newFrame(),
       'ctrl w': () => this.closeFrame(),
       'ctrl l': () => this.focusUrlbar()

@@ -1,4 +1,4 @@
-export default class Hotkeys {
+export default class KeyboardControl {
 
   constructor() {
     this.definitions = {};
