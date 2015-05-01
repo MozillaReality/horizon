@@ -6,12 +6,12 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>vrbrowser@mozvr.com</em:id>
 
-    <em:name>VR Browser Addon</em:name>
+    <em:name>Horizon</em:name>
     <em:version>1.0</em:version>
     <em:type>2</em:type>
     <em:creator>Kevin Grandon</em:creator>
 
-    <em:description>A browser running inside of your browser.</em:description>
+    <em:description>Experimental VR Browser.</em:description>
     <em:homepageURL>http://www.mozbr.com/</em:homepageURL>
     <em:optionsURL>chrome://vrbrowser/content/options.xul</em:optionsURL>
 

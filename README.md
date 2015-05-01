@@ -1,18 +1,18 @@
-[![Build Status](https://travis-ci.org/KevinGrandon/browser.svg?branch=master)](https://travis-ci.org/KevinGrandon/browser)
+[![Build Status](https://travis-ci.org/MozVR/browser.svg?branch=master)](https://travis-ci.org/MozVR/browser)
 
-# Browser
+# Horizon
 
-An experimental browser written using web standards. This browser can be run inside of a standalone Graphene build, or as an addon. Find the addon here: http://kevingrandon.github.io/browser/vrbrowser-addon.xpi
+An experimental browser written using web standards. This browser can be run inside of a standalone Graphene build, or as an addon. Find the addon here: http://mozvr.github.io/horizon/horizon.xpi
 
 ## Installation
 
 1. Clone the git repository from GitHub:
 
-        git clone git@github.com:KevinGrandon/browser.git
+        git clone git@github.com:MozVR/horizon.git
 
 2. Open the working directory:
 
-        cd browser
+        cd horizon
 
 3. Install the Node dependencies:
 

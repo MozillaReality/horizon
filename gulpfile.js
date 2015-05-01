@@ -105,7 +105,7 @@ gulp.task('addon', function(cb) {
 
 gulp.task('make-addon-zip', function() {
   return gulp.src(DIST_ADDON_ROOT + '**')
-    .pipe(zip('dist/vrbrowser-addon.xpi'))
+    .pipe(zip('dist/horizon.xpi'))
     .pipe(gulp.dest(__dirname));
 });
 

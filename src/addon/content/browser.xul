@@ -6,6 +6,6 @@
     <script src="browser.js" />
 
     <toolbarpalette id="BrowserToolbarPalette">
-      <toolbarbutton id="vrbrowser-toolbar-button" label="VRBrowser" tooltiptext="&runvrbrowser;" oncommand="vrbrowser.run()"/>
+      <toolbarbutton id="vrbrowser-toolbar-button" label="VRBrowser" tooltiptext="&runhorizon;" oncommand="vrbrowser.run()"/>
     </toolbarpalette>
 </overlay>

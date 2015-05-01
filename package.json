@@ -1,19 +1,19 @@
 {
-  "name": "hiro-browser",
+  "name": "horizon-browser",
   "version": "0.0.0",
-  "description": "Hiro browser dependencies.",
+  "description": "Horizon browser dependencies.",
   "scripts": {
     "install": "gulp install",
     "start": "gulp"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/kevingrandon/browser.git"
+    "url": "git://github.com/mozvr/horizon.git"
   },
   "author": "Kevin Grandon <kevingrandon@yahoo.com>",
   "license": "MPL",
   "bugs": {
-    "url": "https://github.com/kevingrandon/browser/issues"
+    "url": "https://github.com/mozvr/horizon/issues"
   },
   "engines": {
     "node": "0.12.1"
