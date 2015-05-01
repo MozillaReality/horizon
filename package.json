@@ -4,7 +4,7 @@
   "description": "Hiro browser dependencies.",
   "scripts": {
     "install": "gulp install",
-    "start": "gulp build && gulp webserver"
+    "start": "gulp"
   },
   "repository": {
     "type": "git",
