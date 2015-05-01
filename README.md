@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/MozVR/browser.svg?branch=master)](https://travis-ci.org/MozVR/browser)
+[![Build Status](https://travis-ci.org/MozVR/horizon.svg?branch=master)](https://travis-ci.org/MozVR/horizon)
 
 # Horizon
 
