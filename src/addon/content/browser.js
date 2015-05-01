@@ -84,6 +84,10 @@ var BrowserAppInstaller = {
 
     // Necessary to install permissions from an app installed in the local profile.
     Services.prefs.setBoolPref('dom.webapps.useCurrentProfile', true);
+
+    // Enable VR APIs.
+    Services.prefs.setBoolPref('dom.vr.enabled', true);
+
     return Promise.resolve();
   },
 
