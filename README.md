@@ -1,4 +1,7 @@
+<!---
+<!--- Commented out until this repo is public, or we pay for Travis.
 [![Build Status](https://travis-ci.org/MozVR/horizon.svg?branch=master)](https://travis-ci.org/MozVR/horizon)
+--->
 
 # Horizon
 
@@ -25,10 +28,6 @@ To start the server and file watchers:
 
     npm start
 
-Then launch the site from your favourite browser:
-
-[__http://localhost:8000/__](http://localhost:8000/)
-
 If you wish to serve the site from a different port:
 
     PORT=8000 npm start
@@ -54,17 +53,15 @@ You can run the built binary like so:
 /path/to/gecko-projects/obj-graphene/dist/HIRO.app/Contents/MacOS/graphene --start-manifest http://localhost:8000/manifest.webapp
 ```
 
-
 ### Running as an addon.
-TODO...
-
-### Packaging the addon.
 
 This will build and package the addon into the .xpi file.
 
 ```
 gulp addon
 ```
+
+To run as an addon, you will need to simply drop the addon onto Firefox, or navigate to it with File -> Open.
 
 ## Deployment
 
