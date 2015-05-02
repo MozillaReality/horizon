@@ -51,7 +51,7 @@ Build the gecko project with:
 You can run the built binary like so:
 
 ```
-/path/to/gecko-projects/obj-graphene/dist/HIRO.app/Contents/MacOS/graphene --start-manifest http://localhost:8000/manifest.webapp
+/path/to/gecko-projects/obj-graphene/dist/Horizon.app/Contents/MacOS/graphene --start-manifest http://localhost:8000/manifest.webapp
 ```
 
 ### Running as an addon.
