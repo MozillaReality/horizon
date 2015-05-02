@@ -32,3 +32,9 @@ iframe.frame {
   margin: 20px;
   transition: transform 0.5s ease;
 }
+
+#entervr {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
