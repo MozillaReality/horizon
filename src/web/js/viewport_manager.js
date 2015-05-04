@@ -11,6 +11,8 @@ export default class ViewportManager {
 
     this.getVrDevices().then(devices => {
       this.vrDevices = devices;
+    }).catch(function(err) {
+      console.warn(err);
     });
   }
 
@@ -60,7 +62,7 @@ export default class ViewportManager {
           resolve(this.vrDeviceCallback(devices));
         });
       } else {
-        reject('No VR devices');
+        reject('No VR devices found.');
       }
     });
   }
