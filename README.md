@@ -39,7 +39,7 @@ We are currently using a fork of graphene with some minor modifications here: ht
 
 Once you have a clone of the project you need to add the following line to a .mozconfig file:
 ```
-MOZ_WEBVR=1
+MOZ_HORIZON=1
 ac_add_options --enable-application=b2g/graphene
 ac_add_options --with-branding=b2g/branding/horizon
 ```
