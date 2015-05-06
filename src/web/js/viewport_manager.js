@@ -2,12 +2,17 @@
 global HMDVRDevice, PositionSensorVRDevice
 */
 
+import * as Matrix from 'js/lib/matrix.js';
+
+var matrix = new Matrix();
+
 export default class ViewportManager {
   constructor() {
-    this.vrDevices = {};
+    this.vrDevices = null;
 
+    this.container = $('#fs-container');
+    this.camera = $('#camera');
     this.enter = $('#entervr');
-    this.container = $('#frames');
 
     this.getVrDevices().then(devices => {
       this.vrDevices = devices;
@@ -51,7 +56,6 @@ export default class ViewportManager {
         });
       }
     }
-
     return false;
   }
 
@@ -65,6 +69,13 @@ export default class ViewportManager {
         reject('No VR devices found.');
       }
     });
+  }
+
+  resetSensor() {
+    if (!this.vrDevices) {
+      return false;
+    }
+    this.vrDevices.position.resetSensor();
   }
 
   launchFs(element, opts) {
@@ -83,7 +94,29 @@ export default class ViewportManager {
     });
   }
 
-  start() {
+  onFrame() {
+    if (!this.vrDevices) {
+      return false;
+    }
+
+    let state = this.vrDevices.position.getState();
+    let orientation = state.orientation;
+
+    if (orientation !== null) {
+      let cssOrientationMatrix = matrix.cssMatrixFromOrientation(orientation);
+      this.camera.style.transform = cssOrientationMatrix;
+    }
+    
+    window.requestAnimationFrame(this.onFrame.bind(this));
+  }
+
+  start(runtime) {
     this.enter.addEventListener('click', this.enterVr.bind(this));
+
+    runtime.keyboardControl.assign({
+      'ctrl z': () => this.resetSensor()
+    });
+
+    window.requestAnimationFrame(this.onFrame.bind(this));
   }
 }

@@ -15,4 +15,4 @@ runtime.viewportManager = new ViewportManager();
 runtime.frameManager.start(runtime);
 runtime.gamepadControl.start(runtime);
 runtime.keyboardControl.start(runtime);
-runtime.viewportManager.start();
+runtime.viewportManager.start(runtime);
