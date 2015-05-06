@@ -135,7 +135,7 @@ gulp.task('webserver', function() {
   gulp.src(DIST_WEB_ROOT)
     .pipe(webserver({
       port: process.env.PORT || 8000,
-      host: process.env.HOSTNAME || 'localhost',
+      host: process.env.HOST || 'localhost',
       livereload: false,
       directoryListing: false,
       open: false
