@@ -12,26 +12,49 @@ export default class Frame {
       'mozbrowserlocationchange', 'mozbrowsermetachange', 'mozbrowsericonchange',
       'mozbrowserasyncscroll', 'mozbrowsersecuritychange'];
 
+    this.title = '';
+    this.location = config.url;
+
     this.createFrame();
   }
 
   handleEvent(e) {
-    console.log('Got event', e.type);
+    var listener = 'on_' + e.type;
+    if (this[listener]) {
+      this[listener](e);
+    }
+
+    // Broadcast an event to notify other modules.
+    // We could use an event emitter here, but there may be good reasons
+    // to notify the world for things like history and UI changes.
+    window.dispatchEvent(new CustomEvent('frame_' + e.type, {
+      bubbles: true,
+      detail: e.detail
+    }));
+
   }
 
-  _handle_back() {
+  on_mozbrowserlocationchange(e) {
+    this.location = e.detail;
+  }
+
+  on_mozbrowsertitlechange(e) {
+    this.title = e.detail;
+  }
+
+  on_backclicked() {
     this.element.goBack();
   }
 
-  _handle_forward() {
+  on_forwardclicked() {
     this.element.goForward();
   }
 
-  _handle_stop() {
+  on_stopclicked() {
     this.element.stop();
   }
 
-  _handle_reload() {
+  on_reloadclicked() {
     this.element.reload();
   }
 
@@ -54,6 +77,16 @@ export default class Frame {
   }
 
   navigate(value) {
-    this.element.setAttribute('src', url.getUrlFromInput(value));
+    var location = url.getUrlFromInput(value);
+    this.location = location;
+    this.title = '';
+
+    // Reset local values and update the hud when we navigate..
+    window.dispatchEvent(new CustomEvent('frame_mozbrowserlocationchange', {
+      bubbles: true,
+      detail: location
+    }));
+
+    this.element.setAttribute('src', location);
   }
 }

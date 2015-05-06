@@ -17,6 +17,14 @@ export default class Navigation {
   }
 
   handleEvent(e) {
+
+    switch(e.type) {
+      case 'frame_mozbrowserlocationchange':
+      case 'frame_mozbrowsertitlechange':
+        this.updateHUDForActiveFrame();
+        break;
+    }
+
     var action = e.target.dataset && e.target.dataset.action;
     if (!action) { return; }
 
@@ -25,7 +33,7 @@ export default class Navigation {
       return;
     }
 
-    this.activeFrame['_handle_' + e.target.dataset.action](e);
+    this.activeFrame['on_' + e.target.dataset.action + 'clicked'](e);
   }
 
   /**
@@ -66,11 +74,36 @@ export default class Navigation {
         perspective(${distance}px)
         rotateY(${rotate}deg)`;
     }
+    this.updateHUDForActiveFrame();
   }
 
+  updateHUDForActiveFrame() {
+    if (this.activeFrame) {
+      this.urlInput.value = this.activeFrame.title || this.activeFrame.location;
+    } else {
+      this.urlInput.value = '';
+    }
+  }
+
+  /**
+   * Handles the focus hotkey.
+   * Sets the urlbar to be the raw location instead of title.
+   */
   focusUrlbar() {
     var urlbarInput = $('#urlbar input');
+
+    if (this.activeFrame) {
+      urlbarInput.value = this.activeFrame.location;
+    }
     urlbarInput.focus();
+    this.urlInput.select();
+  }
+
+  /**
+   * On blur we want to return to the title of the page.
+   */
+  handleBlurUrlBar() {
+    this.updateHUDForActiveFrame();
   }
 
   handleUrlEntry(e) {
@@ -78,10 +111,6 @@ export default class Navigation {
     e.preventDefault();
     this.navigate(urlbarInput.value);
     urlbarInput.blur();
-  }
-
-  handleFocusUrlBar() {
-    this.urlInput.select();
   }
 
   navigate(url) {
@@ -92,10 +121,14 @@ export default class Navigation {
   }
 
   start(runtime) {
+    window.addEventListener('frame_mozbrowserlocationchange', this);
+    window.addEventListener('frame_mozbrowsertitlechange', this);
+
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
-    this.urlInput.addEventListener('focus', this.handleFocusUrlBar.bind(this));
+    this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
+    this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.newFrame();
 
     runtime.keyboardControl.assign({
