@@ -1,13 +1,13 @@
 import * as Frame from 'js/frame.js';
 
 export default class Navigation {
-
   constructor() {
     this.frames = [];
     this.activeFrameIndex = null;
 
     this.hud = $('#hud');
-    this.container = $('#frames');
+    this.container = $('#fs-container');
+    this.contentContainer = $('#frames');
     this.urlbar = $('#urlbar');
     this.urlInput = $('#urlbar input');
   }
@@ -33,8 +33,8 @@ export default class Navigation {
    */
   newFrame() {
     var app = new Frame({
-      url: 'http://mozilla.org',
-      container: this.container
+      url: 'http://www.mozvr.com/projects',
+      container: this.contentContainer
     });
     this.activeFrameIndex = this.frames.length;
     this.frames.push(app);
@@ -57,10 +57,9 @@ export default class Navigation {
   }
 
   positionFrames() {
-    var frameWidth = (window.innerWidth * 0.8) /* frame size */ + 40 /* padding */;
-    var centerAdjust = (window.innerWidth - frameWidth) / 4 /* to center the frame */;
     for (var i = 0 ; i < this.frames.length; i++) {
-      var x = (i - this.activeFrameIndex) * frameWidth + centerAdjust;
+      var width = this.frames[i].element.offsetWidth;
+      var x = (i - this.activeFrameIndex) * width;
       var distance = 1000;
       var rotate = 20 * (i - this.activeFrameIndex) * -1;
       this.frames[i].element.style.transform = `translateX(${x}px)

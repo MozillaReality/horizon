@@ -6,17 +6,38 @@
 	<script data-main="js/browser" src="js/ext/require.js"></script>
 </head>
 <body>
-  <button id="entervr">Enter VR</button>
-  <div id="hud">
-    <form action="#" id="urlbar">
-      <input type="text">
-    </form>
-    <span data-action="new">+</span>
-    <span data-action="back">&larr;</span>
-    <span data-action="forward">&rarr;</span>
-    <span data-action="stop">x</span>
-    <span data-action="reload">&#x21bb;</span>
+
+  <!-- fullscreen container which VR fullscreen is applied to-->
+  <div id="fs-container">
+
+    <!-- container acting as camera -->
+    <div id="camera" class="threed">
+
+      <!-- HUD interface elements -->    
+      <div id="hud" class="threed">
+        <div id="frames" class="threed">
+          <!-- browser content iframes -->
+        </div>
+
+        <div id="navigator" class="threed">
+          <span data-action="back">&larr;</span>
+          <span data-action="forward">&rarr;</span>
+
+          <form action="#" id="urlbar">
+            <input type="text">
+          </form>
+          
+          <span data-action="reload">&#x21bb;</span>
+          <span data-action="stop">x</span>
+          <span data-action="new">+</span>
+        </div>
+
+      </div>
+    </div>
+
   </div>
-  <div id="frames"></div>
+
+  <button id="entervr">Enter VR</button>
+  
 </body>
 </html>

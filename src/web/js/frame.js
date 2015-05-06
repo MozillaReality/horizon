@@ -39,7 +39,7 @@ export default class Frame {
     var element = document.createElement('iframe');
     element.setAttribute('src', this.config.url);
     element.setAttribute('mozbrowser', 'true');
-    element.className = 'frame';
+    element.className = 'frame threed';
     this.config.container.appendChild(element);
 
     this.element = element;
