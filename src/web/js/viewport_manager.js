@@ -109,7 +109,7 @@ export default class ViewportManager {
         position[p] *= -50; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
-      cssPosition = 'translate3d(' + position.x + 'cm, ' + -position.y + 'cm, ' + position.z + 'cm)';
+      cssPosition = `translate3d(${position.x}cm, ${position.y}cm, ${position.z}cm)`;
     }
     
     this.camera.style.transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
