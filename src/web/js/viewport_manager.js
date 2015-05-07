@@ -9,6 +9,7 @@ var matrix = new Matrix();
 export default class ViewportManager {
   constructor() {
     this.vrDevices = null;
+    this.lastPosition = null;
 
     this.container = $('#fs-container');
     this.camera = $('#camera');
@@ -101,18 +102,23 @@ export default class ViewportManager {
 
     let state = this.vrDevices.position.getState();
     let orientation = state.orientation;
-    let position = state.position;
+    let position = state.position || this.lastPosition;
     let cssPosition = '';
 
     if (position !== null) {
+      // The scaled position to use.
+      let val = {};
+
       for (let p in position) {
-        position[p] *= -50; /* scale position from HMD to match CSS values */
+        val[p] = position[p] * -50; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
-      position.y *= -1;
-      cssPosition = `translate3d(${position.x}cm, ${position.y}cm, ${position.z}cm)`;
-    }
+      val.y *= -1;
+      cssPosition = `translate3d(${val.x}cm, ${val.y}cm, ${val.z}cm)`;
 
+      // Store the last position to smooth movement if we don't get a position next time.
+      this.lastPosition = position;
+    }
     this.camera.style.transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
 
     window.requestAnimationFrame(this.onFrame.bind(this));
