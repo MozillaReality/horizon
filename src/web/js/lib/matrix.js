@@ -1,6 +1,3 @@
-// helper function to convert a quaternion into a matrix, optionally
-// inverting the quaternion along the way
-
 export default class Matrix {
   matrixFromQuaternion(x, y, z, w) {
     let m = Array(16);
