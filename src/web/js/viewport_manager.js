@@ -101,12 +101,19 @@ export default class ViewportManager {
 
     let state = this.vrDevices.position.getState();
     let orientation = state.orientation;
+    let position = state.position;
+    let cssPosition = '';
 
-    if (orientation !== null) {
-      let cssOrientationMatrix = matrix.cssMatrixFromOrientation(orientation);
-      this.camera.style.transform = cssOrientationMatrix;
+    if (position !== null) {
+      for (let p in position) {
+        position[p] *= -50; /* scale position from HMD to match CSS values */
+      }
+      /* -y to account for css y orientation */
+      cssPosition = 'translate3d(' + position.x + 'cm, ' + -position.y + 'cm, ' + position.z + 'cm)';
     }
     
+    this.camera.style.transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
+
     window.requestAnimationFrame(this.onFrame.bind(this));
   }
 
@@ -114,7 +121,8 @@ export default class ViewportManager {
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
     runtime.keyboardControl.assign({
-      'ctrl z': () => this.resetSensor()
+      'ctrl z': () => this.resetSensor(),
+      'ctrl f': () => this.enterVr()
     });
 
     window.requestAnimationFrame(this.onFrame.bind(this));
