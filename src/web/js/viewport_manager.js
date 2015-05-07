@@ -109,9 +109,10 @@ export default class ViewportManager {
         position[p] *= -50; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
+      position.y *= -1;
       cssPosition = `translate3d(${position.x}cm, ${position.y}cm, ${position.z}cm)`;
     }
-    
+
     this.camera.style.transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
 
     window.requestAnimationFrame(this.onFrame.bind(this));
