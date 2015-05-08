@@ -48,7 +48,7 @@ body {
 }
 
 *:-moz-full-screen #hud {
-  /* 
+  /*
   translate registration of element to center.
   apply as a negative value because DOM defaults to top-left.
   */
@@ -106,6 +106,7 @@ body {
 }
 
 iframe.frame {
+  border: 0;
   width: var(--interface-width);
   height: var(--interface-height);
   transition: transform 0.5s ease;
