@@ -24,13 +24,13 @@ An experimental browser written using web standards. This browser can be run ins
 
 ## Development
 
-To start the server and file watchers:
+To start the server and file watchers run the following on the command line:
 
-    npm start
+    gulp
 
 If you wish to serve the site from a different port:
 
-    PORT=8000 npm start
+    PORT=8000 gulp
 
 
 ### Running inside of a graphene build
