@@ -1,3 +1,4 @@
+var firefoxConnect = require('node-firefox-connect');
 var gulp = require('gulp');
 
 var babel = require('gulp-babel');
@@ -124,10 +125,51 @@ gulp.task('build', function(cb) {
 
 
 /**
+ * Reload the Horizon app (via remote debugging runtime).
+ */
+gulp.task('reload', function (cb) {
+  firefoxConnect(process.env.REMOTE_DEBUG_PORT || 6000).then(function (client) {
+    client.getWebapps(function (err, webapps) {
+      webapps.listRunningApps(function (err, apps) {
+        if (err) {
+          throw '[remote connect] Error occurred: ' + err;
+        }
+
+        if (!apps.length) {
+          console.warn('[remote connect] No apps found');
+          return;
+        }
+
+        webapps.getApp(apps[0], function (err, app) {
+          console.log('[remote connect] Reloading %s', apps[0]);
+
+          app.reload(function () {
+            console.log('[remote connect] Reloaded');
+            client.disconnect();
+            cb();
+          });
+        });
+      });
+    });
+  });
+});
+
+
+/**
+ * First `build` the files, and then call `reload` to reload the app.
+ */
+gulp.task('buildandreload', function (cb) {
+  runSequence('build', 'reload', cb);
+});
+
+
+/**
  * Watch for changes on the file system, and rebuild if so.
  */
 gulp.task('watch', function() {
-  gulp.watch([SRC_ROOT + '**'], ['build']);
+  // TODO: We should probably prevent Horizon app from being reloaded if only
+  // the `src/addon/` files change.
+  gulp.watch([SRC_ROOT + '**'], ['buildandreload']);
 });
 
 
