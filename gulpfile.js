@@ -208,3 +208,12 @@ gulp.task('clean', function(cb) {
     'node_modules/'
   ], cb);
 });
+
+/**
+ * Catch uncaught exceptions.
+ * Right now node-firefox-connect throws an exception asynchronously if
+ * horizon is not running. This allows us to save files without the app running.
+ */
+process.on('uncaughtException', function (err) {
+  console.log('uncaught exception', err);
+});
