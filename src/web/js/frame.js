@@ -63,9 +63,13 @@ export default class Frame {
 
     var {projection} = values;
     if (projection === 'stereo') {
-
+      window.dispatchEvent(new CustomEvent('stereo-viewmode', {
+        detail: this
+      }));
     } else if (!projection || projection === 'mono') {
-
+      window.dispatchEvent(new CustomEvent('mono-viewmode', {
+        detail: this
+      }));
     }
   }
 

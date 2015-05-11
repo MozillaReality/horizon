@@ -125,6 +125,14 @@ export default class ViewportManager {
   }
 
   start(runtime) {
+    window.addEventListener('stereo-viewmode', e => {
+      // XXX: Enter VR
+    });
+
+    window.addEventListener('mono-viewmode', () => {
+      // XXX: Enter Mono
+    });
+
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
     runtime.gamepadInput.assign({
