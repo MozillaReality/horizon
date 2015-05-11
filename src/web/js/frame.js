@@ -50,6 +50,25 @@ export default class Frame {
     this.title = e.detail;
   }
 
+  on_mozbrowsermetachange({detail}) {
+    if (detail.name !== 'viewmode') {
+      return;
+    }
+
+    var values = {};
+    detail.content.split(',').forEach(def => {
+      var [key, val] = def.split('=');
+      values[String(key).trim()] = String(val).trim();
+    });
+
+    var {projection} = values;
+    if (projection === 'stereo') {
+
+    } else if (!projection || projection === 'mono') {
+
+    }
+  }
+
   on_backclicked() {
     this.element.goBack();
   }
