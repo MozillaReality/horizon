@@ -151,8 +151,11 @@ gulp.task('reload', function (cb) {
         });
       });
     });
-  });
-});
+  }, function() {
+    console.log('[remote connect] failed to connect');
+    cb();
+   });
+ });
 
 
 /**
@@ -207,13 +210,4 @@ gulp.task('clean', function(cb) {
     'dist/',
     'node_modules/'
   ], cb);
-});
-
-/**
- * Catch uncaught exceptions.
- * Right now node-firefox-connect throws an exception asynchronously if
- * horizon is not running. This allows us to save files without the app running.
- */
-process.on('uncaughtException', function (err) {
-  console.log('uncaught exception', err);
 });
