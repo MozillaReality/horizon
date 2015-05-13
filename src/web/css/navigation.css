@@ -61,6 +61,8 @@ body {
   transform: translate(0, 0) translate3d(0, 0, calc(var(--interface-depth) + var(--interface-margin)));
   text-align: center;
   font-size: 20px;
+  /* Disable selection of navigation controls. */
+  -moz-user-select: none;
 }
 
 #navigator form {
