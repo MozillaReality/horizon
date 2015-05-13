@@ -2,6 +2,13 @@ import * as Url from 'js/lib/url.js';
 
 var url = new Url();
 
+const zoomConfig = {
+  min: 0.2,
+  max: 3,
+  step: 0.1,
+  defaultValue: 1
+};
+
 export default class Frame {
   constructor(config) {
     this.config = config;
@@ -15,6 +22,7 @@ export default class Frame {
     this.title = '';
     this.location = config.url;
 
+    this.zoomValue = zoomConfig.defaultValue;
     this.createFrame();
   }
 
@@ -75,6 +83,21 @@ export default class Frame {
 
   close() {
     this.element.parentNode.removeChild(this.element);
+  }
+
+  zoomIn() {
+    this.zoomValue = Math.min(this.zoomValue + zoomConfig.step, zoomConfig.max);
+    this.element.zoom(this.zoomValue);
+  }
+
+  zoomOut() {
+    this.zoomValue = Math.max(this.zoomValue - zoomConfig.step, zoomConfig.min);
+    this.element.zoom(this.zoomValue);
+  }
+
+  resetZoom() {
+    this.zoomValue = zoomConfig.defaultValue;
+    this.element.zoom(this.zoomValue);
   }
 
   navigate(value) {

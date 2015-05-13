@@ -132,6 +132,9 @@ export default class Navigation {
     this.newFrame();
 
     runtime.keyboardControl.assign({
+      'ctrl =': () => this.activeFrame.zoomIn(),
+      'ctrl -': () => this.activeFrame.zoomOut(),
+      'ctrl 0': () => this.activeFrame.resetZoom(),
       'ctrl r': () => this.activeFrame.on_reloadclicked(),
       'ctrl t': () => this.newFrame(),
       'ctrl w': () => this.closeFrame(),
