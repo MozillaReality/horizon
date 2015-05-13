@@ -2,6 +2,8 @@ var firefoxConnect = require('node-firefox-connect');
 var gulp = require('gulp');
 
 var babel = require('gulp-babel');
+var sourcemaps = require('gulp-sourcemaps');
+var gutil = require('gulp-util');
 var del = require('del');
 var jshint = require('gulp-jshint');
 var runSequence = require('run-sequence');
@@ -76,11 +78,13 @@ gulp.task('babel', function() {
   ];
   try {
     return gulp.src(files)
+      .pipe(process.env.PRODUCTION ? gutil.noop() : sourcemaps.init())
       .pipe(babel({
         modules: 'amd'
       }).on('error', function(e) {
         console.log('error running babel', e);
       }))
+      .pipe(process.env.PRODUCTION ? gutil.noop() : sourcemaps.write('.'))
       .pipe(gulp.dest(DIST_WEB_ROOT + 'js/'));
   } catch (e) {
     console.log('Got error in babel', e);

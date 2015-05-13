@@ -2,7 +2,7 @@
 # Deploys to github pages.
 
 git checkout -b deploy
-gulp build
+PRODUCTION=1 gulp build
 gulp addon
 rm .gitignore
 git add dist
