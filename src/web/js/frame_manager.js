@@ -132,9 +132,13 @@ export default class Navigation {
     this.newFrame();
 
     runtime.keyboardControl.assign({
+      'ctrl r': () => this.activeFrame.on_reloadclicked(),
       'ctrl t': () => this.newFrame(),
       'ctrl w': () => this.closeFrame(),
-      'ctrl l': () => this.focusUrlbar()
+      'ctrl l': () => this.focusUrlbar(),
+      'escape': () => this.activeFrame.on_stopclicked(),
+      'ctrl ArrowLeft': () => this.activeFrame.on_backclicked(),
+      'ctrl ArrowRight': () => this.activeFrame.on_forwardclicked()
     });
   }
 }

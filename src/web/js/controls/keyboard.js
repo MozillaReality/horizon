@@ -73,7 +73,7 @@ export default class KeyboardControl {
    */
   assign(definitions) {
     for (var i in definitions) {
-      this.definitions[i.split(' ').sort().join(' ')] = definitions[i];
+      this.definitions[i.split(' ').sort().join(' ').toLowerCase()] = definitions[i];
     }
   }
 }
