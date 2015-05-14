@@ -1,4 +1,4 @@
-export default class Navigation {
+export default class Utils {
   constructor() {
     window.$ = this.$;
     window.$$ = this.$$;

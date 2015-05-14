@@ -1,18 +1,19 @@
+var fs = require('fs');
+
 var firefoxConnect = require('node-firefox-connect');
 var gulp = require('gulp');
 
-var babel = require('gulp-babel');
-var sourcemaps = require('gulp-sourcemaps');
-var gutil = require('gulp-util');
+var babelify = require('babelify');
+var browserify = require('browserify');
 var del = require('del');
 var jshint = require('gulp-jshint');
+var moldSourceMap = require('mold-source-map');
 var runSequence = require('run-sequence');
 var zip = require('gulp-zip');
 var webserver = require('gulp-webserver');
 
 const SRC_ROOT = './src/';
 const ADDON_ROOT = './src/addon/';
-const STANDALONE_ROOT = './src/standalone/';
 const WEB_ROOT = './src/web/';
 const DIST_ROOT = './dist/';
 const DIST_ADDON_ROOT = './dist/addon/';
@@ -55,7 +56,7 @@ gulp.task('install', ['copy-web-app', 'copy-addon-core', 'pre-commit']);
 gulp.task('copy-web-app', function() {
   return gulp.src([
       WEB_ROOT + '**',
-      '!' + WEB_ROOT + 'js/*.js' // do not copy js
+      '!' + WEB_ROOT + 'js/{*,**/*}' // do not copy js
     ])
     .pipe(gulp.dest(DIST_WEB_ROOT));
 });
@@ -70,25 +71,20 @@ gulp.task('copy-addon-core', function() {
 /**
  * converts javascript to es5. this allows us to use harmony classes and modules.
  */
-gulp.task('babel', function() {
-  var files = [
-    WEB_ROOT + 'js/*.js',
-    WEB_ROOT + 'js/**/*.js',
-    '!' + WEB_ROOT + 'js/ext/*.js' // do not process external files
-  ];
-  try {
-    return gulp.src(files)
-      .pipe(process.env.PRODUCTION ? gutil.noop() : sourcemaps.init())
-      .pipe(babel({
-        modules: 'amd'
-      }).on('error', function(e) {
-        console.log('error running babel', e);
-      }))
-      .pipe(process.env.PRODUCTION ? gutil.noop() : sourcemaps.write('.'))
-      .pipe(gulp.dest(DIST_WEB_ROOT + 'js/'));
-  } catch (e) {
-    console.log('Got error in babel', e);
-  }
+gulp.task('babelify', function() {
+  return browserify({
+    entries: WEB_ROOT + 'js/browser.js',
+    debug: !!!process.env.PRODUCTION
+  })
+  .transform(babelify.configure({
+    sourceMap: !!!process.env.PRODUCTION
+  }))
+  .bundle()
+  .on('error', function (err) {
+    console.log('[babelify] Error occurred: ', err.message);
+  })
+  .pipe(moldSourceMap.transformSourcesRelativeTo(WEB_ROOT))
+  .pipe(fs.createWriteStream(DIST_WEB_ROOT + 'js/main.js'));
 });
 
 
@@ -117,14 +113,14 @@ gulp.task('make-addon-zip', function() {
 /**
  * Runs travis tests
  */
-gulp.task('travis', ['lint', 'babel']);
+gulp.task('travis', ['lint', 'babelify']);
 
 
 /**
  * Build the app.
  */
 gulp.task('build', function(cb) {
-  runSequence(['clobber'], ['copy-web-app', 'copy-addon-core'], ['babel', 'lint' ], cb);
+  runSequence(['clobber'], ['copy-web-app', 'copy-addon-core'], ['babelify', 'lint'], cb);
 });
 
 
