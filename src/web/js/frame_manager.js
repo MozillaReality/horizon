@@ -24,8 +24,11 @@ export default class FrameManager {
         this.updateHUDForActiveFrame();
         break;
       case 'frame_mozbrowseropenwindow':
-        this.onNewFrame(e.detail.url);
+        this.newFrame(e.detail.url);
         break;
+      case 'frame_mozbrowseropentab':
+          this.newFrame(e.detail.url, false);
+          break;
     }
 
     var action = e.target.dataset && e.target.dataset.action;
@@ -42,12 +45,16 @@ export default class FrameManager {
   /**
    * Opens a new browsing frame.
    */
-  newFrame(location = 'http://www.mozvr.com/projects') {
+  newFrame(location = 'http://www.mozvr.com/projects', openInForeground = true) {
     var app = new Frame({
       url: location,
       container: this.contentContainer
     });
-    this.activeFrameIndex = this.frames.length;
+
+    // We allow tabs to be opened in the background, by not advancing the current index.
+    if (openInForeground) {
+      this.activeFrameIndex = this.frames.length;
+    }
     this.frames.push(app);
 
     this.positionFrames();
@@ -125,6 +132,7 @@ export default class FrameManager {
 
   start(runtime) {
     window.addEventListener('frame_mozbrowserlocationchange', this);
+    window.addEventListener('frame_mozbrowseropentab', this);
     window.addEventListener('frame_mozbrowseropenwindow', this);
     window.addEventListener('frame_mozbrowsertitlechange', this);
 
