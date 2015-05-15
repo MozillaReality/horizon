@@ -123,6 +123,16 @@ export default class FrameManager {
     urlbarInput.blur();
   }
 
+  prevFrame() {
+    this.activeFrameIndex = (this.activeFrameIndex - 1 + this.frames.length) % this.frames.length;
+    this.positionFrames();
+  }
+
+  nextFrame() {
+    this.activeFrameIndex = (this.activeFrameIndex + 1) % this.frames.length;
+    this.positionFrames();
+  }
+
   navigate(url) {
     if (!this.activeFrame) {
       this.newFrame();
@@ -154,7 +164,9 @@ export default class FrameManager {
       'escape': () => this.activeFrame.on_stopclicked(),
       'backspace': () => this.activeFrame.on_backclicked(),
       'ctrl ArrowLeft': () => this.activeFrame.on_backclicked(),
-      'ctrl ArrowRight': () => this.activeFrame.on_forwardclicked()
+      'ctrl ArrowRight': () => this.activeFrame.on_forwardclicked(),
+      'ctrl tab': () => this.nextFrame(),
+      'ctrl shift tab': () => this.prevFrame()
     });
   }
 }
