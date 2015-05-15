@@ -7,29 +7,29 @@
 </head>
 <body>
 
-  <!-- fullscreen container which VR fullscreen is applied to-->
+  <!-- fullscreen container which VR fullscreen is applied to -->
   <div id="fs-container">
 
     <!-- container acting as camera -->
-    <div id="camera" class="threed">
+    <div id="camera" class="camera threed">
 
       <!-- HUD interface elements -->
-      <div id="hud" class="threed">
-        <div id="frames" class="threed">
+      <div id="hud" class="hud threed">
+        <div id="frames" class="frames threed">
           <!-- browser content iframes -->
         </div>
 
-        <div id="navigator" class="threed">
-          <span data-action="back">&larr;</span>
-          <span data-action="forward">&rarr;</span>
+        <div id="navigator" class="navigator nav threed">
+          <span class="nav__btn nav__btn--back" data-action="back" id="nav__back">&larr;</span>
+          <span class="nav__btn nav__btn--forward" data-action="forward" id="nav__forward">&rarr;</span>
 
-          <form action="#" id="urlbar">
-            <input type="text">
+          <form action="#" class="nav__urlbar" id="urlbar">
+            <input class="nav__input" type="text">
           </form>
 
-          <span data-action="reload">&#x21bb;</span>
-          <span data-action="stop">x</span>
-          <span data-action="new">+</span>
+          <span class="nav__btn nav__btn--reload" data-action="reload">&#x21bb;</span>
+          <span class="nav__btn nav__btn--stop" data-action="stop">x</span>
+          <span class="nav__btn nav__btn--new" data-action="new">+</span>
         </div>
 
       </div>
@@ -38,18 +38,18 @@
   </div>
 
   <div id="window-controls">
-    <span class="control shutdown"
+    <span class="control control--shutdown"
       data-action="nativeControl"
       data-message="shutdown-application"></span>
-    <span class="control minimize"
+    <span class="control control--minimize"
       data-action="nativeControl"
       data-message="minimize-native-window"></span>
-    <span class="control fullscreen"
+    <span class="control control--fullscreen"
       data-action="nativeControl"
       data-message="toggle-fullscreen-native-window"></span>
   </div>
 
-  <button id="entervr">Enter VR</button>
+  <button id="entervr" class="btn btn--entervr">Enter VR</button>
 
 </body>
 </html>
