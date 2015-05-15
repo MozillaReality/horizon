@@ -135,14 +135,6 @@ export default class ViewportManager {
 
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
-    runtime.gamepadInput.assign({
-      axisThreshold: 0,
-      indices: {
-        standard: {
-        }
-      }
-    });
-
     runtime.keyboardInput.assign({
       'ctrl z': () => this.resetSensor(),
       'ctrl f': () => this.enterVr()
