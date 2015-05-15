@@ -140,6 +140,7 @@ export default class Navigation {
       'ctrl w': () => this.closeFrame(),
       'ctrl l': () => this.focusUrlbar(),
       'escape': () => this.activeFrame.on_stopclicked(),
+      'backspace': () => this.activeFrame.on_backclicked(),
       'ctrl ArrowLeft': () => this.activeFrame.on_backclicked(),
       'ctrl ArrowRight': () => this.activeFrame.on_forwardclicked()
     });
