@@ -95,11 +95,17 @@ body {
   color: #efefef;
   border-radius: 30px;
   margin: 0px;
+  transition: .1s opacity, .1s background;
 }
 
-.nav__btn:hover {
+.nav__btn:not([disabled]):hover {
   background: #3498DB;
   cursor: pointer;
+}
+
+.nav__btn[disabled] {
+  opacity: .25;
+  pointer-events: none;
 }
 
 
