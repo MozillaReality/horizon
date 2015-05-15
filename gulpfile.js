@@ -73,7 +73,10 @@ gulp.task('copy-addon-core', function() {
  */
 gulp.task('babelify', function() {
   return browserify({
-    entries: WEB_ROOT + 'js/browser.js',
+    entries: [
+      WEB_ROOT + 'js/browser.js',
+      './node_modules/gamepad-plus/src/index.js'
+    ],
     debug: !!!process.env.PRODUCTION
   })
   .transform(babelify.configure({
