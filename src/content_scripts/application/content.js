@@ -55,7 +55,7 @@ class FrameCommunicator extends EventEmitter {
 var fc = new FrameCommunicator();
 
 fc.on('scroll.step', data => {
-  console.log("[add-on] Received 'scroll.step' message", data);
+  log("[add-on] Received 'scroll.step' message", data);
 
   var el = getActiveScrollElement();
   if ('scrollTop' in data) {
@@ -67,7 +67,7 @@ fc.on('scroll.step', data => {
 });
 
 fc.on('scroll.to', data => {
-  console.log("[add-on] Received 'scroll.to' message", data);
+  log("[add-on] Received 'scroll.to' message", data);
 
   var el = getActiveScrollElement();
   if ('scrollTop' in data) {
@@ -79,21 +79,21 @@ fc.on('scroll.to', data => {
 });
 
 fc.on('scroll.home', data => {
-  console.log("[add-on] Received 'scroll.home' message");
+  log("[add-on] Received 'scroll.home' message");
 
   var el = getActiveScrollElement();
   el.scrollTop = 0;
 });
 
 fc.on('scroll.end', data => {
-  console.log("[add-on] Received 'scroll.end' message");
+  log("[add-on] Received 'scroll.end' message");
 
   var el = getActiveScrollElement();
   el.scrollTop = el.scrollHeight;
 });
 
 window.addEventListener('load', () => {
-  console.log('Loaded content script', window.location.href);
+  log('Loaded content script', window.location.href);
 });
 
 window.addEventListener('unload', () => {
@@ -125,3 +125,7 @@ function getActiveScrollElement(doc) {
 
   return el;
 }
+
+
+// Simple wrapper to easily toggle logging.
+var log = false ? () => console.log.apply(console, arguments) : () => {};

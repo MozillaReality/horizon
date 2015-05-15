@@ -285,12 +285,24 @@ export default class FrameManager {
           standard: {
             // XBox Vendor button.
             'b10': () => this.toggleHud(),
+
             // Use Start button too, since vendor button doesn't work on Windows:
             // See http://bugzil.la/1167457
             'b4': () => this.toggleHud(),
+
+            // Horizontal scrolling.
+            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
+
+            // Vertical scrolling.
+            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
           }
         },
       },
+      scroll: {
+        axisThreshold: 0.15,
+        smoothingFactor: 0.4,
+        velocityThreshold: 0.05
+      }
     });
 
     runtime.keyboardInput.assign({
@@ -335,7 +347,7 @@ export default class FrameManager {
       },
       'ctrl arrowdown': () => {
         runtime.frameCommunicator.send('scroll.end');
-      }
+      },
     });
   }
 }
