@@ -125,7 +125,7 @@ export default class ViewportManager {
   }
 
   start(runtime) {
-    window.addEventListener('stereo-viewmode', e => {
+    window.addEventListener('stereo-viewmode', () => {
       // XXX: Enter VR
     });
 
