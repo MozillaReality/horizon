@@ -34,12 +34,25 @@ export default class FrameManager {
     var action = e.target.dataset && e.target.dataset.action;
     if (!action) { return; }
 
-    if (action === 'new') {
-      this.newFrame();
-      return;
+    switch(action) {
+      case 'new':
+        this.newFrame();
+        return;
+      case 'nativeControl':
+        this.nativeControl(e);
+        return;
     }
 
     this.activeFrame['on_' + e.target.dataset.action + 'clicked'](e);
+  }
+
+  /**
+   * Handles when a native control is clicked.
+   */
+  nativeControl(e) {
+    var type = e.target.dataset.message;
+    window.dispatchEvent(new CustomEvent('mozContentEvent',
+      {bubbles: true, cancelable: false, detail: {type}}));
   }
 
   /**

@@ -114,6 +114,44 @@ iframe.frame {
   transition: transform 0.5s ease;
 }
 
+/**
+ * Window Controls
+ */
+ #window-controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 100px;
+  line-height: 30px;
+  vertical-align: center;
+  margin-left: 7px;
+  transform: translate(0, 0) translate3d(0, 0, calc(var(--interface-depth) + var(--interface-margin)));
+}
+
+#window-controls .control {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+#window-controls .shutdown {
+  background: #FC5753;
+}
+
+#window-controls .minimize {
+  background: #FDBC40;
+}
+
+#window-controls .fullscreen {
+  background: #33C748;
+}
+
+#window-controls .control:hover {
+  background: hsl(0, 0%, 86%);
+}
+
 
 /**
  * Other interface
