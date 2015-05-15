@@ -2,7 +2,7 @@
 global HMDVRDevice, PositionSensorVRDevice
 */
 
-import * as Matrix from 'js/lib/matrix.js';
+import Matrix from './lib/matrix.js';
 
 var matrix = new Matrix();
 

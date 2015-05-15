@@ -1,4 +1,4 @@
-import * as Url from 'js/lib/url.js';
+import Url from './lib/url.js';
 
 var url = new Url();
 

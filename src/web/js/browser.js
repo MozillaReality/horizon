@@ -1,9 +1,9 @@
-import * as Debugging from 'js/debugging.js';
-import * as FrameManager from 'js/frame_manager.js';
-import * as ViewportManager from 'js/viewport_manager.js';
-import * as GamepadControl from 'js/controls/gamepad.js';
-import * as KeyboardControl from 'js/controls/keyboard.js';
-import * as Utils from 'js/lib/utils.js';
+import Debugging from './debugging.js';
+import FrameManager from './frame_manager.js';
+import ViewportManager from './viewport_manager.js';
+import GamepadControl from './controls/gamepad.js';
+import KeyboardControl from './controls/keyboard.js';
+import Utils from './lib/utils.js';
 
 var runtime = {};
 runtime.utils = new Utils();

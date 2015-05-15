@@ -1,6 +1,6 @@
-import * as Frame from 'js/frame.js';
+import Frame from './frame.js';
 
-export default class Navigation {
+export default class FrameManager {
   constructor() {
     this.frames = [];
     this.activeFrameIndex = null;
