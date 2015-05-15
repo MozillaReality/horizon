@@ -3,9 +3,10 @@ import Gamepads from '../../../../../node_modules/gamepad-plus/src/lib/gamepads.
 export default class GamepadInput {
 
   constructor() {
+    this._debug = false;
+    this._pollingInterval = {};
     this.config = {};
     this.gamepads = {};
-    this._pollingInterval = {};
   }
 
   /**
@@ -49,29 +50,39 @@ export default class GamepadInput {
     }
 
     window.addEventListener('gamepadconnected', e => {
-      console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
-        e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length);
+      if (this.debug) {
+        console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
+          e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length);
+      }
 
       this._update();
     });
 
     window.addEventListener('gamepaddisconnected', e => {
-      console.log('Gamepad removed at index %d: %s.', e.gamepad.index, e.gamepad.id);
+      if (this.debug) {
+        console.log('Gamepad removed at index %d: %s.', e.gamepad.index, e.gamepad.id);
+      }
     });
 
     window.addEventListener('gamepadaxismove', e => {
-      console.log('Gamepad axis move at index %d: %s. Axis: %d. Value: %f.',
-        e.gamepad.index, e.gamepad.id, e.axis, e.value);
+      if (this.debug) {
+        console.log('Gamepad axis move at index %d: %s. Axis: %d. Value: %f.',
+          e.gamepad.index, e.gamepad.id, e.axis, e.value);
+      }
     });
 
     window.addEventListener('gamepadbuttondown', e => {
-      console.log('Gamepad button down at index %d: %s. Button: %d.',
-        e.gamepad.index, e.gamepad.id, e.button);
+      if (this.debug) {
+        console.log('Gamepad button down at index %d: %s. Button: %d.',
+          e.gamepad.index, e.gamepad.id, e.button);
+      }
     });
 
     window.addEventListener('gamepadbuttonup', e => {
-      console.log('Gamepad button up at index %d: %s. Button: %d.',
-        e.gamepad.index, e.gamepad.id, e.button);
+      if (this.debug) {
+        console.log('Gamepad button up at index %d: %s. Button: %d.',
+          e.gamepad.index, e.gamepad.id, e.button);
+      }
     });
   }
 
