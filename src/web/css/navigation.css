@@ -38,16 +38,16 @@ body {
   --interface-height: 768px;
 }
 
-#camera {
+.camera {
   transform-origin: 0 0 0;
 }
 
-#hud {
+.hud {
   /* translate top left so that interface is useable in non-vr mode */
   transform: translate(0, 0) translate3d(0, 0, 0);
 }
 
-*:-moz-full-screen #hud {
+*:-moz-full-screen .hud {
   /*
   translate registration of element to center.
   apply as a negative value because DOM defaults to top-left.
@@ -55,7 +55,7 @@ body {
   transform: translate(calc(var(--interface-width) / 2 * -1), calc(var(--interface-height) / 2 * -1));
 }
 
-#navigator {
+.nav {
   width: var(--interface-width);
   height: 10px;
   transform: translate(0, 0) translate3d(0, 0, calc(var(--interface-depth) + var(--interface-margin)));
@@ -65,11 +65,11 @@ body {
   -moz-user-select: none;
 }
 
-#navigator form {
+.nav__urlbar {
   display: inline-block;
 }
 
-#navigator input {
+.nav__input {
   width: 400px;
   height: 50px;
   color: #000;
@@ -81,11 +81,11 @@ body {
   padding: 10px 20px;
   margin: 10px;
 }
-#navigator input:focus {
+.nav__input:focus {
   border: 4px solid #3498DB;
 }
 
-#navigator span {
+.nav__btn {
   display: inline-block;
   line-height: 50px;
   width: 50px;
@@ -97,17 +97,17 @@ body {
   margin: 0px;
 }
 
-#navigator span:hover {
+.nav__btn:hover {
   background: #3498DB;
   cursor: pointer;
 }
 
 
-#frames {
+.frames {
   transform: translate(0, 80px) translate3d(0, 0, var(--interface-depth));
 }
 
-iframe.frame {
+/*iframe*/.frame {
   border: 0;
   width: var(--interface-width);
   height: var(--interface-height);
@@ -118,7 +118,7 @@ iframe.frame {
 /**
  * Window Controls
  */
- #window-controls {
+ .window-controls {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -129,7 +129,7 @@ iframe.frame {
   transform: translate(0, 0) translate3d(0, 0, calc(var(--interface-depth) + var(--interface-margin)));
 }
 
-#window-controls .control {
+.window-controls .control {
   display: inline-block;
   width: 12px;
   height: 12px;
@@ -137,19 +137,19 @@ iframe.frame {
   border-radius: 50%;
 }
 
-#window-controls .shutdown {
+.window-controls .control--shutdown {
   background: #FC5753;
 }
 
-#window-controls .minimize {
+.window-controls .control--minimize {
   background: #FDBC40;
 }
 
-#window-controls .fullscreen {
+.window-controls .control--fullscreen {
   background: #33C748;
 }
 
-#window-controls .control:hover {
+.window-controls .control:hover {
   background: hsl(0, 0%, 86%);
 }
 
@@ -157,7 +157,7 @@ iframe.frame {
 /**
  * Other interface
  */
-#entervr {
+.btn--entervr {
   position: absolute;
   right: 10px;
   top: 10px;
