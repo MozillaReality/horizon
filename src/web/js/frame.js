@@ -50,6 +50,35 @@ export default class Frame {
     this.title = e.detail;
   }
 
+  on_mozbrowsermetachange({detail}) {
+    if (detail.name !== 'viewmode') {
+      return;
+    }
+
+    var values = {};
+    detail.content.split(',').forEach(def => {
+      var [key, val] = def.split('=');
+      values[String(key).trim()] = String(val).trim();
+    });
+
+    var {projection} = values;
+
+    // If the meta-tag is removed, we revert to the default mono viewmode.
+    if (detail.type === 'removed') {
+      projection = 'mono';
+    }
+
+    if (projection === 'stereo') {
+      window.dispatchEvent(new CustomEvent('stereo-viewmode', {
+        detail: this
+      }));
+    } else if (!projection || projection === 'mono') {
+      window.dispatchEvent(new CustomEvent('mono-viewmode', {
+        detail: this
+      }));
+    }
+  }
+
   on_backclicked() {
     this.element.goBack();
   }
