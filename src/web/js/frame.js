@@ -62,6 +62,12 @@ export default class Frame {
     });
 
     var {projection} = values;
+
+    // If the meta-tag is removed, we revert to the default mono viewmode.
+    if (detail.type === 'removed') {
+      projection = 'mono';
+    }
+
     if (projection === 'stereo') {
       window.dispatchEvent(new CustomEvent('stereo-viewmode', {
         detail: this
