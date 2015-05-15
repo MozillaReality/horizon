@@ -131,7 +131,7 @@ export default class FrameManager {
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.newFrame();
 
-    runtime.keyboardControl.assign({
+    runtime.keyboardInput.assign({
       'ctrl =': () => this.activeFrame.zoomIn(),
       'ctrl -': () => this.activeFrame.zoomOut(),
       'ctrl 0': () => this.activeFrame.resetZoom(),

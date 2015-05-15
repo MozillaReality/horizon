@@ -7,7 +7,7 @@ const FOCUSABLE_ELEMENTS = [
   'button:not([disabled]):not([readonly])', 'iframe', 'object', 'embed',
   '[tabindex]:not([tabindex="-1"])', '[contenteditable]'];
 
-export default class KeyboardControl {
+export default class KeyboardInput {
 
   constructor() {
     this.definitions = {};

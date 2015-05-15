@@ -127,7 +127,7 @@ export default class ViewportManager {
   start(runtime) {
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
-    runtime.keyboardControl.assign({
+    runtime.keyboardInput.assign({
       'ctrl z': () => this.resetSensor(),
       'ctrl f': () => this.enterVr()
     });
