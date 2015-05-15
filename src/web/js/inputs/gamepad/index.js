@@ -1,6 +1,6 @@
 import Gamepads from '../../../../../node_modules/gamepad-plus/src/lib/gamepads.js';
 
-export default class GamepadControl {
+export default class GamepadInput {
 
   constructor() {
     this.config = {};
