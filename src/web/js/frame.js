@@ -17,7 +17,7 @@ export default class Frame {
     this.browserEvents = ['mozbrowserclose', 'mozbrowsererror', 'mozbrowservisibilitychange',
       'mozbrowserloadend', 'mozbrowserloadstart', 'mozbrowsertitlechange',
       'mozbrowserlocationchange', 'mozbrowsermetachange', 'mozbrowsericonchange',
-      'mozbrowserasyncscroll', 'mozbrowsersecuritychange'];
+      'mozbrowserasyncscroll', 'mozbrowseropenwindow', 'mozbrowsersecuritychange'];
 
     this.title = '';
     this.location = config.url;

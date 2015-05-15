@@ -23,6 +23,9 @@ export default class FrameManager {
       case 'frame_mozbrowsertitlechange':
         this.updateHUDForActiveFrame();
         break;
+      case 'frame_mozbrowseropenwindow':
+        this.onNewFrame(e.detail.url);
+        break;
     }
 
     var action = e.target.dataset && e.target.dataset.action;
@@ -39,9 +42,9 @@ export default class FrameManager {
   /**
    * Opens a new browsing frame.
    */
-  newFrame() {
+  newFrame(location = 'http://www.mozvr.com/projects') {
     var app = new Frame({
-      url: 'http://www.mozvr.com/projects',
+      url: location,
       container: this.contentContainer
     });
     this.activeFrameIndex = this.frames.length;
@@ -122,6 +125,7 @@ export default class FrameManager {
 
   start(runtime) {
     window.addEventListener('frame_mozbrowserlocationchange', this);
+    window.addEventListener('frame_mozbrowseropenwindow', this);
     window.addEventListener('frame_mozbrowsertitlechange', this);
 
     window.addEventListener('resize', this.positionFrames.bind(this));
