@@ -5,7 +5,7 @@ export default class Debugging {
 
   constructor() {}
 
-  start() {
+  init() {
     window.addEventListener('mozChromeEvent', this);
   }
 

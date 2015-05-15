@@ -14,8 +14,8 @@ runtime.gamepadInput = new GamepadInput();
 runtime.keyboardInput = new KeyboardInput();
 runtime.viewportManager = new ViewportManager();
 
-runtime.debugging.start(runtime);
-runtime.frameManager.start(runtime);
-runtime.gamepadInput.start(runtime);
-runtime.keyboardInput.start(runtime);
-runtime.viewportManager.start(runtime);
+runtime.debugging.init(runtime);
+runtime.frameManager.init(runtime);
+runtime.gamepadInput.init(runtime);
+runtime.keyboardInput.init(runtime);
+runtime.viewportManager.init(runtime);

@@ -28,7 +28,7 @@ export default class GamepadInput {
     window.cancelAnimationFrame(this._update.bind(this));
   }
 
-  start() {
+  init() {
     this.gamepads = new Gamepads(this.config);
 
     if (!this.gamepads.gamepadsSupported) {

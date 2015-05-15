@@ -153,7 +153,7 @@ export default class FrameManager {
     this.activeFrame.navigate(url);
   }
 
-  start(runtime) {
+  init(runtime) {
     window.addEventListener('frame_mozbrowserlocationchange', this);
     window.addEventListener('frame_mozbrowseropentab', this);
     window.addEventListener('frame_mozbrowseropenwindow', this);

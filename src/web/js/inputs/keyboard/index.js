@@ -13,7 +13,7 @@ export default class KeyboardInput {
     this.definitions = {};
   }
 
-  start() {
+  init() {
     window.addEventListener('keydown', this);
   }
 

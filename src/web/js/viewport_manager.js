@@ -124,7 +124,7 @@ export default class ViewportManager {
     window.requestAnimationFrame(this.onFrame.bind(this));
   }
 
-  start(runtime) {
+  init(runtime) {
     window.addEventListener('stereo-viewmode', () => {
       // XXX: Enter VR
     });
