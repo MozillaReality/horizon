@@ -50,7 +50,7 @@ export default class GamepadInput {
     }
 
     window.addEventListener('gamepadconnected', e => {
-      if (this.debug) {
+      if (this._debug) {
         console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
           e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length);
       }
@@ -59,27 +59,27 @@ export default class GamepadInput {
     });
 
     window.addEventListener('gamepaddisconnected', e => {
-      if (this.debug) {
+      if (this._debug) {
         console.log('Gamepad removed at index %d: %s.', e.gamepad.index, e.gamepad.id);
       }
     });
 
     window.addEventListener('gamepadaxismove', e => {
-      if (this.debug) {
+      if (this._debug) {
         console.log('Gamepad axis move at index %d: %s. Axis: %d. Value: %f.',
           e.gamepad.index, e.gamepad.id, e.axis, e.value);
       }
     });
 
     window.addEventListener('gamepadbuttondown', e => {
-      if (this.debug) {
+      if (this._debug) {
         console.log('Gamepad button down at index %d: %s. Button: %d.',
           e.gamepad.index, e.gamepad.id, e.button);
       }
     });
 
     window.addEventListener('gamepadbuttonup', e => {
-      if (this.debug) {
+      if (this._debug) {
         console.log('Gamepad button up at index %d: %s. Button: %d.',
           e.gamepad.index, e.gamepad.id, e.button);
       }
