@@ -1,19 +1,12 @@
-/**
- * A list of selectors for which we ignore keyboard events for.
- */
-const FOCUSABLE_ELEMENTS = [
-  'a[href]', 'area[href]', 'input:not([disabled]):not([readonly])',
-  'select:not([disabled]):not([readonly])', 'textarea:not([disabled]):not([readonly])',
-  'button:not([disabled]):not([readonly])', 'iframe', 'object', 'embed',
-  '[tabindex]:not([tabindex="-1"])', '[contenteditable]'];
-
 export default class KeyboardInput {
 
   constructor() {
     this.definitions = {};
+    this.utils = {};
   }
 
-  init() {
+  init(runtime) {
+    this.utils = runtime.utils;
     window.addEventListener('keydown', this);
   }
 
@@ -36,19 +29,11 @@ export default class KeyboardInput {
   }
 
   /**
-   * Checks if an event target matches one of the selectors in FOCUSABLE_ELEMENTS.
-   * @param {Event}
-   */
-  isFieldFocused(e) {
-    return (e ? e.target : document.activeElement).matches(FOCUSABLE_ELEMENTS);
-  }
-
-  /**
    * Keydown event handler.
    * @param {Event}
    */
   handleEvent(e) {
-    if (this.isFieldFocused()) {
+    if (this.utils.isFieldFocused(e.target)) {
       return;
     }
 

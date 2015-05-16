@@ -89,10 +89,34 @@ export default class ViewportManager {
     }
   }
 
+  exitFs(element) {
+    element = element || document;
+    if (element.exitFullscreen) {
+      element.exitFullscreen();
+    } else if (element.msExitFullscreen) {
+      element.msExitFullscreen();
+    } else if (element.mozCancelFullScreen) {
+      element.mozCancelFullScreen();
+    } else if (element.webkitExitFullscreen) {
+      element.webkitExitFullscreen();
+    }
+  }
+
+  isFs(element) {
+    element = element || document;
+    return !!(element.fullscreenElement ||
+              element.mozFullScreenElement ||
+              element.webkitFullscreenElement);
+  }
+
   enterVr() {
     this.launchFs(this.container, {
       vrDisplay: this.vrDevices.headset
     });
+  }
+
+  exitVr() {
+    this.exitFs();
   }
 
   onFrame() {

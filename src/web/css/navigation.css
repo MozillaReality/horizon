@@ -20,6 +20,9 @@
 
   /* colors */
   --color-blue-vibrant: hsl(200, 89%, 50%);
+
+  --hud-focus-color: hsl(204, 70%, 53%);
+  --hud-active-color: hsl(204, 70%, 23%);
 }
 
 
@@ -50,6 +53,11 @@
 
 html {
   font-size: 1cm;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
 }
 
 html,
@@ -279,12 +287,20 @@ input {
   text-decoration: none;
 }
 
-.directory__tile:hover {
+.directory__tile:hover,
+.directory__tile:focus {
   background-color: black;
   color: white;
 }
 
-.directory__tile:active {
+/*
+.directory__tile:focus {
+  border-color: var(--color-blue-vibrant);
+}
+*/
+
+.directory__tile:active,
+.directory__tile.colon-active {
   background: var(--color-blue-vibrant);
   border: 0.25cm solid var(--color-blue-vibrant);
 }
@@ -381,14 +397,7 @@ input {
   line-height: 1em;
   margin: 0;
   padding: 0.5em;
-  transition: .1s opacity;
-}
-
-.nav:not([disabled]):hover {
-  background: black;
-  color: white;
-  cursor: pointer;
-  opacity: 1;
+  transition: .1s opacity, .1s background;
 }
 
 .nav[disabled] {
@@ -396,10 +405,24 @@ input {
   pointer-events: none;
 }
 
-.nav:not([disabled]):active {
-  background: var(--color-blue-vibrant);
-  border: 0.25cm solid var(--color-blue-vibrant);;
+.nav:not([disabled]):hover,
+.nav:not([disabled]):focus {
+  background: black;
+  color: white;
+  cursor: pointer;
+  opacity: 1;
 }
+
+.nav:not([disabled]):active,
+.nav:not([disabled]).colon-active {
+  background: var(--color-blue-vibrant);
+  border: 0.25cm solid var(--color-blue-vibrant);
+}
+
+/**:not([disabled]):focus {
+  outline: 4px solid #00f;
+}
+*/
 
 
 /**
@@ -426,12 +449,18 @@ input {
   transform: translate(-50%, 0) translate3d(0, 20cm, 0);
 }
 
-.resetsensor:hover, .closehud:hover {
+.resetsensor:hover,
+.resetsensor:focus,
+.closehud:hover,
+.closehud:focus {
   background: black;
   color: white;
 }
 
-.resetsensor:active, .closehud:active {
+.resetsensor:active,
+.resetsensor.colon-active,
+.closehud:active,
+.closehud.colon-active, {
   background: var(--color-blue-vibrant);
   border: 0.25cm solid var(--color-blue-vibrant);
   color: white;
@@ -481,7 +510,13 @@ input {
   top: 2em;
 }
 
-.btn--entervr:hover {
+.btn--entervr:hover,
+.btn--entervr:focus {
   background: hsl(0, 0%, 45%);
   cursor: pointer;
+}
+
+.btn--entervr:focus {
+  background-color: var(--hud-focus-color);
+  color: #fff;
 }

@@ -302,7 +302,7 @@ export default class FrameManager {
    * Handles backspace. If HUD is open, close HUD. Else, trigger back action in active frame.
    */
   backspace() {
-    if(this.hudVisible) {
+    if (this.hudVisible) {
       this.hideHud();
     } else {
       this.activeFrame.on_back();
@@ -389,6 +389,12 @@ export default class FrameManager {
   }
 
   toggleHud() {
+    // Steal focus from whatever is currently focussed.
+    var el = document.activeElement;
+    if (el) {
+      el.blur();
+    }
+
     if (this.hudVisible) {
       this.hideHud();
     } else {
@@ -396,17 +402,30 @@ export default class FrameManager {
     }
   }
 
+  /**
+   * Wraps a function that gets executed only if the HUD is open.
+   *
+   * @param {String} func Callback function to call.
+   * @returns {Function} Wrapped function that guards for HUD invisibility.
+   */
+  requireHudOpen(func) {
+    return () => {
+      if (this.hudVisible) {
+        func.apply(this, arguments);
+      }
+    };
+  }
 
   /**
    * Show/Hide the stop-reload buttons.
    * Called by both loading events (mozbrowserloadstart and mozbrowserloadend) and user action (toggleHud).
    */
-  showStopreload(){
+  showStopreload() {
     this.stopreload.style.animation = 'show 0.1s ease forwards';
   }
 
-  hideStopreload(){
-    if(!this.isLoading){ // Only hide if activeFrame is not currently loading. This ensures the stop button stays visible during loading.
+  hideStopreload() {
+    if (!this.isLoading) { // Only hide if activeFrame is not currently loading. This ensures the stop button stays visible during loading.
       this.stopreload.style.animation = 'hide 0.1s ease forwards';
     }
   }
@@ -433,9 +452,13 @@ export default class FrameManager {
    * Populate the directory using the loaded JSON.
    */
   buildDirectory(data) {
-    data.sites.forEach(site => {
+    data.sites.forEach((site, idx) => {
       var tile = document.createElement('a');
       tile.className = 'directory__tile';
+      if (idx === 0) {
+        tile.style.navLeft = '#entervr';
+        tile.style.navUp = '#entervr';
+      }
       tile.setAttribute('href', site.url);
       tile.innerHTML = site.name;
       tile.addEventListener('click', this.handleLinkClick.bind(this), false);
@@ -492,17 +515,27 @@ export default class FrameManager {
         indices: {
           standard: {
             // XBox Vendor button.
-            'b10': () => this.toggleHud(),
+            'b10.up': () => this.toggleHud(),
 
             // Use Start button too, since vendor button doesn't work on Windows:
-            // See http://bugzil.la/1167457.
-            'b4': () => this.toggleHud(),
+            // See http://bugzil.la/1167457
+            'b4.up': () => this.toggleHud(),
 
-            // Horizontal scrolling.
+            // Use the left analogue stick to scroll horizontally.
             'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
 
-            // Vertical scrolling.
+            // Use the left analogue stick to scroll vertically.
             'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
+
+            // Use the d-pad to navigate within the HUD.
+            'b0.up': () => this.requireHudOpen(() => runtime.gamepadInput.focus.navUp())(),
+            'b1.up': () => this.requireHudOpen(() => runtime.gamepadInput.focus.navDown())(),
+            'b2.up': () => this.requireHudOpen(() => runtime.gamepadInput.focus.navLeft())(),
+            'b3.up': () => this.requireHudOpen(() => runtime.gamepadInput.focus.navRight())(),
+
+            // Use the "A" button to click/submit forms.
+            'b11.down': () => this.requireHudOpen(() => runtime.gamepadInput.focus.clickDown())(),
+            'b11.up': () => this.requireHudOpen(() => runtime.gamepadInput.focus.clickUp())(),
           }
         },
       },

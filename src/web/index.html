@@ -43,18 +43,18 @@
         </form>
 
         <div id="backfwd" class="backfwd threed">
-          <span class="fa fa-arrow-left nav backfwd__back" data-action="back" id="backfwd__back"></span>
-          <span class="fa fa-arrow-right nav backfwd__forward" data-action="forward" id="backfwd__forward"></span>
+          <button class="fa fa-arrow-left nav backfwd__back" data-action="back" id="backfwd__back"></button>
+          <button class="fa fa-arrow-right nav backfwd__forward" data-action="forward" id="backfwd__forward"></button>
         </div>
 
         <div id="stopreload" class="stopreload threed">
-          <span class="fa fa-repeat nav stopreload--reload" data-action="reload" id="stopreload--reload"></span>
-          <span class="fa fa-times nav stopreload--stop" data-action="stop" id="stopreload--stop"></span>
+          <button class="fa fa-repeat nav stopreload--reload" data-action="reload" id="stopreload--reload" style="nav-right: #closehud; nav-down: #closehud"></button>
+          <button class="fa fa-times nav stopreload--stop" data-action="stop" id="stopreload--stop"></button>
         </div>
-        <!-- <span class="fa fa-plus nav__btn nav__btn--new" data-action="new"></span> -->
+        <!-- <button class="fa fa-plus nav nav--new" data-action="new"></button> -->
 
-        <div id="closehud" class="closehud threed">Close HUD</div>
-        <div id="resetsensor" class="resetsensor threed">Reset Sensor</div>
+        <button id="closehud" class="closehud threed" style="nav-left: #stopreload--reload; nav-up: #stopreload--reload; nav-right: #resetsensor; nav-down: #resetsensor">Close HUD</button>
+        <button id="resetsensor" class="resetsensor threed" style="nav-left: #closehud; nav-up: #closehud; nav-right: #entervr; nav-down: #entervr">Reset Sensor</button>
 
         <div id="loading" class="loading threed">LOADING</div>
 
@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <button id="entervr" class="btn btn--entervr">Enter VR</button>
+  <button id="entervr" class="btn btn--entervr" style="nav-left: #resetsensor; nav-up: #resetsensor; nav-right: #directory a; nav-down: #directory a">Enter VR</button>
 
 </body>
 </html>
