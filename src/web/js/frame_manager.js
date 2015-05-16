@@ -166,6 +166,16 @@ export default class FrameManager {
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.newFrame();
 
+    runtime.gamepadInput.assign({
+      axisThreshold: 0,
+      indices: {
+        standard: {
+          scrollX: 'a0',
+          scrollY: 'a1',
+        }
+      }
+    });
+
     runtime.keyboardInput.assign({
       'ctrl =': () => this.activeFrame.zoomIn(),
       'ctrl -': () => this.activeFrame.zoomOut(),
