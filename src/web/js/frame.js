@@ -1,3 +1,4 @@
+
 import Url from './lib/url.js';
 
 var url = new Url();
@@ -11,6 +12,7 @@ const zoomConfig = {
 
 export default class Frame {
   constructor(config) {
+    this.id = config.id;
     this.config = config;
 
     // Mozbrowser events that we are interested in listening to.
@@ -32,14 +34,7 @@ export default class Frame {
       this[listener](e);
     }
 
-    // Broadcast an event to notify other modules.
-    // We could use an event emitter here, but there may be good reasons
-    // to notify the world for things like history and UI changes.
-    window.dispatchEvent(new CustomEvent('frame_' + e.type, {
-      bubbles: true,
-      detail: e.detail
-    }));
-
+    this.config.browserEvent(e, this);
   }
 
   on_mozbrowserlocationchange(e) {

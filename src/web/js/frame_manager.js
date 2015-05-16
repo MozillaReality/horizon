@@ -5,6 +5,7 @@ export default class FrameManager {
     this.frames = [];
     this.activeFrameIndex = null;
 
+    this.currentId = 0;
     this.hud = $('#hud');
     this.container = $('#fs-container');
     this.contentContainer = $('#frames');
@@ -16,17 +17,24 @@ export default class FrameManager {
     return this.frames[this.activeFrameIndex];
   }
 
-  handleEvent(e) {
+  nextId() {
+    return ++this.currentId;
+  }
+
+  browserEvent(e, frame) {
+    if (frame.id !== this.activeFrame.id) {
+      return;
+    }
 
     switch(e.type) {
-      case 'frame_mozbrowserlocationchange':
-      case 'frame_mozbrowsertitlechange':
+      case 'mozbrowserlocationchange':
+      case 'mozbrowsertitlechange':
         this.updateHUDForActiveFrame();
         break;
-      case 'frame_mozbrowseropenwindow':
+      case 'mozbrowseropenwindow':
         this.newFrame(e.detail.url);
         break;
-      case 'frame_mozbrowseropentab':
+      case 'mozbrowseropentab':
           this.newFrame(e.detail.url, false);
           break;
     }
@@ -60,8 +68,10 @@ export default class FrameManager {
    */
   newFrame(location = 'http://www.mozvr.com/projects', openInForeground = true) {
     var app = new Frame({
+      id: this.nextId(),
       url: location,
-      container: this.contentContainer
+      container: this.contentContainer,
+      browserEvent: this.browserEvent.bind(this)
     });
 
     // We allow tabs to be opened in the background, by not advancing the current index.
@@ -154,11 +164,6 @@ export default class FrameManager {
   }
 
   init(runtime) {
-    window.addEventListener('frame_mozbrowserlocationchange', this);
-    window.addEventListener('frame_mozbrowseropentab', this);
-    window.addEventListener('frame_mozbrowseropenwindow', this);
-    window.addEventListener('frame_mozbrowsertitlechange', this);
-
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
