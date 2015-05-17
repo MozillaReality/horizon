@@ -35,10 +35,12 @@ export default class FrameManager {
         this.newFrame(e.detail.url);
         break;
       case 'mozbrowseropentab':
-          this.newFrame(e.detail.url, false);
-          break;
+        this.newFrame(e.detail.url, false);
+        break;
     }
+  }
 
+  handleEvent(e) {
     var action = e.target.dataset && e.target.dataset.action;
     if (!action) { return; }
 
