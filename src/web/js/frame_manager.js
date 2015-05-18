@@ -11,6 +11,8 @@ export default class FrameManager {
     this.contentContainer = $('#frames');
     this.urlbar = $('#urlbar');
     this.urlInput = $('#urlbar input');
+    this.backButton = $('#nav__back');
+    this.forwardButton = $('#nav__forward');
   }
 
   get activeFrame() {
@@ -28,6 +30,8 @@ export default class FrameManager {
 
     switch(e.type) {
       case 'mozbrowserlocationchange':
+        this.updateHUDForNavButtons();
+        /* falls through */
       case 'mozbrowsertitlechange':
         this.updateHUDForActiveFrame();
         break;
@@ -109,6 +113,7 @@ export default class FrameManager {
         perspective(${distance}px)
         rotateY(${rotate}deg)`;
     }
+    this.updateHUDForNavButtons();
     this.updateHUDForActiveFrame();
   }
 
@@ -118,6 +123,36 @@ export default class FrameManager {
     } else {
       this.urlInput.value = '';
     }
+  }
+
+  updateHUDForNavButtons() {
+    if (!this.activeFrame || !this.activeFrame.element) {
+      return;
+    }
+
+    this.getCanGoBack().then(result => {
+      if (result) {
+        this.backButton.removeAttribute('disabled');
+      } else {
+        this.backButton.setAttribute('disabled', 'true');
+      }
+    }).catch(console.warn.bind(console));
+
+    this.getCanGoForward().then(result => {
+      if (result) {
+        this.forwardButton.removeAttribute('disabled');
+      } else {
+        this.forwardButton.setAttribute('disabled', 'true');
+      }
+    }).catch(console.warn.bind(console));
+  }
+
+  getCanGoBack() {
+    return this.utils.evaluateDOMRequest(this.activeFrame.element.getCanGoBack());
+  }
+
+  getCanGoForward() {
+    return this.utils.evaluateDOMRequest(this.activeFrame.element.getCanGoForward());
   }
 
   /**
@@ -166,6 +201,8 @@ export default class FrameManager {
   }
 
   init(runtime) {
+    this.utils = runtime.utils;
+
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
