@@ -125,14 +125,6 @@ export default class ViewportManager {
   }
 
   init(runtime) {
-    window.addEventListener('stereo-viewmode', () => {
-      // XXX: Enter VR
-    });
-
-    window.addEventListener('mono-viewmode', () => {
-      // XXX: Enter Mono
-    });
-
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
     runtime.keyboardInput.assign({

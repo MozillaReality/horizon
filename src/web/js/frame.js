@@ -23,6 +23,7 @@ export default class Frame {
 
     this.title = '';
     this.location = config.url;
+    this.isStereo = false;
 
     this.zoomValue = zoomConfig.defaultValue;
     this.createFrame();
@@ -40,7 +41,6 @@ export default class Frame {
   on_mozbrowserlocationchange(e) {
     this.location = e.detail;
   }
-
   on_mozbrowsertitlechange(e) {
     this.title = e.detail;
   }
@@ -63,7 +63,7 @@ export default class Frame {
       projection = 'mono';
     }
 
-    if (projection === 'stereo') {
+    if (projection === 'stereo' && !this.isStereo) {
       window.dispatchEvent(new CustomEvent('stereo-viewmode', {
         detail: this
       }));
@@ -95,7 +95,7 @@ export default class Frame {
     element.setAttribute('src', this.config.url);
     element.setAttribute('mozbrowser', 'true');
     element.setAttribute('remote', 'true');
-    element.className = 'frame threed';
+    element.className = 'frame--mono threed';
     this.config.container.appendChild(element);
 
     this.element = element;

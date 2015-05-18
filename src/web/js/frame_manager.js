@@ -9,6 +9,7 @@ export default class FrameManager {
     this.hud = $('#hud');
     this.container = $('#fs-container');
     this.contentContainer = $('#frames');
+    this.contentStereoContainer = $('#frames-stereo');
     this.urlbar = $('#urlbar');
     this.urlInput = $('#urlbar input');
     this.backButton = $('#nav__back');
@@ -170,6 +171,22 @@ export default class FrameManager {
   }
 
   /**
+   * Handles view mode changes for content iframes
+   * Attaches iframe to appropriate container in DOM for projection.
+   */
+  toStereo(app) {
+    app.isStereo = true;
+    app.element.className = 'frame--stereo';
+    this.contentStereoContainer.appendChild(app.element);
+  }
+
+  toMono(app) {
+    app.isStereo = false;
+    app.element.className = 'frame--mono threed'; /* should remove this duplication */
+    this.contentContainer.appendChild(app.element);
+  }
+
+  /**
    * On blur we want to return to the title of the page.
    */
   handleBlurUrlBar() {
@@ -209,6 +226,13 @@ export default class FrameManager {
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.newFrame();
+
+    window.addEventListener('stereo-viewmode', e => {
+      this.toStereo(e.detail);
+    });
+    window.addEventListener('mono-viewmode', e => {
+      this.toMono(e.detail);
+    });
 
     runtime.gamepadInput.assign({
       axisThreshold: 0,
