@@ -149,10 +149,16 @@ export default class FrameManager {
   }
 
   getCanGoBack() {
+    if (!this.activeFrame.element.getCanGoBack) {
+      return Promise.resolve(true);
+    }
     return this.utils.evaluateDOMRequest(this.activeFrame.element.getCanGoBack());
   }
 
   getCanGoForward() {
+    if (!this.activeFrame.element.getCanGoForward) {
+      return Promise.resolve(true);
+    }
     return this.utils.evaluateDOMRequest(this.activeFrame.element.getCanGoForward());
   }
 

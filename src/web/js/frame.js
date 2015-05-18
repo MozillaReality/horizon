@@ -75,19 +75,27 @@ export default class Frame {
   }
 
   on_backclicked() {
-    this.element.goBack();
+    if (this.element.goBack) {
+      this.element.goBack();
+    }
   }
 
   on_forwardclicked() {
-    this.element.goForward();
+    if (this.element.goForward) {
+      this.element.goForward();
+    }
   }
 
   on_stopclicked() {
-    this.element.stop();
+    if (this.element.stop) {
+      this.element.stop();
+    }
   }
 
   on_reloadclicked() {
-    this.element.reload();
+    if (this.element.reload) {
+      this.element.reload();
+    }
   }
 
   createFrame() {
