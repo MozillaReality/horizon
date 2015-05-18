@@ -105,7 +105,7 @@ export default class FrameManager {
   }
 
   positionFrames() {
-    for (var i = 0 ; i < this.frames.length; i++) {
+    for (var i = 0; i < this.frames.length; i++) {
       var width = this.frames[i].element.offsetWidth;
       var x = (i - this.activeFrameIndex) * width;
       var distance = 1000;

@@ -51,10 +51,10 @@ export default class ViewportManager {
         position = device;
       }
       if (position && headset) {
-        return ({
+        return {
           headset: headset,
           position: position
-        });
+        };
       }
     }
     return false;

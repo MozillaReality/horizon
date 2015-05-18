@@ -6,7 +6,7 @@ var gulp = require('gulp');
 var babelify = require('babelify');
 var browserify = require('browserify');
 var del = require('del');
-var jshint = require('gulp-jshint');
+var eslint = require('gulp-eslint');
 var moldSourceMap = require('mold-source-map');
 var runSequence = require('run-sequence');
 var zip = require('gulp-zip');
@@ -29,9 +29,8 @@ gulp.task('lint', function() {
   return gulp.src([
       WEB_ROOT + 'js/*.js'
     ])
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'))
-    .pipe(jshint.reporter('fail'));
+    .pipe(eslint())
+    .pipe(eslint.format());
 });
 
 
