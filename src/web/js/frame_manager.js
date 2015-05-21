@@ -16,6 +16,7 @@ export default class FrameManager {
     this.urlInput = this.urlbar.querySelector('input');
     this.backButton = $('#nav__back');
     this.forwardButton = $('#nav__forward');
+    this.windowControls = $('#window-controls');
   }
 
   get activeFrame() {
@@ -256,6 +257,7 @@ export default class FrameManager {
 
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
+    this.windowControls.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
