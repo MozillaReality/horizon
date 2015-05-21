@@ -10,20 +10,22 @@
 
   <!-- fullscreen container which VR fullscreen is applied to -->
   <div id="fs-container">
-    <div id="frames-stereo" class="full">
+    <div id="container--stereo" class="container--stereo">
       <!-- Full VR content iframes -->
     </div>
 
     <!-- container acting as camera -->
     <div id="camera" class="camera threed">
+      <div id="container--mono" class="container--mono threed">
+        <!-- browser content iframes -->
+      </div>
 
       <!-- HUD interface elements -->
       <div id="hud" class="hud threed">
-        <div id="frames" class="frames threed">
-          <!-- browser content iframes -->
+        <div id="title" class="title">
         </div>
 
-        <div id="navigator" class="navigator nav threed">
+        <div id="nav" class="nav">
           <span class="fa fa-arrow-left nav__btn nav__btn--back" data-action="back" id="nav__back"></span>
           <span class="fa fa-arrow-right nav__btn nav__btn--forward" data-action="forward" id="nav__forward"></span>
 
