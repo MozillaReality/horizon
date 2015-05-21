@@ -10,8 +10,8 @@ export default class FrameManager {
     this.container = $('#fs-container');
     this.contentContainer = $('#frames');
     this.contentStereoContainer = $('#frames-stereo');
-    this.urlbar = $('#urlbar');
-    this.urlInput = $('#urlbar input');
+    this.urlbar = $('#nav__urlbar');
+    this.urlInput = this.urlbar.querySelector('input');
     this.backButton = $('#nav__back');
     this.forwardButton = $('#nav__forward');
   }
@@ -161,12 +161,10 @@ export default class FrameManager {
    * Sets the urlbar to be the raw location instead of title.
    */
   focusUrlbar() {
-    var urlbarInput = $('#urlbar input');
-
     if (this.activeFrame) {
-      urlbarInput.value = this.activeFrame.location;
+      this.urlInput.value = this.activeFrame.location;
     }
-    urlbarInput.focus();
+    this.urlInput.focus();
     this.urlInput.select();
   }
 
@@ -194,10 +192,9 @@ export default class FrameManager {
   }
 
   handleUrlEntry(e) {
-    var urlbarInput = $('#urlbar input');
     e.preventDefault();
-    this.navigate(urlbarInput.value);
-    urlbarInput.blur();
+    this.navigate(this.urlInput.value);
+    this.urlInput.blur();
   }
 
   prevFrame() {
