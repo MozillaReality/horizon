@@ -1,3 +1,4 @@
+import ContentScripts from './content_scripts.js';
 import Debugging from './debugging.js';
 import FrameManager from './frame_manager.js';
 import ViewportManager from './viewport_manager.js';
@@ -8,12 +9,14 @@ import Utils from './lib/utils.js';
 var runtime = {};
 runtime.utils = new Utils();
 
+runtime.contentScripts = new ContentScripts();
 runtime.debugging = new Debugging();
 runtime.frameManager = new FrameManager();
 runtime.gamepadInput = new GamepadInput();
 runtime.keyboardInput = new KeyboardInput();
 runtime.viewportManager = new ViewportManager();
 
+runtime.contentScripts.init(runtime);
 runtime.debugging.init(runtime);
 runtime.frameManager.init(runtime);
 runtime.gamepadInput.init(runtime);
