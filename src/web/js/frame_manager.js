@@ -2,14 +2,16 @@ import Frame from './frame.js';
 
 export default class FrameManager {
   constructor() {
+    this.visible = false;
     this.frames = [];
     this.activeFrameIndex = null;
-
     this.currentId = 0;
     this.hud = $('#hud');
+    this.title = $('#title');
+    this.nav = $('#nav');
     this.container = $('#fs-container');
-    this.contentContainer = $('#frames');
-    this.contentStereoContainer = $('#frames-stereo');
+    this.contentContainer = $('#container--mono');
+    this.contentStereoContainer = $('#container--stereo');
     this.urlbar = $('#nav__urlbar');
     this.urlInput = this.urlbar.querySelector('input');
     this.backButton = $('#nav__back');
@@ -121,6 +123,7 @@ export default class FrameManager {
   updateHUDForActiveFrame() {
     if (this.activeFrame) {
       this.urlInput.value = this.activeFrame.title || this.activeFrame.location;
+      this.updateTitle(this.activeFrame.title);
     } else {
       this.urlInput.value = '';
     }
@@ -169,6 +172,15 @@ export default class FrameManager {
   }
 
   /**
+   * Handles change in url input field
+   */
+  handleChange() {
+    if (this.urlInput.value.trim().length === 0) {
+      this.hideHud();
+    }
+  }
+
+  /**
    * Handles view mode changes for content iframes
    * Attaches iframe to appropriate container in DOM for projection.
    */
@@ -180,8 +192,32 @@ export default class FrameManager {
 
   toMono(app) {
     app.isStereo = false;
-    app.element.className = 'frame--mono threed'; /* should remove this duplication */
+    app.element.className = 'frame--mono threed';
     this.contentContainer.appendChild(app.element);
+  }
+
+  hideHud() {
+    this.hud.style.opacity = 0;
+    this.urlInput.blur();
+    this.visible = false;
+  }
+
+  showHud() {
+    this.hud.style.opacity = 1;
+    this.visible = true;
+    this.focusUrlbar();
+  }
+
+  updateTitle(text) {
+    this.title.textContent = text;
+  }
+
+  toggleHud() {
+    if (this.visible) {
+      this.hideHud();
+    } else {
+      this.showHud();
+    }
   }
 
   /**
@@ -195,6 +231,7 @@ export default class FrameManager {
     e.preventDefault();
     this.navigate(this.urlInput.value);
     this.urlInput.blur();
+    this.hideHud();
   }
 
   prevFrame() {
@@ -222,6 +259,7 @@ export default class FrameManager {
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
+    this.urlInput.addEventListener('input', this.handleChange.bind(this));
     this.newFrame();
 
     window.addEventListener('stereo-viewmode', e => {
@@ -254,7 +292,8 @@ export default class FrameManager {
       'ctrl ArrowLeft': () => this.activeFrame.on_backclicked(),
       'ctrl ArrowRight': () => this.activeFrame.on_forwardclicked(),
       'ctrl tab': () => this.nextFrame(),
-      'ctrl shift tab': () => this.prevFrame()
+      'ctrl shift tab': () => this.prevFrame(),
+      ' ': () => this.toggleHud()
     });
   }
 }

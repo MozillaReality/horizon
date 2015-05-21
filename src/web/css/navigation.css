@@ -1,3 +1,27 @@
+/**
+ * Variables
+ */
+
+:root {
+  /* default depth to place interface */
+  --interface-depth: -800px;
+
+  /* default depth to mono iframe content */
+  --interface-mono-depth: -900px;
+
+  /* margin between navigation control */
+  --interface-margin: 50px;
+
+  /* default iframe dimensions */
+  --interface-width: 1024px;
+  --interface-height: 768px;
+}
+
+
+/**
+ * tags
+ */
+
 * {
   margin: 0;
   padding: 0;
@@ -10,18 +34,46 @@ body {
   background: #111;
 }
 
+
 /**
- * VR layout classes
+ * VR classes
  */
 
 .threed {
-  transform-style: preserve-3d;
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.full {
+*:-moz-full-screen .threed {
+  /* apply preserve-3d to that elements for layout in VR */
+  transform-style: preserve-3d;
+}
+
+.camera {
+  /* 
+  this is the element that serves as the viewport into the scene.  
+  hmd orientation and position is applied to this element.   
+  transform-origin specifies of position of the viewport.
+  */
+  transform-origin: 0 0 0;
+}
+
+
+/**
+ * Content iframes
+ */
+
+/* 2D content container */
+.container--mono {}
+
+*:-moz-full-screen .container--mono {
+  /* translate top left so that mono content is centered in viewport */
+  transform: translate(calc(var(--interface-width) / 2 * -1), calc(var(--interface-height) / 2 * -1)) translate3d(0, 0, var(--interface-mono-depth));
+}
+
+/* stereo content container */
+.container--stereo {
   position: absolute;
   left: 0;
   top: 0;
@@ -29,48 +81,61 @@ body {
   height: 100%;
 }
 
+/* iframe */.frame--mono {
+  border: 0;
+  width: var(--interface-width);
+  height: var(--interface-height);
+  transition: transform 0.5s ease;
+  background: white; 
+  /* prevent pointer events into iframe from stealing focus away from app.  */
+  pointer-events: none;
+}
+
+/* iframe */.frame--stereo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
 /**
- * HUD layers
+ * HUD
  */
 
-:root {
-  /* default depth to place interface */
-  --interface-depth: -800px;
-
-  /* margin between navigation control and iframes */
-  --interface-margin: 50px;
-
-  /* default iframe dimensions */
-  --interface-width: 1024px;
-  --interface-height: 768px;
-}
-
-.camera {
-  transform-origin: 0 0 0;
-  z-index: 1;
-}
-
 .hud {
-  /* translate top left so that interface is useable in non-vr mode */
-  transform: translate(0, 0) translate3d(0, 0, 0);
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.8);
+  width: 700px;
+  height: 200px;
+  top: calc(var(--interface-height) / 2 - 100px);
+  left: calc(var(--interface-width) / 2 - 350px);
+  border-radius: 25px;
+  padding: 10px;
 }
 
 *:-moz-full-screen .hud {
-  /*
-  translate registration of element to center.
-  apply as a negative value because DOM defaults to top-left.
-  */
-  transform: translate(calc(var(--interface-width) / 2 * -1), calc(var(--interface-height) / 2 * -1));
+  transform: translate3d(-50%, -50%, var(--interface-depth));
+  top: 0;
+  left: 0;
+}
+
+.title {
+  text-align: center;
+  font-size: 30px;
+  color: #fff;
+  text-align: center;
+  margin: 10px;
 }
 
 .nav {
-  width: var(--interface-width);
-  height: 10px;
-  transform: translate(0, 0) translate3d(0, 0, calc(var(--interface-depth) + var(--interface-margin)));
   text-align: center;
   font-size: 20px;
   /* Disable selection of navigation controls. */
   -moz-user-select: none;
+  padding: 10px;
+  border-radius: 50px;
 }
 
 .nav__urlbar {
@@ -87,8 +152,9 @@ body {
   border: 4px solid #efefef;
   border-radius: 30px;
   padding: 0 20px;
-  margin: 10px;
+  margin: 0;
 }
+
 .nav__input:focus {
   border: 4px solid #3498DB;
 }
@@ -117,25 +183,6 @@ body {
   pointer-events: none;
 }
 
-.frames {
-  transform: translate(0, 80px) translate3d(0, 0, var(--interface-depth));
-}
-
-.frame--stereo {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.frame--mono {
-  border: 0;
-  width: var(--interface-width);
-  height: var(--interface-height);
-  transition: transform 0.5s ease;
-  background: white;
-}
 
 /**
  * Window Controls
