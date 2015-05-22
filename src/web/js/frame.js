@@ -40,7 +40,9 @@ export default class Frame {
 
   get icon() {
     if (!this.icons.length) {
-      var baseUrl = new URL('/favicon.ico', this.location);
+      var size = devicePixelRatio * 50;
+      var mozResolution = '#-moz-resolution=' + size + ',' + size;
+      var baseUrl = new URL('/favicon.ico' + mozResolution, this.location);
       return baseUrl.toString();
     }
     return this.icons[0].href;
