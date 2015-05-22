@@ -1,0 +1,17 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Not Found</title>
+</head>
+<body>
+    <script defer='defer'>
+      // <script src="…"> doesn't work because of about:netError redirection.
+      // We have to use an inline script or use a app:// URL.
+      // Small hack to get the URL object to parse the URI correctly.
+      var url = new URL(document.documentURI.replace('about:', 'http://'));
+      var error = url.searchParams.get('e');
+      var description = url.searchParams.get('d');
+      document.body.textContent = `${error}: ${description}`;
+    </script>
+</body>
+</html>
