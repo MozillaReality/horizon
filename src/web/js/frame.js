@@ -50,7 +50,9 @@ export default class Frame {
 
   on_mozbrowserlocationchange(e) {
     this.location = e.detail;
+    this.icons = [];
   }
+
   on_mozbrowsertitlechange(e) {
     this.title = e.detail;
   }
