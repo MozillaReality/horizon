@@ -15,6 +15,8 @@
   /* default iframe dimensions */
   --interface-width: 1024px;
   --interface-height: 768px;
+
+  --icon-size: 25px;
 }
 
 
@@ -122,16 +124,20 @@ body {
 }
 
 .title {
+  margin: 10px;
   text-align: center;
+}
+
+.hud__title {
   font-size: 30px;
   color: #fff;
-  text-align: center;
-  margin: 10px;
 }
 
 .hud__icon {
-  height: 50px;
-  width: 50px;
+  height: var(--icon-size);
+  width: var(--icon-size);
+  /* move icon left to maintain correct title centering */
+  margin-left: calc(var(--icon-size) * -1);
   display: inline-block;
   background-repeat: no-repeat;
   background-size: 100%;
