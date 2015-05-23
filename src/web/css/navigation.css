@@ -4,17 +4,21 @@
 
 :root {
   /* default depth to place interface */
-  --interface-depth: -800px;
+  --interface-depth: -50cm;
 
   /* default depth to mono iframe content */
-  --interface-mono-depth: -900px;
+  --interface-mono-depth: -50cm;
 
   /* margin between navigation control */
   --interface-margin: 50px;
 
   /* default iframe dimensions */
-  --interface-width: 1024px;
-  --interface-height: 768px;
+  --interface-width: 59cm;
+  --interface-height: 33cm;
+
+  --bg-size: 200cm;
+  --bg-position: calc(var(--bg-size) / 2 * -1);
+
 }
 
 
@@ -31,7 +35,7 @@ html,
 body {
   width: 100%;
   height: 100%;
-  background: #111;
+  background: #ececec;
 }
 
 
@@ -64,12 +68,16 @@ body {
  * Content iframes
  */
 
+#fs-container {
+  background-color: #ececec;
+}
+
 /* 2D content container */
 .container--mono {}
 
 *:-moz-full-screen .container--mono {
   /* translate top left so that mono content is centered in viewport */
-  transform: translate(calc(var(--interface-width) / 2 * -1), calc(var(--interface-height) / 2 * -1)) translate3d(0, 0, var(--interface-mono-depth));
+  transform: translate(calc(var(--interface-width) / 2 * -1), calc(var(--interface-height) / 2 * -1)) translate3d(0, 12cm, var(--interface-mono-depth));
 }
 
 /* stereo content container */
@@ -239,3 +247,66 @@ body {
   right: 10px;
   top: 10px;
 }
+
+
+/**
+ * Background skybox
+ */
+
+
+.bg-pane {
+  width: var(--bg-size);
+  height: var(--bg-size);
+  overflow: hidden;
+  background-size: 100%;
+  /*border: 5px dashed rgba( 255, 255, 255, 0.3 );*/
+}
+
+#bg-front {
+  transform: translate( var(--bg-position), var(--bg-position)) rotateY(0deg) translate3d(0, 0, var(--bg-position));
+  /*background-color: rgba( 74, 144, 226, 0.5 );*/
+  background: url('../images/bg1-front.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat; 
+}
+
+#bg-back {
+  transform: translate(var(--bg-position), var(--bg-position)) rotateY(180deg) translate3d(0, 0, var(--bg-position));
+  /*background-color: rgba( 74, 144, 226, 0.5 );*/
+  background: url('../images/bg1-back.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#bg-left {
+  transform: translate(var(--bg-position), var(--bg-position)) rotateY(90deg) translate3d(0, 0, var(--bg-position));
+  /*background-color: rgba( 194, 121, 183, 0.5 );*/
+  background: url('../images/bg1-left.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#bg-right {
+  transform: translate(var(--bg-position), var(--bg-position)) rotateY(-90deg) translate3d(0, 0, var(--bg-position));
+  /*background-color: rgba( 194, 121, 183, 0.5 );*/
+  background: url('../images/bg1-right.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#bg-top {
+  transform: translate(var(--bg-position), var(--bg-position)) rotateX(-90deg) translate3d(0, 0, var(--bg-position));
+  /*background-color: rgba( 154, 195, 93, 0.5 );*/
+  background: url('../images/bg1-top.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#bg-bottom {
+  transform: translate(var(--bg-position), var(--bg-position)) rotateX(90deg) translate3d(0, 0, var(--bg-position));
+  /*background-color: rgba( 154, 195, 93, 0.5 );*/
+  background: url('../images/bg1-bottom.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
