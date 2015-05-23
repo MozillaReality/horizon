@@ -7,7 +7,7 @@ export default class FrameManager {
     this.activeFrameIndex = null;
     this.currentId = 0;
     this.hud = $('#hud');
-    this.title = $('#title');
+    this.title = $('#hud__title');
     this.nav = $('#nav');
     this.container = $('#fs-container');
     this.contentContainer = $('#container--mono');
