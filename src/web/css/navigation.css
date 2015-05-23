@@ -55,9 +55,9 @@ body {
 }
 
 .camera {
-  /* 
-  this is the element that serves as the viewport into the scene.  
-  hmd orientation and position is applied to this element.   
+  /*
+  this is the element that serves as the viewport into the scene.
+  hmd orientation and position is applied to this element.
   transform-origin specifies of position of the viewport.
   */
   transform-origin: 0 0 0;
@@ -94,7 +94,7 @@ body {
   width: var(--interface-width);
   height: var(--interface-height);
   transition: transform 0.5s ease;
-  background: white; 
+  background: white;
   /* prevent pointer events into iframe from stealing focus away from app.  */
   pointer-events: none;
 }
@@ -135,6 +135,14 @@ body {
   color: #fff;
   text-align: center;
   margin: 10px;
+}
+
+.hud__icon {
+  height: 50px;
+  width: 50px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: 100%;
 }
 
 .nav {

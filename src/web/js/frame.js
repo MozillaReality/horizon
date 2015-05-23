@@ -1,4 +1,3 @@
-
 import Url from './lib/url.js';
 
 var url = new Url();
@@ -24,6 +23,7 @@ export default class Frame {
     this.title = '';
     this.location = config.url;
     this.isStereo = false;
+    this.icons = [];
 
     this.zoomValue = zoomConfig.defaultValue;
     this.createFrame();
@@ -38,11 +38,27 @@ export default class Frame {
     this.config.browserEvent(e, this);
   }
 
+  get icon() {
+    if (!this.icons.length) {
+      var size = devicePixelRatio * 50;
+      var mozResolution = '#-moz-resolution=' + size + ',' + size;
+      var baseUrl = new URL('/favicon.ico' + mozResolution, this.location);
+      return baseUrl.toString();
+    }
+    return this.icons[0].href;
+  }
+
   on_mozbrowserlocationchange(e) {
     this.location = e.detail;
+    this.icons = [];
   }
+
   on_mozbrowsertitlechange(e) {
     this.title = e.detail;
+  }
+
+  on_mozbrowsericonchange({detail}) {
+    this.icons.push(detail);
   }
 
   on_mozbrowsermetachange({detail}) {
@@ -128,6 +144,7 @@ export default class Frame {
     var location = url.getUrlFromInput(value);
     this.location = location;
     this.title = '';
+    this.icons = [];
 
     // Reset local values and update the hud when we navigate..
     window.dispatchEvent(new CustomEvent('frame_mozbrowserlocationchange', {

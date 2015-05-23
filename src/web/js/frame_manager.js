@@ -14,6 +14,7 @@ export default class FrameManager {
     this.contentStereoContainer = $('#container--stereo');
     this.urlbar = $('#nav__urlbar');
     this.urlInput = this.urlbar.querySelector('input');
+    this.hudIcon = $('#hud__icon');
     this.backButton = $('#nav__back');
     this.forwardButton = $('#nav__forward');
     this.windowControls = $('#window-controls');
@@ -125,7 +126,9 @@ export default class FrameManager {
     if (this.activeFrame) {
       this.urlInput.value = this.activeFrame.title || this.activeFrame.location;
       this.updateTitle(this.activeFrame.title);
+      this.hudIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
+      this.hudIcon.style.backgroundImage = '';
       this.urlInput.value = '';
     }
   }
