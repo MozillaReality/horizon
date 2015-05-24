@@ -90,20 +90,25 @@ export default class Frame {
     }
   }
 
-  on_backclicked() {
+  on_back() {
     this.element.goBack();
   }
 
-  on_forwardclicked() {
+  on_forward() {
     this.element.goForward();
   }
 
-  on_stopclicked() {
+  on_stop() {
     this.element.stop();
   }
 
-  on_reloadclicked() {
-    this.element.reload();
+  /**
+   * Reloads the current page.
+   * @param e The mozbrowser event.
+   * @param hardReload Whether or not to perform a hard reload.
+   */
+  on_reload(e, hardReload = false) {
+    this.element.reload(hardReload);
   }
 
   createFrame() {

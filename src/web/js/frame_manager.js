@@ -62,7 +62,7 @@ export default class FrameManager {
         return;
     }
 
-    this.activeFrame['on_' + e.target.dataset.action + 'clicked'](e);
+    this.activeFrame['on_' + e.target.dataset.action](e);
   }
 
   /**
@@ -288,14 +288,16 @@ export default class FrameManager {
       'ctrl =': () => this.activeFrame.zoomIn(),
       'ctrl -': () => this.activeFrame.zoomOut(),
       'ctrl 0': () => this.activeFrame.resetZoom(),
-      'ctrl r': () => this.activeFrame.on_reloadclicked(),
+      'f5': () => this.activeFrame.on_reload(),
+      'ctrl r': () => this.activeFrame.on_reload(),
+      'ctrl shift r': () => this.activeFrame.on_reload(null, true),
       'ctrl t': () => this.newFrame(),
       'ctrl w': () => this.closeFrame(),
       'ctrl l': () => this.focusUrlbar(),
-      'escape': () => this.activeFrame.on_stopclicked(),
-      'backspace': () => this.activeFrame.on_backclicked(),
-      'ctrl ArrowLeft': () => this.activeFrame.on_backclicked(),
-      'ctrl ArrowRight': () => this.activeFrame.on_forwardclicked(),
+      'escape': () => this.activeFrame.on_stop(),
+      'backspace': () => this.activeFrame.on_back(),
+      'ctrl ArrowLeft': () => this.activeFrame.on_back(),
+      'ctrl ArrowRight': () => this.activeFrame.on_forward(),
       'ctrl tab': () => this.nextFrame(),
       'ctrl shift tab': () => this.prevFrame(),
       ' ': () => this.toggleHud()
