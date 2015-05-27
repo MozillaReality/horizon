@@ -35,7 +35,7 @@ If you wish to serve the site from a different port:
 
 ### Running inside of a graphene build
 
-We are currently using a fork of graphene with some minor modifications here: https://github.com/KevinGrandon/gecko-projects/tree/larch_vr/
+You should build with the gecko branch mirrored here: https://github.com/mozilla/gecko-projects/tree/larch
 
 Once you have a clone of the project you need to add the following line to a .mozconfig file:
 ```
