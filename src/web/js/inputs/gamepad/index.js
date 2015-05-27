@@ -1,8 +1,12 @@
 import Gamepads from '../../../../../node_modules/gamepad-plus/src/lib/gamepads.js';
 
-export default class GamepadInput {
+import EventEmitter from '../../lib/eventEmitter.js';
+
+
+export default class GamepadInput extends EventEmitter {
 
   constructor() {
+    super();
     this._debug = false;
     this._pollingInterval = {};
     this.config = {};
@@ -50,40 +54,49 @@ export default class GamepadInput {
     }
 
     window.addEventListener('gamepadconnected', e => {
-      if (this._debug) {
-        console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
-          e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length);
-      }
-
       this._update();
+      this.emit('gamepadconnected', this.gamepads.state[e.gamepad.index]);
     });
-
     window.addEventListener('gamepaddisconnected', e => {
-      if (this._debug) {
-        console.log('Gamepad removed at index %d: %s.', e.gamepad.index, e.gamepad.id);
-      }
+      this.emit('gamepaddisconnected', this.gamepads.state[e.gamepad.index]);
     });
-
     window.addEventListener('gamepadaxismove', e => {
-      if (this._debug) {
-        console.log('Gamepad axis move at index %d: %s. Axis: %d. Value: %f.',
-          e.gamepad.index, e.gamepad.id, e.axis, e.value);
-      }
+      this.emit('gamepadaxismove', this.gamepads.state[e.gamepad.index],
+        e.axis, e.value);
     });
-
     window.addEventListener('gamepadbuttondown', e => {
-      if (this._debug) {
-        console.log('Gamepad button down at index %d: %s. Button: %d.',
-          e.gamepad.index, e.gamepad.id, e.button);
-      }
+      this.emit('gamepadbuttondown', this.gamepads.state[e.gamepad.index],
+        e.button);
+    });
+    window.addEventListener('gamepadbuttonup', e => {
+      this.emit('gamepadbuttonup', this.gamepads.state[e.gamepad.index],
+        e.button);
     });
 
-    window.addEventListener('gamepadbuttonup', e => {
-      if (this._debug) {
+    if (this._debug) {
+      this.on('gamepadconnected', gamepad => {
+        console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
+          gamepad.index, gamepad.id, gamepad.buttons.length,
+          gamepad.axes.length);
+
+      }).on('gamepaddisconnected', gamepad => {
+        console.log('Gamepad removed at index %d: %s.', gamepad.index,
+          gamepad.id);
+
+      }).on('gamepadaxismove', (gamepad, axis, value) => {
+        console.log('Gamepad axis move at index %d: %s. Axis: %d. Value: %f.',
+          gamepad.index, gamepad.id, axis, value);
+
+      }).on('gamepadbuttondown', (gamepad, button) => {
+        console.log('Gamepad button down at index %d: %s. Button: %d.',
+          gamepad.index, gamepad.id, button);
+
+      }).on('gamepadbuttonup', (gamepad, button) => {
         console.log('Gamepad button up at index %d: %s. Button: %d.',
-          e.gamepad.index, e.gamepad.id, e.button);
-      }
-    });
+          gamepad.index, gamepad.id, button);
+
+      });
+    }
   }
 
   /**
@@ -91,6 +104,6 @@ export default class GamepadInput {
    * @param {Object} config Options object to use for creating `Gamepads` instance.
    */
   assign(config) {
-    this.config = config;
+    this.config = config || {};
   }
 }
