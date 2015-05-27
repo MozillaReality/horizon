@@ -7,10 +7,16 @@ export default class Debugging {
 
   init() {
     window.addEventListener('mozChromeEvent', this);
+    window.addEventListener('unload', this);
   }
 
   handleEvent(e) {
     switch (e.type) {
+      case 'unload':
+        // Clear cache and ensure that the ContentStart event is sent again.
+        // This is necessary with live-reloading to ensure that mozContentEvents work.
+        this.dispatch('clear-cache-and-reload');
+        break;
       case 'remote-debugger-prompt':
         // Always allow remote debugging for now.
         this.dispatch('remote-debugger-prompt', {value: true});
