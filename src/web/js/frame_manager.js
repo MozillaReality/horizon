@@ -4,20 +4,23 @@ export default class FrameManager {
   constructor() {
     this.visible = false;
     this.frames = [];
-    this.activeFrameIndex = null;
-    this.currentId = 0;
-    this.hud = $('#hud');
-    this.title = $('#hud__title');
-    this.nav = $('#nav');
     this.container = $('#fs-container');
     this.contentContainer = $('#container--mono');
     this.contentStereoContainer = $('#container--stereo');
-    this.urlbar = $('#nav__urlbar');
+    this.activeFrameIndex = null;
+    this.currentId = 0;
+    this.hud = $('#hud');
+    this.hudFrame = $('#frame');
+    this.title = $('#title__text');
+    this.titleIcon = $('#title__icon');
+    this.nav = $('#nav');
+    this.urlbar = $('#urlbar');
     this.urlInput = this.urlbar.querySelector('input');
-    this.hudIcon = $('#hud__icon');
     this.backButton = $('#nav__back');
     this.forwardButton = $('#nav__forward');
     this.windowControls = $('#window-controls');
+    this.sfxHudHide = $('#hud_hide');
+    this.sfxHudShow = $('#hud_show');
   }
 
   get activeFrame() {
@@ -77,7 +80,7 @@ export default class FrameManager {
   /**
    * Opens a new browsing frame.
    */
-  newFrame(location = 'http://www.mozvr.com/projects', openInForeground = true) {
+  newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
     var app = new Frame({
       id: this.nextId(),
       url: location,
@@ -126,9 +129,9 @@ export default class FrameManager {
     if (this.activeFrame) {
       this.urlInput.value = this.activeFrame.title || this.activeFrame.location;
       this.updateTitle(this.activeFrame.title);
-      this.hudIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
+      this.titleIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
-      this.hudIcon.style.backgroundImage = '';
+      this.titleIcon.style.backgroundImage = '';
       this.urlInput.value = '';
     }
   }
@@ -204,12 +207,22 @@ export default class FrameManager {
     this.hud.style.opacity = 0;
     this.urlInput.blur();
     this.visible = false;
+    this.sfxHudHide.play();
+    this.container.style.animation = 'fs-container-hideHud 0.5s ease forwards';
+    this.contentContainer.style.animation = 'container-hideHud 0.3s ease forwards';
+    this.hudFrame.style.animation = 'frameHide 0.4s ease forwards';
+    this.urlbar.style.animation = 'urlbarHide 0.5s ease backwards';
   }
 
   showHud() {
     this.hud.style.opacity = 1;
     this.visible = true;
     this.focusUrlbar();
+    this.sfxHudShow.play();
+    this.container.style.animation = 'fs-container-showHud 0.5s ease forwards';
+    this.contentContainer.style.animation = 'container-showHud 0.3s ease forwards';
+    this.hudFrame.style.animation = 'frameShow 0.4s ease forwards';
+    this.urlbar.style.animation = 'urlbarShow 0.3s ease forwards';
   }
 
   updateTitle(text) {
