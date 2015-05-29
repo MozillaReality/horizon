@@ -89,7 +89,7 @@ gulp.task('install-content-scripts-into-dist', function() {
 });
 
 gulp.task('generate-content-scripts', function(cb) {
-  runSequence(['install-content-scripts-into-dist'], ['zip-content-scripts' ], ['zip-content-scripts-bundle' ], cb);
+  runSequence(['install-content-scripts-into-dist'], ['zip-content-scripts'], ['zip-content-scripts-bundle'], cb);
 });
 
 /**
@@ -128,7 +128,7 @@ gulp.task('zip', function() {
  * Packages the addon into a zip.
  */
 gulp.task('addon', function(cb) {
-  runSequence(['build'], ['make-addon-zip' ], cb);
+  runSequence(['build'], ['make-addon-zip'], cb);
 });
 
 gulp.task('make-addon-zip', function() {

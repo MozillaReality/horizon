@@ -1,5 +1,9 @@
 import Frame from './frame.js';
 
+const scrollConfig = {
+  step: 50,
+};
+
 export default class FrameManager {
   constructor() {
     this.visible = false;
@@ -300,7 +304,27 @@ export default class FrameManager {
       'ctrl ArrowRight': () => this.activeFrame.on_forward(),
       'ctrl tab': () => this.nextFrame(),
       'ctrl shift tab': () => this.prevFrame(),
-      ' ': () => this.toggleHud()
+      ' ': () => this.toggleHud(),
+      'alt arrowup': () => {
+        runtime.frameCommunicator.send('scroll', {
+          scrollTop: -scrollConfig.step
+        });
+      },
+      'alt arrowdown': () => {
+        runtime.frameCommunicator.send('scroll', {
+          scrollTop: scrollConfig.step
+        });
+      },
+      'alt arrowleft': () => {
+        runtime.frameCommunicator.send('scroll', {
+          scrollLeft: -scrollConfig.step
+        });
+      },
+      'alt arrowright': () => {
+        runtime.frameCommunicator.send('scroll', {
+          scrollLeft: scrollConfig.step
+        });
+      }
     });
   }
 }

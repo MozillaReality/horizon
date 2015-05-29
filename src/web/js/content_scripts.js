@@ -30,18 +30,18 @@ export default class ContentScripts {
     console.log('Importing blob', blob);
 
     navigator.mozApps.mgmt.import(blob)
-      .then((addon) => {
+      .then(addon => {
         console.log('Enabling addon');
         // Enable the addon by default.
         navigator.mozApps.mgmt.setEnabled(addon, true);
         console.log('Activated content script addon', addon.manifestURL);
       })
-      .catch((error) => {
+      .catch(error => {
         if (error.name === 'AppAlreadyInstalled') {
-          console.log('Add-on already installed, skipping…');
-        } else {
-          console.error('Could not activate content script add-on', error);
+          return;
         }
+
+        console.error('Could not activate content script add-on', error);
       });
   }
 }
