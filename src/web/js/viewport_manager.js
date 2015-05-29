@@ -23,12 +23,12 @@ export default class ViewportManager {
   }
 
   filterInvalidDevices(devices) {
-    let oculusDevices = devices.filter((device) => {
+    let oculusDevices = devices.filter(device => {
       return device.deviceName.toLowerCase().indexOf('oculus') !== -1;
     });
 
     if (oculusDevices.length >= 1) {
-      return devices.filter((device) => {
+      return devices.filter(device => {
         return device.deviceName.toLowerCase().indexOf('cardboard') === -1;
       });
     } else {
