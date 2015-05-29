@@ -37,7 +37,11 @@ export default class ContentScripts {
         console.log('Activated content script addon', addon.manifestURL);
       })
       .catch((error) => {
-        console.log('Error importing content script addon', error);
+        if (error.name === 'AppAlreadyInstalled') {
+          console.log('Add-on already installed, skipping…');
+        } else {
+          console.error('Could not activate content script add-on', error);
+        }
       });
   }
 }
