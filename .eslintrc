@@ -9,13 +9,12 @@
     "jquery": true
   },
   "plugins": [
-      "eslint-plugin-react"
+    "eslint-plugin-random"
   ],
   "ecmaFeatures": {
     "jsx": true,
   },
   "rules": {
-    "react/jsx-uses-vars": 1,
     "comma-dangle": 0,
     "block-scoped-var": 2,
     "camelcase": 0,
@@ -85,7 +84,8 @@
     "wrap-iife": [
       2,
       "inside"
-    ]
+    ],
+    "random/arrow-function-parens": 2
   }
 }
 
