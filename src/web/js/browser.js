@@ -6,8 +6,8 @@ import KeyboardInput from './inputs/keyboard/index.js';
 import Utils from './lib/utils.js';
 
 var runtime = {};
-runtime.utils = new Utils();
 
+runtime.utils = new Utils();
 runtime.debugging = new Debugging();
 runtime.frameManager = new FrameManager();
 runtime.gamepadInput = new GamepadInput();

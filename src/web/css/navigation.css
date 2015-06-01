@@ -164,6 +164,29 @@ input {
 
 
 /**
+ * Directory
+ */
+
+
+/* Placeholder css now. Will use once logic from cyee lands */
+
+.directory { 
+  height: 20cm;
+  transform: translate(-50%, -50%) translate3d(0, 0, -2cm);
+  width: 40cm;
+}
+
+.directory-iframe {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+
+
+/**
  * Time
  */
 
