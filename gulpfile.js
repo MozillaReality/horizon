@@ -174,7 +174,7 @@ gulp.task('buildandreload', function (cb) {
 gulp.task('watch', function() {
   // TODO: We should probably prevent Horizon app from being reloaded if only
   // the `src/addon/` files change.
-  gulp.watch([SRC_ROOT + '**'], ['buildandreload']);
+  gulp.watch([SRC_ROOT + '{*,**/*}'], ['buildandreload']);
 });
 
 
