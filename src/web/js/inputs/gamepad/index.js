@@ -1,6 +1,6 @@
 import Gamepads from '../../../../../node_modules/gamepad-plus/src/lib/gamepads.js';
 
-import EventEmitter from '../../lib/eventEmitter.js';
+import EventEmitter from '../../lib/event_emitter.js';
 
 
 export default class GamepadInput extends EventEmitter {
