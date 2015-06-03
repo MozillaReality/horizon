@@ -1,4 +1,5 @@
 import Gamepads from '../../../../../node_modules/gamepad-plus/src/lib/gamepads.js';
+import GamepadScroll from './scroll.js';
 
 import EventEmitter from '../../lib/event_emitter.js';
 
@@ -33,12 +34,18 @@ export default class GamepadInput extends EventEmitter {
     window.cancelAnimationFrame(this._update.bind(this));
   }
 
-  init() {
+  init(runtime) {
     this.gamepads = new Gamepads(this.config.input);
 
     if (!this.gamepads.gamepadsSupported) {
       return;
     }
+
+    this.scroll = new GamepadScroll({
+      gamepadInput: this,
+      config: this.config.scroll
+    });
+    this.scroll.init(runtime);
 
     // At the time of this writing, Firefox is the only browser that
     // fires the `gamepadconnected` event. For the other browsers
@@ -53,6 +60,8 @@ export default class GamepadInput extends EventEmitter {
       }, 200);
     }
 
+    // Firing local events so we don't need to look up the gamepad state and
+    // wrap it with gamepad-plus's wrapped Gamepad object every time.
     window.addEventListener('gamepadconnected', e => {
       this._update();
       this.emit('gamepadconnected', this.gamepads.state[e.gamepad.index]);
@@ -98,24 +107,98 @@ export default class GamepadInput extends EventEmitter {
       });
     }
 
-    this.on('gamepadconnected', this.onGamepadConnected.bind(this));
-    this.on('gamepadbuttonup', this.onGamepadButtonUp.bind(this));
+    // These handle the bindings defined in the `runtime.gamepadInput.assign`
+    // call in `FrameManager.init`.
+    this.on('gamepadconnected', this._onGamepadConnected.bind(this));
+    this.on('gamepaddisconnected', this._onGamepadDisconnected.bind(this));
+    this.on('gamepadbuttonup', this._onGamepadButtonUp.bind(this));
+    this.on('gamepadaxismove', this._onGamepadAxisMove.bind(this));
   }
 
-  onGamepadConnected(gamepad) {
-    this.gamepad = gamepad;
+  /**
+   * Returns whether a `button` index equals the supplied `key`.
+   *
+   * Useful for determining whether ``navigator.getGamepads()[0].buttons[`$button`]``
+   * has any bindings defined (in `FrameManager`).
+   *
+   * @param {Number} button Index of gamepad button (e.g., `4`).
+   * @param {String} key Human-readable format for button binding (e.g., 'b4').
+   */
+  _buttonEqualsKey(button, key) {
+    return 'b' + button === key.trim().toLowerCase();
   }
 
-  onGamepadButtonUp(gamepad, button) {
-    this.onGamepadConnected(gamepad);
+  /**
+   * Returns whether an `axis` index equals the supplied `key`.
+   *
+   * Useful for determining whether ``navigator.getGamepads()[0].axes[`$button`]``
+   * has any bindings defined (in `FrameManager`).
+   *
+   * @param {Number} button Index of gamepad axis (e.g., `1`).
+   * @param {String} key Human-readable format for button binding (e.g., 'a1').
+   */
+  _axisEqualsKey(axis, key) {
+    return 'a' + axis === key.trim().toLowerCase();
+  }
 
-    var pressedButtonIdx = 'b' + button;
+  /**
+   * Calls any bindings defined for 'connected' (in `FrameManager`).
+   *
+   * (Called by event listener for `gamepadconnected`.)
+   *
+   * @param {Gamepad} gamepad Gamepad object (after it's been wrapped by gamepad-plus).
+   */
+  _onGamepadConnected(gamepad) {
+    if ('connected' in gamepad.indices) {
+      gamepad.indices.connected(gamepad);
+    }
+  }
 
-    for (var idx in this.gamepad.indices) {
-      var buttonIdx = idx.trim().toLowerCase();
+  /**
+   * Calls any bindings defined for 'disconnected' (in `FrameManager`).
+   *
+   * (Called by event listener for `gamepadconnected`.)
+   *
+   * @param {Gamepad} gamepad Gamepad object (after it's been wrapped by gamepad-plus).
+   */
+  _onGamepadDisconnected(gamepad) {
+    if ('disconnected' in gamepad.indices) {
+      gamepad.indices.disconnected(gamepad);
+    }
+  }
 
-      if (buttonIdx === pressedButtonIdx) {
-        this.gamepad.indices[idx]();
+  /**
+   * Calls any bindings defined for buttons (e.g., 'b4' in `FrameManager`).
+   *
+   * (Called by event listener for `gamepadconnected`.)
+   *
+   * @param {Gamepad} gamepad Gamepad object (after it's been wrapped by gamepad-plus).
+   * @param {Number} button Index of gamepad button (integer) being released
+   *                        (per `gamepadbuttonup` event).
+   */
+  _onGamepadButtonUp(gamepad, button) {
+    for (var key in gamepad.indices) {
+      if (this._buttonEqualsKey(button, key)) {
+        gamepad.indices[key](gamepad, button);
+      }
+    }
+  }
+
+  /**
+   * Calls any bindings defined for axes (e.g., 'a1' in `FrameManager`).
+   *
+   * (Called by event listener for `gamepadaxismove`.)
+   *
+   * @param {Gamepad} gamepad Gamepad object (after it's been wrapped by gamepad-plus).
+   * @param {Number} axis Index of gamepad axis (integer) being changed
+   *                      (per `gamepadaxismove` event).
+   * @param {Number} value Value of gamepad axis (from -1.0 to 1.0) being
+   *                       changed (per `gamepadaxismove` event).
+   */
+  _onGamepadAxisMove(gamepad, axis, value) {
+    for (var key in gamepad.indices) {
+      if (this._axisEqualsKey(axis, key)) {
+        gamepad.indices[key](gamepad, axis, value);
       }
     }
   }
