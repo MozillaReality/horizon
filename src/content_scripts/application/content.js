@@ -1,3 +1,5 @@
+import EventEmitter from '../../web/js/lib/event_emitter.js';
+
 /*
 
 # FrameCommunicator
@@ -29,48 +31,24 @@ window.addEventListener('unload', () => {
 
 */
 
-function FrameCommunicator(name) {
-  this._listeners = {};
-  this.name = name;
+class FrameCommunicator extends EventEmitter {
+  constructor(name) {
+    super();
+    this.name = name;
 
-  window.addEventListener('message', function (e) {
-    // TODO: Check `e.origin` to make sure it matches the Horizon origin.
-    if (e.data && typeof e.data === 'object') {
-      this.emit(e.data.type, e.data.data);
-    }
-  }.bind(this));
+    window.addEventListener('message', e => {
+      // TODO: Check `e.origin` to make sure it matches the Horizon origin.
+      if (e.data && typeof e.data === 'object') {
+        this.emit(e.data.type, e.data.data);
+      }
+    });
+  }
 }
-
-FrameCommunicator.prototype.emit = function (name) {
-  var args = Array.prototype.slice.call(arguments, 1);
-  (this._listeners[name] || []).forEach(function (func) {
-    func.apply(this, args);
-  }, this);
-  return this;
-};
-
-FrameCommunicator.prototype.on = function (name, func) {
-  if (name in this._listeners) {
-    this._listeners[name].push(func);
-  } else {
-    this._listeners[name] = [func];
-  }
-  return this;
-};
-
-FrameCommunicator.prototype.off = function (name) {
-  if (name) {
-    this._listeners[name] = [];
-  } else {
-    this._listeners = {};
-  }
-  return this;
-};
 
 
 var fc = new FrameCommunicator();
 
-fc.on('scroll', function (data) {
+fc.on('scroll', data => {
   console.log('[add-on] Received scroll message', data);
 
   if ('scrollTop' in data) {
@@ -81,10 +59,10 @@ fc.on('scroll', function (data) {
   }
 });
 
-window.addEventListener('load', function () {
+window.addEventListener('load', () => {
   console.log('Got content script', window.location.href);
 });
 
-window.addEventListener('unload', function () {
+window.addEventListener('unload', () => {
   fc.off();
 });

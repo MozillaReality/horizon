@@ -83,14 +83,36 @@ gulp.task('zip-content-scripts-bundle', function() {
 
 gulp.task('install-content-scripts-into-dist', function() {
   return gulp.src([
-      CONTENT_SCRIPTS_ROOT + '**'
+      CONTENT_SCRIPTS_ROOT + '**',
+      // Ignore the root file since the browserify+babelify'd bundle
+      // is generated separately by the task below.
+      '!' + CONTENT_SCRIPTS_ROOT + 'application/content.js'
     ])
     .pipe(gulp.dest(DIST_CONTENT_SCRIPTS_ROOT));
 });
 
-gulp.task('generate-content-scripts', function(cb) {
-  runSequence(['install-content-scripts-into-dist'], ['zip-content-scripts'], ['zip-content-scripts-bundle'], cb);
+gulp.task('babelify-content-scripts', function() {
+  return browserify({
+    entries: [
+      CONTENT_SCRIPTS_ROOT + 'application/content.js',
+    ],
+    debug: !!!process.env.PRODUCTION
+  })
+  .transform(babelify.configure({
+    sourceMap: !!!process.env.PRODUCTION
+  }))
+  .bundle()
+  .on('error', function (err) {
+    console.log('[babelify] Error occurred: ', err.message);
+  })
+  .pipe(moldSourceMap.transformSourcesRelativeTo(CONTENT_SCRIPTS_ROOT))
+  .pipe(fs.createWriteStream(DIST_CONTENT_SCRIPTS_ROOT + 'application/content.js'));
 });
+
+gulp.task('generate-content-scripts', function(cb) {
+  runSequence('install-content-scripts-into-dist', 'babelify-content-scripts', 'zip-content-scripts', 'zip-content-scripts-bundle', cb);
+});
+
 
 /**
  * converts javascript to es5. this allows us to use harmony classes and modules.
