@@ -57,35 +57,39 @@ var fc = new FrameCommunicator();
 fc.on('scroll.step', data => {
   console.log("[add-on] Received 'scroll.step' message", data);
 
+  var el = getActiveScrollElement();
   if ('scrollTop' in data) {
-    document.documentElement.scrollTop += data.scrollTop;
+    el.scrollTop += data.scrollTop;
   }
   if ('scrollLeft' in data) {
-    document.documentElement.scrollLeft += data.scrollLeft;
+    el.scrollLeft += data.scrollLeft;
   }
 });
 
 fc.on('scroll.to', data => {
   console.log("[add-on] Received 'scroll.to' message", data);
 
+  var el = getActiveScrollElement();
   if ('scrollTop' in data) {
-    document.documentElement.scrollTop = data.scrollTop;
+    el.scrollTop = data.scrollTop;
   }
   if ('scrollLeft' in data) {
-    document.documentElement.scrollLeft = data.scrollLeft;
+    el.scrollLeft = data.scrollLeft;
   }
 });
 
 fc.on('scroll.home', data => {
   console.log("[add-on] Received 'scroll.home' message");
 
-  window.scrollTo(0, 0);
+  var el = getActiveScrollElement();
+  el.scrollTop = 0;
 });
 
 fc.on('scroll.end', data => {
   console.log("[add-on] Received 'scroll.end' message");
 
-  window.scrollTo(0, document.documentElement.scrollHeight);
+  var el = getActiveScrollElement();
+  el.scrollTop = el.scrollHeight;
 });
 
 window.addEventListener('load', () => {
@@ -95,3 +99,29 @@ window.addEventListener('load', () => {
 window.addEventListener('unload', () => {
   fc.off();
 });
+
+
+function getActiveScrollElement(doc) {
+  doc = doc || document;
+
+  // This is whichever element currently has focus
+  // (really only useful if `pointer-events` are not disabled).
+  var el = doc.activeElement;
+
+  while ('contentWindow' in el) {
+    doc = el.contentWindow.document;
+    el = doc.activeElement;
+  }
+
+  if (el.tagName.toLowerCase() === 'body') {
+    // If `pointer-events` are disabled, just scroll the `<html>` of the
+    // active `<iframe>` element.
+    //
+    // Also, this lets us scroll an `<iframe>` if the element is visible but
+    // not focussed yet.
+    // Related: https://miketaylr.com/posts/2014/11/document-body-scrollTop.html
+    el = el.parentNode;
+  }
+
+  return el;
+}
