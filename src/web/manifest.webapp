@@ -11,6 +11,7 @@
   "permissions": {
     "browser": {},
     "embed-apps": {},
-    "systemXHR": {}
+    "systemXHR": {},
+    "webapps-manage": {}
   }
 }

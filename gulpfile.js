@@ -14,9 +14,11 @@ var webserver = require('gulp-webserver');
 
 const SRC_ROOT = './src/';
 const ADDON_ROOT = './src/addon/';
+const CONTENT_SCRIPTS_ROOT = './src/content_scripts/';
 const WEB_ROOT = './src/web/';
 const DIST_ROOT = './dist/';
 const DIST_ADDON_ROOT = './dist/addon/';
+const DIST_CONTENT_SCRIPTS_ROOT = './dist/content_scripts/';
 const DIST_WEB_ROOT = './dist/web/';
 
 
@@ -46,7 +48,7 @@ gulp.task('pre-commit', function() {
 /**
  * Setup steps after an npm install.
  */
-gulp.task('install', ['copy-web-app', 'copy-addon-core', 'pre-commit']);
+gulp.task('install', ['copy-web-app', 'copy-addon-core', 'generate-content-scripts', 'pre-commit']);
 
 
 /**
@@ -66,6 +68,51 @@ gulp.task('copy-addon-core', function() {
     ])
     .pipe(gulp.dest(DIST_ADDON_ROOT));
 });
+
+gulp.task('zip-content-scripts', function() {
+  return gulp.src(DIST_CONTENT_SCRIPTS_ROOT + '/application/**')
+      .pipe(zip('application.zip'))
+      .pipe(gulp.dest(DIST_CONTENT_SCRIPTS_ROOT));
+});
+
+gulp.task('zip-content-scripts-bundle', function() {
+  return gulp.src(DIST_CONTENT_SCRIPTS_ROOT + '/**')
+      .pipe(zip('content_scripts.zip'))
+      .pipe(gulp.dest(DIST_WEB_ROOT));
+});
+
+gulp.task('install-content-scripts-into-dist', function() {
+  return gulp.src([
+      CONTENT_SCRIPTS_ROOT + '**',
+      // Ignore the root file since the browserify+babelify'd bundle
+      // is generated separately by the task below.
+      '!' + CONTENT_SCRIPTS_ROOT + 'application/content.js'
+    ])
+    .pipe(gulp.dest(DIST_CONTENT_SCRIPTS_ROOT));
+});
+
+gulp.task('babelify-content-scripts', function() {
+  return browserify({
+    entries: [
+      CONTENT_SCRIPTS_ROOT + 'application/content.js',
+    ],
+    debug: !!!process.env.PRODUCTION
+  })
+  .transform(babelify.configure({
+    sourceMap: !!!process.env.PRODUCTION
+  }))
+  .bundle()
+  .on('error', function (err) {
+    console.log('[babelify] Error occurred: ', err.message);
+  })
+  .pipe(moldSourceMap.transformSourcesRelativeTo(CONTENT_SCRIPTS_ROOT))
+  .pipe(fs.createWriteStream(DIST_CONTENT_SCRIPTS_ROOT + 'application/content.js'));
+});
+
+gulp.task('generate-content-scripts', function(cb) {
+  runSequence('install-content-scripts-into-dist', 'babelify-content-scripts', 'zip-content-scripts', 'zip-content-scripts-bundle', cb);
+});
+
 
 /**
  * converts javascript to es5. this allows us to use harmony classes and modules.
@@ -103,7 +150,7 @@ gulp.task('zip', function() {
  * Packages the addon into a zip.
  */
 gulp.task('addon', function(cb) {
-  runSequence(['build'], ['make-addon-zip' ], cb);
+  runSequence(['build'], ['make-addon-zip'], cb);
 });
 
 gulp.task('make-addon-zip', function() {
@@ -122,7 +169,7 @@ gulp.task('travis', ['lint', 'babelify']);
  * Build the app.
  */
 gulp.task('build', function(cb) {
-  runSequence(['clobber'], ['copy-web-app', 'copy-addon-core'], ['babelify', 'lint'], cb);
+  runSequence(['clobber'], ['copy-web-app', 'copy-addon-core', 'generate-content-scripts'], ['babelify', 'lint'], cb);
 });
 
 
