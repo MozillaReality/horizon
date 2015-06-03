@@ -11,16 +11,15 @@ A simple class that wraps `postMessage` with an event emitter.
 var fc = new FrameCommunicator();
 
 window.addEventListener('load', () => {
-  // Send a `postMessage` of type 'scrollinit'.
-  fc.send('scrollinit', {
+  // Send a `postMessage` of type 'scrollinit'. (See note about `send` below.)
+  fc.send('scroll.init', {
     scrollTop: document.body.scrollTop,
     scrollLeft: document.body.scrollLeft
   });
 
   // Listen for `postMessage` messages of type 'scroll'.
-  fc.on('scroll', data => {
-    document.body.scrollTop = data.scrollTop;
-    document.body.scrollLeft = data.scrollLeft;
+  fc.on('scroll.to', data => {
+    window.scrollTo(data.scrollTop, data.scrollLeft);
   });
 });
 
@@ -43,13 +42,20 @@ class FrameCommunicator extends EventEmitter {
       }
     });
   }
+
+  send() {
+    // NOTE: communicating with the parent browser is not possible in the
+    // platform, but it is a necessity that will need to be implemented soon.
+    // See issue #120: https://github.com/MozVR/horizon/issues/120
+    throw Error('Not Implemented');
+  }
 }
 
 
 var fc = new FrameCommunicator();
 
-fc.on('scroll', data => {
-  console.log('[add-on] Received scroll message', data);
+fc.on('scroll.step', data => {
+  console.log("[add-on] Received 'scroll.step' message", data);
 
   if ('scrollTop' in data) {
     document.documentElement.scrollTop += data.scrollTop;
@@ -59,8 +65,31 @@ fc.on('scroll', data => {
   }
 });
 
+fc.on('scroll.to', data => {
+  console.log("[add-on] Received 'scroll.to' message", data);
+
+  if ('scrollTop' in data) {
+    document.documentElement.scrollTop = data.scrollTop;
+  }
+  if ('scrollLeft' in data) {
+    document.documentElement.scrollLeft = data.scrollLeft;
+  }
+});
+
+fc.on('scroll.home', data => {
+  console.log("[add-on] Received 'scroll.home' message");
+
+  window.scrollTo(0, 0);
+});
+
+fc.on('scroll.end', data => {
+  console.log("[add-on] Received 'scroll.end' message");
+
+  window.scrollTo(0, document.documentElement.scrollHeight);
+});
+
 window.addEventListener('load', () => {
-  console.log('Got content script', window.location.href);
+  console.log('Loaded content script', window.location.href);
 });
 
 window.addEventListener('unload', () => {

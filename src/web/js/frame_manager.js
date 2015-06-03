@@ -306,24 +306,30 @@ export default class FrameManager {
       'ctrl shift tab': () => this.prevFrame(),
       ' ': () => this.toggleHud(),
       'alt arrowup': () => {
-        runtime.frameCommunicator.send('scroll', {
+        runtime.frameCommunicator.send('scroll.step', {
           scrollTop: -scrollConfig.step
         });
       },
       'alt arrowdown': () => {
-        runtime.frameCommunicator.send('scroll', {
+        runtime.frameCommunicator.send('scroll.step', {
           scrollTop: scrollConfig.step
         });
       },
       'alt arrowleft': () => {
-        runtime.frameCommunicator.send('scroll', {
+        runtime.frameCommunicator.send('scroll.step', {
           scrollLeft: -scrollConfig.step
         });
       },
       'alt arrowright': () => {
-        runtime.frameCommunicator.send('scroll', {
+        runtime.frameCommunicator.send('scroll.step', {
           scrollLeft: scrollConfig.step
         });
+      },
+      'ctrl arrowup': () => {
+        runtime.frameCommunicator.send('scroll.home');
+      },
+      'ctrl arrowdown': () => {
+        runtime.frameCommunicator.send('scroll.end');
       }
     });
   }

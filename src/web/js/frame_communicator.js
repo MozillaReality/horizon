@@ -12,7 +12,7 @@ var fc = new FrameCommunicator();
 fc.init(runtime);
 
 // Send a `postMessage` message of type 'scroll'.
-fc.send('scroll', {
+fc.send('scroll.to', {
   scrollTop: 100
   scrollLeft: 0
 });
