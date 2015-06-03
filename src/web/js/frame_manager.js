@@ -6,32 +6,42 @@ const scrollConfig = {
 
 export default class FrameManager {
   constructor() {
+
+    /* variables for managing frames */
     this.visible = false;
     this.frames = [];
     this.activeFrameIndex = null;
     this.currentId = 0;
-    this.hud = $('#hud');
-    this.title = $('#hud__title');
-    this.nav = $('#nav');
+
+    /* variables for frame and HUD elements */
     this.container = $('#fs-container');
     this.contentContainer = $('#container--mono');
     this.contentStereoContainer = $('#container--stereo');
-    this.urlbar = $('#nav__urlbar');
+    this.hud = $('#hud');
+    this.title = $('#title');
+    this.titleText = $('#title__text');
+    this.titleIcon = $('#title__icon');
+    this.directory = $('#directory');
+    this.urlbar = $('#urlbar');
     this.urlInput = this.urlbar.querySelector('input');
-    this.hudIcon = $('#hud__icon');
+    this.nav = $('#nav');
     this.backButton = $('#nav__back');
     this.forwardButton = $('#nav__forward');
+    this.loading = $('#loading');
+    this.hudBackground = $('#background');
+
+    /* variables for sound effects */
+    this.sfxHudHide = $('#hud_hide');
+    this.sfxHudShow = $('#hud_show');
+
+    /* variables for window controls */
     this.windowControls = $('#window-controls');
   }
 
-  get activeFrame() {
-    return this.frames[this.activeFrameIndex];
-  }
 
-  nextId() {
-    return ++this.currentId;
-  }
-
+  /**
+   * Manages events for the active frame
+   */
   browserEvent(e, frame) {
     if (frame.id !== this.activeFrame.id) {
       return;
@@ -50,9 +60,18 @@ export default class FrameManager {
       case 'mozbrowseropentab':
         this.newFrame(e.detail.url, false);
         break;
+      case 'mozbrowserloadend':
+        this.hideLoadingIndicator();
+        break;
+      case 'mozbrowserloadstart':
+        this.showLoadingIndicator();
+        break;
     }
   }
 
+  /**
+   * Manages events for frame handling and native controls (?)
+   */
   handleEvent(e) {
     var action = e.target.dataset && e.target.dataset.action;
     if (!action) { return; }
@@ -69,6 +88,7 @@ export default class FrameManager {
     this.activeFrame['on_' + e.target.dataset.action](e);
   }
 
+
   /**
    * Handles when a native control is clicked.
    */
@@ -79,9 +99,9 @@ export default class FrameManager {
   }
 
   /**
-   * Opens a new browsing frame.
+   * Creates a new browsing frame
    */
-  newFrame(location = 'http://www.mozvr.com/projects', openInForeground = true) {
+  newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
     var app = new Frame({
       id: this.nextId(),
       url: location,
@@ -99,16 +119,29 @@ export default class FrameManager {
   }
 
   /**
-   * Closes the currently active frame.
+   * Gets the activeFrame
    */
-  closeFrame() {
-    if (!this.activeFrame) { return; }
+  get activeFrame() {
+    return this.frames[this.activeFrameIndex];
+  }
 
-    this.activeFrame.close();
+  /**
+   * Returns the next ID
+   */
+  nextId() {
+    return ++this.currentId;
+  }
 
-    this.frames.splice(this.activeFrameIndex, 1);
-    this.activeFrameIndex = this.activeFrameIndex > 0 ? this.activeFrameIndex - 1 : 0;
+  /**
+   * Handles browsing through and re-positioning open frames
+   */
+  prevFrame() {
+    this.activeFrameIndex = (this.activeFrameIndex - 1 + this.frames.length) % this.frames.length;
+    this.positionFrames();
+  }
 
+  nextFrame() {
+    this.activeFrameIndex = (this.activeFrameIndex + 1) % this.frames.length;
     this.positionFrames();
   }
 
@@ -126,17 +159,38 @@ export default class FrameManager {
     this.updateHUDForActiveFrame();
   }
 
+  /**
+   * Closes the currently active frame.
+   */
+  closeFrame() {
+    if (!this.activeFrame) { return; }
+
+    this.activeFrame.close();
+
+    this.frames.splice(this.activeFrameIndex, 1);
+    this.activeFrameIndex = this.activeFrameIndex > 0 ? this.activeFrameIndex - 1 : 0;
+
+    this.positionFrames();
+  }
+
+
+  /**
+   * Updates HUD elements to match active frame (or sets them empty if there is no active frame)
+   */
   updateHUDForActiveFrame() {
     if (this.activeFrame) {
       this.urlInput.value = this.activeFrame.title || this.activeFrame.location;
       this.updateTitle(this.activeFrame.title);
-      this.hudIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
+      this.titleIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
-      this.hudIcon.style.backgroundImage = '';
+      this.titleIcon.style.backgroundImage = '';
       this.urlInput.value = '';
     }
   }
 
+  /**
+   * Toggles navigation UI depending on history states of the active frame
+   */
   updateHUDForNavButtons() {
     if (!this.activeFrame || !this.activeFrame.element) {
       return;
@@ -167,6 +221,7 @@ export default class FrameManager {
     return this.utils.evaluateDOMRequest(this.activeFrame.element.getCanGoForward());
   }
 
+
   /**
    * Handles the focus hotkey.
    * Sets the urlbar to be the raw location instead of title.
@@ -189,6 +244,40 @@ export default class FrameManager {
   }
 
   /**
+   * Updates title text
+   */
+  updateTitle(text) {
+    this.titleText.textContent = text;
+  }
+
+  /**
+   * On blur returns to the title of the page.
+   */
+  handleBlurUrlBar() {
+    this.updateHUDForActiveFrame();
+  }
+
+
+  /**
+   * Handles URL submit and loading new URL into active frame
+   */
+
+  handleUrlEntry(e) {
+    e.preventDefault();
+    this.navigate(this.urlInput.value);
+    this.urlInput.blur();
+    this.hideHud();
+  }
+
+  navigate(url) {
+    if (!this.activeFrame) {
+      this.newFrame();
+    }
+    this.activeFrame.navigate(url);
+  }
+
+
+  /**
    * Handles view mode changes for content iframes
    * Attaches iframe to appropriate container in DOM for projection.
    */
@@ -204,20 +293,34 @@ export default class FrameManager {
     this.contentContainer.appendChild(app.element);
   }
 
-  hideHud() {
-    this.hud.style.opacity = 0;
-    this.urlInput.blur();
-    this.visible = false;
-  }
 
+  /**
+   * Shows/Hides majority of the HUD elements
+   */
   showHud() {
-    this.hud.style.opacity = 1;
     this.visible = true;
     this.focusUrlbar();
+    this.sfxHudShow.play();
+    this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
+    this.contentContainer.style.animation = 'container-pushBack 0.3s ease forwards';
+    this.title.style.animation = 'show 0.1s ease forwards';
+    this.directory.style.animation = 'show 0.1s ease forwards';
+    this.urlbar.style.animation = 'show 0.1s ease forwards';
+    this.nav.style.animation = 'show 0.1s ease forwards';
+    this.hudBackground.style.animation = 'background-fadeIn 0.3s ease forwards';
   }
 
-  updateTitle(text) {
-    this.title.textContent = text;
+  hideHud() {
+    this.urlInput.blur();
+    this.visible = false;
+    this.sfxHudHide.play();
+    this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
+    this.contentContainer.style.animation = 'container-pullForward 0.3s ease forwards';
+    this.title.style.animation = 'hide 0.1s ease forwards';
+    this.directory.style.animation = 'hide 0.1s ease forwards';
+    this.urlbar.style.animation = 'hide 0.1s ease forwards';
+    this.nav.style.animation = 'hide 0.1s ease forwards';
+    this.hudBackground.style.animation = 'background-fadeOut 0.3s ease forwards';
   }
 
   toggleHud() {
@@ -228,54 +331,70 @@ export default class FrameManager {
     }
   }
 
+
   /**
-   * On blur we want to return to the title of the page.
+   * Show/Hide loading indicators in response to mozbrowserloadstart and mozbrowserloadend
    */
-  handleBlurUrlBar() {
-    this.updateHUDForActiveFrame();
+  showLoadingIndicator() {
+    this.loading.style.animation = 'show 0.1s ease forwards';
   }
 
-  handleUrlEntry(e) {
-    e.preventDefault();
-    this.navigate(this.urlInput.value);
-    this.urlInput.blur();
-    this.hideHud();
+  hideLoadingIndicator() {
+    this.loading.style.animation = 'hide 0.1s ease forwards';
   }
 
-  prevFrame() {
-    this.activeFrameIndex = (this.activeFrameIndex - 1 + this.frames.length) % this.frames.length;
-    this.positionFrames();
-  }
 
-  nextFrame() {
-    this.activeFrameIndex = (this.activeFrameIndex + 1) % this.frames.length;
-    this.positionFrames();
-  }
-
-  navigate(url) {
-    if (!this.activeFrame) {
-      this.newFrame();
-    }
-    this.activeFrame.navigate(url);
+  /**
+   * Populate the directory using the loaded JSON
+   */
+  buildDirectory(data) {
+    data.sites.forEach(site => {
+      var tile = document.createElement('a');
+      tile.className = 'directory__tile';
+      tile.setAttribute.href = site.url;
+      tile.innerHTML = site.name;
+      this.directory.appendChild(tile);
+    })
   }
 
   init(runtime) {
     this.utils = runtime.utils;
 
+    /* Creates listeners for HUD element states and positions */
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
-    this.windowControls.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.urlInput.addEventListener('input', this.handleChange.bind(this));
+
+    /* Creates listeners for HUD element states and positions */
+    this.windowControls.addEventListener('click', this);
+
+    /* Creates initial frame */
     this.newFrame();
 
+    /* Handles moving between stereo and mono view modes */
     window.addEventListener('stereo-viewmode', e => {
       this.toStereo(e.detail);
     });
     window.addEventListener('mono-viewmode', e => {
       this.toMono(e.detail);
+    });
+
+    /* Hides the HUD and loading indicators on first load */
+    this.hideHud();
+    this.hideLoadingIndicator();
+
+    /* Loads JSON for Directory */
+    /* TODO: Put in utils? Took forever to figure out how to make scope work. Cvan helped explain how to use fetch and .bind() */
+    var self = this;
+    fetch('directory.json')
+    .then(function (response) {
+      return response.json()
+    })
+    .then(data => {
+      self.buildDirectory(data)
     });
 
     runtime.gamepadInput.assign({
@@ -316,7 +435,6 @@ export default class FrameManager {
       'ctrl w': () => this.closeFrame(),
       'ctrl l': () => this.focusUrlbar(),
       'escape': () => this.activeFrame.on_stop(),
-      'backspace': () => this.activeFrame.on_back(),
       'ctrl ArrowLeft': () => this.activeFrame.on_back(),
       'ctrl ArrowRight': () => this.activeFrame.on_forward(),
       'ctrl tab': () => this.nextFrame(),
