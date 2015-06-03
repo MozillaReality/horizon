@@ -34,7 +34,7 @@ export default class GamepadInput extends EventEmitter {
   }
 
   init() {
-    this.gamepads = new Gamepads(this.config);
+    this.gamepads = new Gamepads(this.config.input);
 
     if (!this.gamepads.gamepadsSupported) {
       return;
@@ -96,6 +96,27 @@ export default class GamepadInput extends EventEmitter {
           gamepad.index, gamepad.id, button);
 
       });
+    }
+
+    this.on('gamepadconnected', this.onGamepadConnected.bind(this));
+    this.on('gamepadbuttonup', this.onGamepadButtonUp.bind(this));
+  }
+
+  onGamepadConnected(gamepad) {
+    this.gamepad = gamepad;
+  }
+
+  onGamepadButtonUp(gamepad, button) {
+    this.onGamepadConnected(gamepad);
+
+    var pressedButtonIdx = 'b' + button;
+
+    for (var idx in this.gamepad.indices) {
+      var buttonIdx = idx.trim().toLowerCase();
+
+      if (buttonIdx === pressedButtonIdx) {
+        this.gamepad.indices[idx]();
+      }
     }
   }
 

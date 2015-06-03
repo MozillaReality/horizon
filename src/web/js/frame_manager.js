@@ -275,13 +275,18 @@ export default class FrameManager {
     });
 
     runtime.gamepadInput.assign({
-      axisThreshold: 0,
-      indices: {
-        standard: {
-          scrollX: 'a0',
-          scrollY: 'a1',
-        }
-      }
+      input: {
+        axisThreshold: 0,
+        indices: {
+          standard: {
+            // XBox Vendor button.
+            'b10': () => this.toggleHud(),
+            // Use Start button too, since vendor button doesn't work on Windows:
+            // See http://bugzil.la/1167457
+            'b4': () => this.toggleHud(),
+          }
+        },
+      },
     });
 
     runtime.keyboardInput.assign({
