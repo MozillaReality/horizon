@@ -37,7 +37,6 @@ export default class GamepadScroll {
    * (Called by event listener for `frame_mozbrowserlocationchange`.)
    */
   reset() {
-    console.log('reset');
     this.latestScrollPos = {scrollLeft: 0, scrollTop: 0};
     this.stop();
   }
