@@ -152,8 +152,16 @@ input {
   border: 0;
   width: var(--content-width);
   height: var(--content-height);
+  top: 18cm;
+  left: 18cm;
   transition: transform 0.5s ease;
   background: white;
+}
+
+*:-moz-full-screen .frame--mono {
+  top: 0;
+  left: 0;
+  transform: translate3d(0, 0, var(--hud-depth));
 }
 
 [data-frame-pointer-events="none"] /* iframe */.frame--mono {
@@ -182,6 +190,14 @@ input {
 
 .hud {  
   --hud-width: 28cm;
+  top: 18cm;
+  left: 18cm;
+  transform: translate3d(0, 0, var(--hud-depth));
+}
+
+*:-moz-full-screen .hud {
+  left: 0;
+  top: 0;
   transform: translate3d(0, 0, var(--hud-depth));
 }
 

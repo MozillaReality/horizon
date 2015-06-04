@@ -160,7 +160,7 @@ export default class FrameManager {
   }
 
   /**
-   * Closes the currently active frame.
+   * Removes the active frame from the stack
    */
   closeFrame() {
     if (!this.activeFrame) { return; }
@@ -351,16 +351,16 @@ export default class FrameManager {
     data.sites.forEach(site => {
       var tile = document.createElement('a');
       tile.className = 'directory__tile';
-      tile.setAttribute.href = site.url;
+      tile.setAttribute('href', site.url);
       tile.innerHTML = site.name;
       this.directory.appendChild(tile);
-    })
+    });
   }
 
   init(runtime) {
     this.utils = runtime.utils;
 
-    /* Creates listeners for HUD element states and positions */
+    // Creates listeners for HUD element states and positions
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
@@ -368,13 +368,13 @@ export default class FrameManager {
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.urlInput.addEventListener('input', this.handleChange.bind(this));
 
-    /* Creates listeners for HUD element states and positions */
+    // Creates listeners for HUD element states and positions
     this.windowControls.addEventListener('click', this);
 
-    /* Creates initial frame */
+    // Creates initial frame
     this.newFrame();
 
-    /* Handles moving between stereo and mono view modes */
+    // Handles moving between stereo and mono view modes
     window.addEventListener('stereo-viewmode', e => {
       this.toStereo(e.detail);
     });
@@ -382,12 +382,14 @@ export default class FrameManager {
       this.toMono(e.detail);
     });
 
-    /* Hides the HUD and loading indicators on first load */
+    // Hides the HUD and loading indicators on first load
     this.hideHud();
     this.hideLoadingIndicator();
 
-    /* Loads JSON for Directory */
-    /* TODO: Put in utils? Took forever to figure out how to make scope work. Cvan helped explain how to use fetch and .bind() */
+    /**
+     * Loads JSON for Directory
+     * TODO: Put in utils? Took forever to figure out how to make scope work. Cvan helped explain how to use fetch and .bind()
+     */
     var self = this;
     fetch('directory.json')
     .then(function (response) {

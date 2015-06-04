@@ -2,60 +2,82 @@
   "template": "index.html",
   "sites": [
     {
-      "color": "#49619f",
-      "description": "A documentary by DEEP that takes users to the Arctic in 360° VR video, powered by eleVR’s WebGL VR video player.",
-      "icon": "http://people.mozilla.org/~cwiemeersch/webvr-demos/polarsea/polarsea-630.png",
-      "name": "Polar Sea",
-      "tagline": "Video",
-      "url": "http://people.mozilla.org/~cwiemeersch/webvr-demos/polarsea/"
-    },
-    {
-      "color": "#b7b7b7",
-      "description": "An animated short in which a drawing comes to life and draws its own life.",
-      "icon": "http://people.mozilla.org/~cwiemeersch/webvr-demos/iamink/animatic_test_4/iamink-630.png",
-      "name": "I Am Ink",
-      "tagline": "Animation",
-      "url": "http://people.mozilla.org/~cwiemeersch/webvr-demos/iamink/animatic_test_4/"
-    },
-    {
-      "color": "#f9e740",
-      "description": "Wonder how it feels to be chased by a T-rex? Find out in Oculus Rex, an incredible virtual reality experience inspired by the iconic Jurassic Park™ T-rex chase scene.",
-      "icon": "http://people.mozilla.org/~cwiemeersch/webvr-demos/rex/rex-630.png",
-      "name": "Oculus Rex",
-      "tagline": "Driving",
-      "url": "http://people.mozilla.org/~cwiemeersch/webvr-demos/rex/super-trex.html"
-    },
-    {
-      "color": "#fec96c",
-      "description": "A one-on-one mêlée game in a trendy apartment with realistic furniture, decor, and a balcony overlooking the city.",
-      "icon": "http://people.mozilla.org/~cwiemeersch/webvr-demos/couchknights/couchknights-630.png",
-      "name": "Couch Knights",
-      "tagline": "Hack-N-Slash",
-      "url": "http://people.mozilla.org/~cwiemeersch/webvr-demos/couchknights/CouchKnights.html"
-    },
-    {
-      "color": "#578646",
-      "description": "A motion-controlled VR sensory experience with Leap Motion and WebGL.",
-      "icon": "http://people.mozilla.org/~cwiemeersch/webvr-demos/rainbow/rainbow-630.png",
-      "name": "Rainbow Membrane",
-      "tagline": "Visualization",
-      "url": "http://people.mozilla.org/~cwiemeersch/webvr-demos/rainbow/"
-    },
-    {
-      "color": "#fee7c5",
       "description": "A visualization of British Columbia's coast built with three.js and Cinema 4D.",
-      "icon": "http://people.mozilla.org/~cwiemeersch/webvr-demos/sechelt/sechelt-630.png",
+      "icon": "http://mozvr.com/projects/sechelt/project-thumb.png",
       "name": "Sechelt",
       "tagline": "Fly Through",
-      "url": "http://people.mozilla.org/~cwiemeersch/webvr-demos/sechelt/"
+      "type": "Full-VR WebGL",
+      "url": "http://mozvr.github.io/sechelt/"
     },
     {
-      "color": "#62d884",
-      "description": "Retro first-person run-and-gun action from PhobosLab, built with ImpactJS.",
-      "icon": "http://people.mozilla.org/~cwiemeersch/webvr-demos/xibalba/xibalba-630.png",
-      "name": "Xibalba",
-      "tagline": "FPS",
-      "url": "http://people.mozilla.org/~cwiemeersch/webvr-demos/xibalba/"
+      "description": "A documentary by DEEP that takes users to the Arctic in 360° VR video, powered by eleVR’s WebGL VR video player.",
+      "icon": "http://mozvr.com/projects/polarsea/project-thumb.png",
+      "name": "Polar Sea",
+      "tagline": "Video",
+      "type": "Full-VR WebGL",
+      "url": "http://mozvr.com/projects/polarsea/content/"
+    },
+    {
+      "description": "A weird and wonderful visualization of seamlessly-linked primates.",
+      "icon": "http://mozvr.com/projects/monkeys/project-thumb.png",
+      "name": "Monkeys",
+      "tagline": "Visualization",
+      "type": "Full-VR WebGL",
+      "url": "http://monkeys.hypernom.com/"
+    },
+
+
+    {
+      "description": "",
+      "icon": "",
+      "name": "Blue Box",
+      "tagline": "Test",
+      "type": "Full-VR CSS",
+      "url": "http://mozvr.github.io/cssvr-experiments/20150505/bluebox.html"
+    },
+    {
+      "description": "",
+      "icon": "",
+      "name": "'Abandoned' Cube Map",
+      "tagline": "Test",
+      "type": "Full-VR CSS",
+      "url": "http://mozvr.github.io/cssvr-experiments/20150505-02/cubemap.html"
+    },
+    {
+      "description": "",
+      "icon": "",
+      "name": "Vimeo Player",
+      "tagline": "Test",
+      "type": "Full-VR CSS",
+      "url": "http://mozvr.github.io/cssvr-experiments/20150516/webm.html"
+    },
+    {
+      "description": "",
+      "icon": "",
+      "name": "Tridix NES Model",
+      "tagline": "Test",
+      "type": "Full-VR CSS",
+      "url": "http://mozvr.github.io/cssvr-experiments/20150520/tridiv.html"
+    },
+
+
+    {
+      "description": "Site of the MozVR team",
+      "icon": "",
+      "name": "MozVR.com",
+      "tagline": "Site",
+      "type": "Classic",
+      "url": "http://mozvr.com"
+    },
+    {
+      "description": "Heavy site with lots of content",
+      "icon": "",
+      "name": "CNN.com",
+      "tagline": "Site",
+      "type": "Classic",
+      "url": "http://cnn.com"
     }
   ]
 }
+
+
