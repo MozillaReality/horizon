@@ -52,78 +52,94 @@ class FrameCommunicator extends EventEmitter {
 }
 
 
+class Page {
+  get activeScrollElement() {
+    // This is the element that currently has focus.
+    var el = document.activeElement;
+
+    try {
+      el = el.contentWindow.document.activeElement;
+    } catch (e) {
+      // Oops, we tried accessing the document of a cross-origin iframe:
+      // > Permission was denied to access property 'document'
+      // Fall back to just scrolling the whole document.
+      return document.documentElement;
+    }
+
+    if (el.tagName.toLowerCase() === 'body') {
+      // If `pointer-events` are disabled, just scroll the page's `<html>`.
+      // Related: https://miketaylr.com/posts/2014/11/document-body-scrollTop.html
+      return el.parentNode;
+    }
+
+    return el;
+  }
+
+  scrollStep(data) {
+    var el = this.activeScrollElement;
+
+    if ('scrollTop' in data) {
+      el.scrollTop += data.scrollTop;
+    }
+
+    if ('scrollLeft' in data) {
+      el.scrollLeft += data.scrollLeft;
+    }
+  }
+
+  scrollTo(data) {
+    var el = this.activeScrollElement;
+
+    if ('scrollTop' in data) {
+      if (data.scrollTop === Infinity) {
+        el.scrollTop = el.scrollHeight;
+      } else {
+        el.scrollTop = data.scrollTop;
+      }
+    }
+
+    if ('scrollLeft' in data) {
+      el.scrollLeft = data.scrollLeft;
+    }
+  }
+
+  scrollHome() {
+    this.scrollTo({scrollTop: 0});
+  }
+
+  scrollEnd() {
+    this.scrollTo({scrollTop: Infinity});
+  }
+}
+
+
 var fc = new FrameCommunicator();
+var page = new Page();
 
 fc.on('scroll.step', data => {
   log("[add-on] Received 'scroll.step' message", data);
-
-  var el = getActiveScrollElement();
-  if ('scrollTop' in data) {
-    el.scrollTop += data.scrollTop;
-  }
-  if ('scrollLeft' in data) {
-    el.scrollLeft += data.scrollLeft;
-  }
+  page.scrollStep(data);
 });
 
 fc.on('scroll.to', data => {
   log("[add-on] Received 'scroll.to' message", data);
-
-  var el = getActiveScrollElement();
-  if ('scrollTop' in data) {
-    el.scrollTop = data.scrollTop;
-  }
-  if ('scrollLeft' in data) {
-    el.scrollLeft = data.scrollLeft;
-  }
+  page.scrollTo(data);
 });
 
-fc.on('scroll.home', data => {
+fc.on('scroll.home', () => {
   log("[add-on] Received 'scroll.home' message");
-
-  var el = getActiveScrollElement();
-  el.scrollTop = 0;
+  page.scrollHome();
 });
 
-fc.on('scroll.end', data => {
+fc.on('scroll.end', () => {
   log("[add-on] Received 'scroll.end' message");
-
-  var el = getActiveScrollElement();
-  el.scrollTop = el.scrollHeight;
+  page.scrollEnd();
 });
+
 
 window.addEventListener('load', () => {
   log('Loaded content script', window.location.href);
 });
-
-window.addEventListener('unload', () => {
-  fc.off();
-});
-
-
-function getActiveScrollElement(doc) {
-  doc = doc || document;
-
-  // This is the element that currently has focus.
-  var el = doc.activeElement;
-
-  try {
-    el = el.contentWindow.document.activeElement;
-  } catch (e) {
-    // Oops, we tried accessing the document of a cross-origin iframe:
-    // > Permission was denied to access property 'document'
-    // Fall back to just scrolling the whole document.
-    return doc.documentElement;
-  }
-
-  if (el.tagName.toLowerCase() === 'body') {
-    // If `pointer-events` are disabled, just scroll the page's `<html>`.
-    // Related: https://miketaylr.com/posts/2014/11/document-body-scrollTop.html
-    return el.parentNode;
-  }
-
-  return el;
-}
 
 
 // Simple wrapper to easily toggle logging.
