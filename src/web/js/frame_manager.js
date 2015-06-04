@@ -294,8 +294,15 @@ export default class FrameManager {
             'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
 
             // Vertical scrolling.
-            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
-          }
+            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value)
+          },
+          // Wired Xbox 360 controller
+          '45e-28e-Controller': {
+            'b10': () => this.toggleHud(),
+            'b4': () => this.toggleHud(),
+            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
+            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value)
+          },
         },
       },
       scroll: {
