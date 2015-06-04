@@ -104,23 +104,22 @@ window.addEventListener('unload', () => {
 function getActiveScrollElement(doc) {
   doc = doc || document;
 
-  // This is whichever element currently has focus
-  // (really only useful if `pointer-events` are not disabled).
+  // This is the element that currently has focus.
   var el = doc.activeElement;
 
-  while ('contentWindow' in el) {
-    doc = el.contentWindow.document;
-    el = doc.activeElement;
+  try {
+    el = el.contentWindow.document.activeElement;
+  } catch (e) {
+    // Oops, we tried accessing the document of a cross-origin iframe:
+    // > Permission was denied to access property 'document'
+    // Fall back to just scrolling the whole document.
+    return doc.documentElement;
   }
 
   if (el.tagName.toLowerCase() === 'body') {
-    // If `pointer-events` are disabled, just scroll the `<html>` of the
-    // active `<iframe>` element.
-    //
-    // Also, this lets us scroll an `<iframe>` if the element is visible but
-    // not focussed yet.
+    // If `pointer-events` are disabled, just scroll the page's `<html>`.
     // Related: https://miketaylr.com/posts/2014/11/document-body-scrollTop.html
-    el = el.parentNode;
+    return el.parentNode;
   }
 
   return el;
