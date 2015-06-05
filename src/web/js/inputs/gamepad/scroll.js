@@ -9,8 +9,6 @@ export default class GamepadScroll {
     opts = opts || {};
 
     this.active = false;
-    this.activeElement = null;
-    this.bc = null;
     this.config = Object.assign({}, DEFAULT_CONFIG, opts.config || {});
     this.offset = {x: 0, y: 0};
     this.realVelocity = {x: 0.0, y: 0.0};
