@@ -17,6 +17,9 @@ runtime.frameManager = new FrameManager();
 runtime.gamepadInput = new GamepadInput();
 runtime.keyboardInput = new KeyboardInput();
 runtime.viewportManager = new ViewportManager();
+runtime.settings = {
+  www_directory_src: '/directory.json'
+};
 
 runtime.contentScripts.init(runtime);
 runtime.debugging.init(runtime);
