@@ -8,12 +8,13 @@ export default class FrameManager {
   constructor() {
 
     /* variables for managing frames */
-    this.visible = false;
     this.frames = [];
     this.activeFrameIndex = null;
     this.currentId = 0;
 
     /* variables for frame and HUD elements */
+    this.hudVisible = false;
+    this.isLoading = false;
     this.container = $('#fs-container');
     this.contentContainer = $('#container--mono');
     this.contentStereoContainer = $('#container--stereo');
@@ -25,17 +26,20 @@ export default class FrameManager {
     this.urlbar = $('#urlbar');
     this.urlInput = this.urlbar.querySelector('input');
     this.nav = $('#nav');
-    this.backButton = $('#nav__back');
-    this.forwardButton = $('#nav__forward');
+    this.backfwd = $('#backfwd');
+    this.backButton = $('#backfwd__back');
+    this.forwardButton = $('#backfwd__forward');
+    this.stopreload = $('#stopreload');
+    this.reloadButton = $('#stopreload--reload');
+    this.stopButton = $('#stopreload--stop');
     this.loading = $('#loading');
+    this.closehudButton = $('#closehud');
+    this.resetsensorButton = $('#resetsensor');
     this.hudBackground = $('#background');
 
     /* variables for sound effects */
     this.sfxHudHide = $('#hud_hide');
     this.sfxHudShow = $('#hud_show');
-
-    /* variables for window controls */
-    this.windowControls = $('#window-controls');
   }
 
 
@@ -61,16 +65,19 @@ export default class FrameManager {
         this.newFrame(e.detail.url, false);
         break;
       case 'mozbrowserloadend':
+        this.isLoading = false;
         this.hideLoadingIndicator();
         break;
       case 'mozbrowserloadstart':
+        this.isLoading = true;
         this.showLoadingIndicator();
         break;
     }
   }
 
+
   /**
-   * Manages events for frame handling and native controls (?)
+   * Manages events for native controls (?)
    */
   handleEvent(e) {
     var action = e.target.dataset && e.target.dataset.action;
@@ -83,6 +90,13 @@ export default class FrameManager {
       case 'nativeControl':
         this.nativeControl(e);
         return;
+      case 'forward':
+      case 'back':
+      case 'reload':
+        /* on back, forward or reload, hide the Hud and trigger the selected action on the active frame */
+        this.toggleHud();
+        this.activeFrame['on_' + e.target.dataset.action](e);
+        return
     }
 
     this.activeFrame['on_' + e.target.dataset.action](e);
@@ -257,10 +271,28 @@ export default class FrameManager {
     this.updateHUDForActiveFrame();
   }
 
+  /**
+   * Handles backspace. If HUD is open, close HUD. Else, trigger back action in active frame.
+   */
+
+  backspace() {
+    if(this.hudVisible){
+      this.hideHud();
+    } else {
+      this.activeFrame.on_back();
+    }
+  }
+
 
   /**
-   * Handles URL submit and loading new URL into active frame
+   * Handles loading new URLs into active frame
    */
+
+  handleLinkClick(e) {
+    e.preventDefault();
+    this.navigate(e.target.href);
+    this.hideHud();
+  }
 
   handleUrlEntry(e) {
     e.preventDefault();
@@ -298,7 +330,7 @@ export default class FrameManager {
    * Shows/Hides majority of the HUD elements
    */
   showHud() {
-    this.visible = true;
+    this.hudVisible = true;
     this.focusUrlbar();
     this.sfxHudShow.play();
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
@@ -306,25 +338,31 @@ export default class FrameManager {
     this.title.style.animation = 'show 0.1s ease forwards';
     this.directory.style.animation = 'show 0.1s ease forwards';
     this.urlbar.style.animation = 'show 0.1s ease forwards';
-    this.nav.style.animation = 'show 0.1s ease forwards';
+    this.backfwd.style.animation = 'show 0.1s ease forwards';
+    this.showStopreload();
+    this.closehudButton.style.animation = 'show 0.1s ease forwards';
+    this.resetsensorButton.style.animation = 'show 0.1s ease forwards';
     this.hudBackground.style.animation = 'background-fadeIn 0.3s ease forwards';
   }
 
   hideHud() {
+    this.hudVisible = false;
     this.urlInput.blur();
-    this.visible = false;
     this.sfxHudHide.play();
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
     this.contentContainer.style.animation = 'container-pullForward 0.3s ease forwards';
     this.title.style.animation = 'hide 0.1s ease forwards';
     this.directory.style.animation = 'hide 0.1s ease forwards';
     this.urlbar.style.animation = 'hide 0.1s ease forwards';
-    this.nav.style.animation = 'hide 0.1s ease forwards';
+    this.backfwd.style.animation = 'hide 0.1s ease forwards';
+    this.hideStopreload();
+    this.closehudButton.style.animation = 'hide 0.1s ease forwards';
+    this.resetsensorButton.style.animation = 'hide 0.1s ease forwards';
     this.hudBackground.style.animation = 'background-fadeOut 0.3s ease forwards';
   }
 
   toggleHud() {
-    if (this.visible) {
+    if (this.hudVisible) {
       this.hideHud();
     } else {
       this.showHud();
@@ -333,14 +371,36 @@ export default class FrameManager {
 
 
   /**
-   * Show/Hide loading indicators in response to mozbrowserloadstart and mozbrowserloadend
+   * Show/Hide the stop-reload buttons
+   * Called by both loading events (mozbrowserloadstart and mozbrowserloadend) and user action (toggleHud).
    */
+
+  showStopreload(){
+    this.stopreload.style.animation = 'show 0.1s ease forwards';
+  }
+
+  hideStopreload(){
+    if(!this.isLoading){ // Only hide if activeFrame is not currently loading. This ensures the stop button stays visible during loading.
+      this.stopreload.style.animation = 'hide 0.1s ease forwards';
+    }
+  }
+
+
+  /**
+   * Show/Hide loading indicators
+   * Called by mozbrowserloadstart and mozbrowserloadend events.
+   */
+
   showLoadingIndicator() {
+    this.showStopreload();
     this.loading.style.animation = 'show 0.1s ease forwards';
+    this.stopButton.style.display = 'inline'; // When loading starts, show the stop button
   }
 
   hideLoadingIndicator() {
+    this.hideStopreload();
     this.loading.style.animation = 'hide 0.1s ease forwards';
+    this.stopButton.style.display = 'none'; // When loading ends, hide the stop button to reveal the underlying reload button.
   }
 
 
@@ -353,12 +413,14 @@ export default class FrameManager {
       tile.className = 'directory__tile';
       tile.setAttribute('href', site.url);
       tile.innerHTML = site.name;
+      tile.addEventListener('click', this.handleLinkClick.bind(this), false)
       this.directory.appendChild(tile);
     });
   }
 
   init(runtime) {
     this.utils = runtime.utils;
+    this.viewportManager = runtime.viewportManager;
 
     // Creates listeners for HUD element states and positions
     window.addEventListener('resize', this.positionFrames.bind(this));
@@ -367,9 +429,8 @@ export default class FrameManager {
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.urlInput.addEventListener('input', this.handleChange.bind(this));
-
-    // Creates listeners for HUD element states and positions
-    this.windowControls.addEventListener('click', this);
+    this.closehudButton.addEventListener('click', this.hideHud.bind(this));
+    this.resetsensorButton.addEventListener('click', this.viewportManager.resetSensor.bind(this));
 
     // Creates initial frame
     this.newFrame();
@@ -441,6 +502,7 @@ export default class FrameManager {
       'ctrl ArrowRight': () => this.activeFrame.on_forward(),
       'ctrl tab': () => this.nextFrame(),
       'ctrl shift tab': () => this.prevFrame(),
+      'backspace': () => this.backspace(),
       ' ': () => this.toggleHud(),
       'alt arrowup': () => {
         runtime.frameCommunicator.send('scroll.step', {
