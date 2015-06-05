@@ -9,6 +9,9 @@
 </head>
 <body data-frame-pointer-events="none">
 
+  <audio id="hud_hide" src="media/hud_hide.wav" preload="auto"></audio>
+  <audio id="hud_show" src="media/hud_show.wav" preload="auto"></audio>
+
   <!-- fullscreen container which VR fullscreen is applied to -->
   <div id="fs-container">
     <div id="container--stereo" class="container--stereo">
@@ -17,45 +20,46 @@
 
     <!-- container acting as camera -->
     <div id="camera" class="camera threed">
+
+      <!-- <div class="container__cover threed"></div> -->
       <div id="container--mono" class="container--mono threed">
         <!-- browser content iframes -->
       </div>
 
-      <!-- HUD interface elements -->
+      <!-- HUD -->
       <div id="hud" class="hud threed">
-        <div class="title">
-          <span id="hud__icon" class="hud__icon"></span>
-          <span id="hud__title" class="hud__title"></span>
+
+        <div id="background" class="background threed"></div>
+
+        <div id="title" class="title threed">
+          <span id="title__icon" class="title__icon"></span>
+          <span id="title__text" class="title__text"></span>
         </div>
 
-        <div id="nav" class="nav">
-          <span class="fa fa-arrow-left nav__btn nav__btn--back" data-action="back" id="nav__back"></span>
-          <span class="fa fa-arrow-right nav__btn nav__btn--forward" data-action="forward" id="nav__forward"></span>
+        <div id="directory" class="directory threed"></div>
 
-          <form action="#" class="nav__urlbar" id="nav__urlbar">
-            <input class="nav__input" type="text">
-          </form>
+        <form id="urlbar" class="urlbar threed" action="#">
+          <input class="urlbar__input" type="text">
+        </form>
 
-          <span class="fa fa-repeat nav__btn nav__btn--reload" data-action="reload"></span>
-          <span class="fa fa-times nav__btn nav__btn--stop" data-action="stop"></span>
-          <span class="fa fa-plus nav__btn nav__btn--new" data-action="new"></span>
+        <div id="backfwd" class="backfwd threed">
+          <span class="fa fa-arrow-left nav backfwd__back" data-action="back" id="backfwd__back"></span>
+          <span class="fa fa-arrow-right nav backfwd__forward" data-action="forward" id="backfwd__forward"></span>
         </div>
+        
+        <div id="stopreload" class="stopreload threed">
+          <span class="fa fa-repeat nav stopreload--reload" data-action="reload" id="stopreload--reload"></span>
+          <span class="fa fa-times nav stopreload--stop" data-action="stop" id="stopreload--stop"></span>
+        </div>
+        <!-- <span class="fa fa-plus nav__btn nav__btn--new" data-action="new"></span> -->
+
+        <div id="closehud" class="closehud threed">Close HUD</div>
+        <div id="resetsensor" class="resetsensor threed">Reset Sensor</div>
+
+        <div id="loading" class="loading threed">LOADING</div>
 
       </div>
     </div>
-
-  </div>
-
-  <div id="window-controls" class="window-controls">
-    <span class="control control--shutdown"
-      data-action="nativeControl"
-      data-message="shutdown-application"></span>
-    <span class="control control--minimize"
-      data-action="nativeControl"
-      data-message="minimize-native-window"></span>
-    <span class="control control--fullscreen"
-      data-action="nativeControl"
-      data-message="toggle-fullscreen-native-window"></span>
   </div>
 
   <button id="entervr" class="btn btn--entervr">Enter VR</button>
