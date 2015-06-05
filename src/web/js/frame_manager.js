@@ -61,14 +61,17 @@ export default class FrameManager {
 
 
   /**
-   * Manages events for the active frame.
+   * Manages events for the active frame (called from `Frame.handleEvent` method).
+   *
+   * @param {Event} e A `mozbrowser*` event.
+   * @param {Object} frame A `Frame` instance (should be the active frame's).
    */
   browserEvent(e, frame) {
     if (frame.id !== this.activeFrame.id) {
       return;
     }
 
-    switch(e.type) {
+    switch (e.type) {
       case 'mozbrowserlocationchange':
         this.updateHUDForNavButtons();
         /* falls through */
@@ -97,13 +100,15 @@ export default class FrameManager {
 
 
   /**
-   * Manages events for native controls.
+   * Manages events for native controls (for clicking on HUD elements).
+   *
+   * @param {Event} e A `click` event.
    */
   handleEvent(e) {
     var action = e.target.dataset && e.target.dataset.action;
     if (!action) { return; }
 
-    switch(action) {
+    switch (action) {
       case 'new':
         this.newFrame();
         return;
@@ -124,7 +129,9 @@ export default class FrameManager {
 
 
   /**
-   * Shows a modal dialog.
+   * Shows a modal dialog (called from `browserEvent` method).
+   *
+   * @param {Event} e A `mozbrowsershowmodalprompt` event.
    */
   showModal(e) {
     e.preventDefault();
@@ -160,6 +167,8 @@ export default class FrameManager {
 
   /**
    * Handles when a native control is clicked.
+   *
+   * @param {Event} e The custom event triggered from the window controls.
    */
   nativeControl(e) {
     var type = e.target.dataset.message;
@@ -189,6 +198,8 @@ export default class FrameManager {
 
   /**
    * Gets the activeFrame.
+   *
+   * @returns {Object} The active `Frame` instance.
    */
   get activeFrame() {
     return this.frames[this.activeFrameIndex];
@@ -196,6 +207,8 @@ export default class FrameManager {
 
   /**
    * Returns the next ID.
+   *
+   * @returns {Number} The next frame (tab) number.
    */
   nextId() {
     return ++this.currentId;
@@ -303,6 +316,8 @@ export default class FrameManager {
 
   /**
    * Updates title text.
+   *
+   * @param {String} text Title of page loaded in the active frame.
    */
   updateTitle(text) {
     this.titleText.textContent = text;
@@ -412,6 +427,8 @@ export default class FrameManager {
    * Returns a promise if the HUD is open.
    *
    * (Useful for conditionally calling functions based on HUD visibility.)
+   *
+   * @returns {Promise} Resolved if HUD is opened; rejected if HUD is closed.
    */
   requireHudOpen() {
     if (this.hudVisible) {
@@ -423,6 +440,8 @@ export default class FrameManager {
 
   /**
    * Returns a promise if the active frame is mono.
+   *
+   * @returns {Promise} Resolved if frame is mono; rejected if HUD is stereo.
    */
   requireMonoFrameOpen() {
     if (!this.activeFrame.isStereo) {
@@ -434,6 +453,8 @@ export default class FrameManager {
 
   /**
    * Returns a promise if the active frame is stereo.
+   *
+   * @returns {Promise} Resolved if frame is stereo; rejected if HUD is mono.
    */
   requireStereoFrameOpen() {
     if (this.activeFrame.isStereo) {
@@ -483,6 +504,8 @@ export default class FrameManager {
 
   /**
    * Populate the directory using the loaded JSON.
+   *
+   * @param {Object} data An object containing an array of sites in the directory.
    */
   buildDirectory(data) {
     data.sites.forEach(site => {

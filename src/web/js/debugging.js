@@ -26,6 +26,9 @@ export default class Debugging {
 
   /**
    * Dispatches an event to gecko.
+   *
+   * @param {String} name The event name.
+   * @param {Object} payload The event `details` object (optional).
    */
   dispatch(name, payload) {
     let details = payload || {};
