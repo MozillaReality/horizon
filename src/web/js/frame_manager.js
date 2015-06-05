@@ -174,15 +174,15 @@ export default class FrameManager {
   }
 
   /**
-   * Removes the active frame from the stack
+   * Closes the currently active frame
    */
   closeFrame() {
     if (!this.activeFrame) { return; }
 
     this.activeFrame.close();
 
-    this.frames.splice(this.activeFrameIndex, 1);
-    this.activeFrameIndex = this.activeFrameIndex > 0 ? this.activeFrameIndex - 1 : 0;
+    this.frames.splice(this.activeFrameIndex, 1); // Remove the active frame from the stack.
+    this.activeFrameIndex = Math.max(this.activeFrameIndex - 1, 0);
 
     this.positionFrames();
   }
@@ -451,13 +451,12 @@ export default class FrameManager {
      * Loads JSON for Directory
      * TODO: Put in utils? Took forever to figure out how to make scope work. Cvan helped explain how to use fetch and .bind()
      */
-    var self = this;
     fetch('directory.json')
     .then(function (response) {
       return response.json()
     })
     .then(data => {
-      self.buildDirectory(data)
+      this.buildDirectory(data)
     });
 
     runtime.gamepadInput.assign({

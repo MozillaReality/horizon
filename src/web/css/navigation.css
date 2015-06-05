@@ -414,13 +414,14 @@ input {
   transform: translate(-50%, 0) translate3d(0, 20cm, 0);
 }
 
-.resetsensor:hover, .closehud:hover, {
+.resetsensor:hover, .closehud:hover {
   background: black;
   color: white;
 }
 
-.resetsensor:active, .closehud:active, {
+.resetsensor:active, .closehud:active {
   background: var(--color-blue-vibrant);
+  border: 0.25cm solid var(--color-blue-vibrant);
   color: white;
 }
 
