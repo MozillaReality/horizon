@@ -44,6 +44,9 @@ export default class FrameManager {
       case 'mozbrowsertitlechange':
         this.updateHUDForActiveFrame();
         break;
+      case 'mozbrowsershowmodalprompt':
+        this.showModal(e);
+        break;
       case 'mozbrowseropenwindow':
         this.newFrame(e.detail.url);
         break;
@@ -67,6 +70,41 @@ export default class FrameManager {
     }
 
     this.activeFrame['on_' + e.target.dataset.action](e);
+  }
+
+  /**
+   * Shows a modal dialog.
+   */
+  showModal(e) {
+    e.preventDefault();
+
+    var unblockUI = (detail, returnValue) => {
+      if (returnValue !== undefined) {
+        detail.returnValue = returnValue;
+      }
+      if (detail.unblock) {
+        detail.unblock();
+      }
+    }.bind(null, e.detail);
+
+    var controls = [];
+    switch (e.detail.promptType) {
+      case 'alert':
+        controls.push({
+          text: 'ok',
+          handler: unblockUI
+        });
+        break;
+      case 'prompt':
+        // TODO
+        break;
+      case 'confirm':
+        // TODO
+    }
+  }
+
+  modalPromptHide() {
+
   }
 
   /**
