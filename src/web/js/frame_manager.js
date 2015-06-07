@@ -193,7 +193,9 @@ export default class FrameManager {
    */
   updateHUDForActiveFrame() {
     if (this.activeFrame) {
-      this.urlInput.value = this.activeFrame.title || this.activeFrame.location;
+      var url = new URL(this.activeFrame.location);
+      this.urlInput.value = url.hostname;
+      // this.urlInput.value = this.activeFrame.title || this.activeFrame.location;
       this.updateTitle(this.activeFrame.title);
       this.titleIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
@@ -246,15 +248,6 @@ export default class FrameManager {
     }
     this.urlInput.focus();
     this.urlInput.select();
-  }
-
-  /**
-   * Handles change in url input field.
-   */
-  handleChange() {
-    if (this.urlInput.value.trim().length === 0) {
-      this.hideHud();
-    }
   }
 
   /**
@@ -329,7 +322,7 @@ export default class FrameManager {
    */
   showHud() {
     this.hudVisible = true;
-    this.focusUrlbar();
+    // this.focusUrlbar();
     this.sfxHudShow.play();
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
     this.contentContainer.style.animation = 'container-pushBack 0.3s ease forwards';
@@ -428,7 +421,6 @@ export default class FrameManager {
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
-    this.urlInput.addEventListener('input', this.handleChange.bind(this));
     this.closehudButton.addEventListener('click', this.hideHud.bind(this));
     this.resetsensorButton.addEventListener('click', this.viewportManager.resetSensor.bind(this));
 
