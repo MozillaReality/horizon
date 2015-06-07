@@ -1,4 +1,7 @@
 import Frame from './frame.js';
+import Matrix from './lib/matrix.js';
+
+var matrix = new Matrix();
 
 const scrollConfig = {
   step: 50,
@@ -297,7 +300,22 @@ export default class FrameManager {
     this.activeFrame.navigate(url);
   }
 
+  positionDialogue() {
+    let dialogue = $('#dialogue');
+    let orientation = this.runtime.hmdState.orientation;
+
+    // invert orientation
+    orientation.y *= -1;
+    orientation.x *= -1;
+    orientation.z *= -1;
+
+    // apply matrix to dialogue
+    let cssMatrix = matrix.cssMatrixFromOrientation(orientation);
+    dialogue.style.transform = cssMatrix;
+  }
+
   init(runtime) {
+    this.runtime = runtime;
     this.utils = runtime.utils;
 
     window.addEventListener('resize', this.positionFrames.bind(this));
@@ -360,6 +378,7 @@ export default class FrameManager {
       'ctrl tab': () => this.nextFrame(),
       'ctrl shift tab': () => this.prevFrame(),
       ' ': () => this.toggleHud(),
+      'enter': () => this.positionDialogue(),
       'alt arrowup': () => {
         runtime.frameCommunicator.send('scroll.step', {
           scrollTop: -scrollConfig.step
