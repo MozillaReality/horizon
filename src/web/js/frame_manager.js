@@ -195,7 +195,6 @@ export default class FrameManager {
     if (this.activeFrame) {
       var url = new URL(this.activeFrame.location);
       this.urlInput.value = url.hostname;
-      // this.urlInput.value = this.activeFrame.title || this.activeFrame.location;
       this.updateTitle(this.activeFrame.title);
       this.titleIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
@@ -322,7 +321,6 @@ export default class FrameManager {
    */
   showHud() {
     this.hudVisible = true;
-    // this.focusUrlbar();
     this.sfxHudShow.play();
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
     this.contentContainer.style.animation = 'container-pushBack 0.3s ease forwards';
