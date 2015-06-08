@@ -3,37 +3,64 @@
  */
 
 :root {
+
   /* default depth to place interface */
-  --interface-depth: -800px;
+  --hud-depth: -34cm;
 
   /* default depth to mono iframe content */
-  --interface-mono-depth: -900px;
+  --content-depth: calc(var(--hud-depth) - 4cm);
+  --content-depth-hud--open: calc(var(--hud-depth) - 8cm);
 
-  /* margin between navigation control */
-  --interface-margin: 50px;
+  /* default content dimensions */
+  --content-width: 32cm; 
+  --content-height: 26cm;
 
-  /* default iframe dimensions */
-  --interface-width: 1024px;
-  --interface-height: 768px;
-
+  /* icons size */
   --icon-size: 25px;
+
+  /* colors */
+  --color-blue-vibrant: hsl(200, 89%, 50%);
 }
 
 
 /**
- * tags
+ * Common animations
+ */
+
+@keyframes show {
+  from { visibility: hidden; }
+  to { visibility: visible; }
+}
+
+@keyframes hide {
+  from { visibility: visible; }
+  to { visibility: hidden; }
+}
+
+
+/**
+ * Globals
  */
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  font-size: 1cm;
+}
+
 html,
 body {
-  width: 100%;
+  background: hsl(228, 15%, 19%);
   height: 100%;
-  background: #111;
+  width: 100%;
+}
+
+input {
+  border: 0;
 }
 
 
@@ -42,9 +69,9 @@ body {
  */
 
 .threed {
+  left: 0;
   position: absolute;
   top: 0;
-  left: 0;
 }
 
 *:-moz-full-screen .threed {
@@ -66,29 +93,78 @@ body {
  * Content iframes
  */
 
+/* fullscreen container */
+#fs-container {
+  background-color: hsl(228, 15%, 19%);
+}
+
+@keyframes fs-container-lighten {
+  from { background-color: hsl(228, 20%, 13%); }
+  to { background-color: hsl(228, 15%, 19%); }
+}
+
+@keyframes fs-container-darken {
+  from { background-color: hsl(228, 15%, 19%); }
+  to { background-color: hsl(228, 20%, 13%); }
+}
+ 
+
 /* 2D content container */
-.container--mono {}
+
+.container--mono {
+  height: var(--content-height);
+  width: var(--content-width);
+}
 
 *:-moz-full-screen .container--mono {
-  /* translate top left so that mono content is centered in viewport */
-  transform: translate(calc(var(--interface-width) / 2 * -1), calc(var(--interface-height) / 2 * -1)) translate3d(0, 0, var(--interface-mono-depth));
+  /* translate top left so that mono content is centered in viewport, then position in 3D space */
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth));
 }
+
+@keyframes container-pushBack {
+  from {
+    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
+  }
+  to { 
+    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
+  }
+}
+
+@keyframes container-pullForward {
+  from { 
+    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
+  }
+  to { 
+    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1); 
+  }
+}
+
 
 /* stereo content container */
 .container--stereo {
-  position: absolute;
+  height: 100%;
   left: 0;
+  position: absolute;
   top: 0;
   width: 100%;
-  height: 100%;
 }
 
-/* iframe */.frame--mono {
+
+/* iframe */
+.frame--mono {
   border: 0;
-  width: var(--interface-width);
-  height: var(--interface-height);
+  width: var(--content-width);
+  height: var(--content-height);
+  top: 18cm;
+  left: 18cm;
   transition: transform 0.5s ease;
   background: white;
+}
+
+*:-moz-full-screen .frame--mono {
+  top: 0;
+  left: 0;
+  transform: translate3d(0, 0, var(--hud-depth));
 }
 
 [data-frame-pointer-events="none"] /* iframe */.frame--mono {
@@ -96,157 +172,316 @@ body {
      Uncomment this if you want the user to be able to click on any scrollable
      element and scroll within that element using a gamepad. */
   pointer-events: none;
+  transition: transform 0.5s ease;
+  width: 100%;
 }
 
-/* iframe */.frame--stereo {
+/* iframe */
+.frame--stereo {
+  height: 100%;
+  left: 0;
   position: absolute;
   top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
 }
+
 
 
 /**
  * HUD
  */
 
-.hud {
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.8);
-  width: 700px;
-  height: 200px;
-  top: calc(var(--interface-height) / 2 - 100px);
-  left: calc(var(--interface-width) / 2 - 350px);
-  border-radius: 25px;
-  padding: 10px;
+.hud {  
+  --hud-width: 28cm;
+  top: 18cm;
+  left: 18cm;
+  transform: translate3d(0, 0, var(--hud-depth));
 }
 
 *:-moz-full-screen .hud {
-  transform: translate3d(-50%, -50%, var(--interface-depth));
-  top: 0;
   left: 0;
-}
-
-.title {
-  margin: 10px;
-  text-align: center;
-}
-
-.hud__title {
-  font-size: 30px;
-  color: #fff;
-}
-
-.hud__icon {
-  height: var(--icon-size);
-  width: var(--icon-size);
-  /* move icon left to maintain correct title centering */
-  margin-left: calc(var(--icon-size) * -1);
-  display: inline-block;
-  background-repeat: no-repeat;
-  background-size: 100%;
-}
-
-.nav {
-  text-align: center;
-  font-size: 20px;
-  /* Disable selection of navigation controls. */
-  -moz-user-select: none;
-  padding: 10px;
-  border-radius: 50px;
-}
-
-.nav__urlbar {
-  display: inline-block;
-}
-
-.nav__input {
-  width: 400px;
-  height: 50px;
-  color: #000;
-  background: #fff;
-  font-size: 20px;
-  font-weight: 500;
-  border: 4px solid #efefef;
-  border-radius: 30px;
-  padding: 0 20px;
-  margin: 0;
-}
-
-.nav__input:focus {
-  border: 4px solid #3498DB;
-}
-
-.nav__btn,
-.fa.nav__btn {
-  display: inline-block;
-  line-height: 50px;
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
-  background: #333;
-  color: #efefef;
-  border-radius: 30px;
-  margin: 0px;
-  transition: .1s opacity, .1s background;
-}
-
-.nav__btn:not([disabled]):hover {
-  background: #3498DB;
-  cursor: pointer;
-}
-
-.nav__btn[disabled] {
-  opacity: .25;
-  pointer-events: none;
+  top: 0;
+  transform: translate3d(0, 0, var(--hud-depth));
 }
 
 
 /**
- * Window Controls
+ * Loading
  */
- .window-controls {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 100px;
-  line-height: 30px;
-  vertical-align: center;
-  margin-left: 7px;
-  transform: translate(0, 0) translate3d(0, 0, calc(var(--interface-depth) + var(--interface-margin)));
+
+.loading {
+  background: hsla(197, 97%, 59%, 0.76);
+  color: white;
+  font: 600 0.75rem/1em sans-serif;
+  padding: 0.6em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) translate3d(0, 12cm, 4cm);
+  width: 6cm;
 }
 
-.window-controls .control {
+
+/**
+ * Title
+ */
+
+.title {
+  background-color: black;
+  color: white;
+  font: 400 1.1rem/1 sans-serif;
+  letter-spacing: 0.06em;
+  line-height: 1em;
+  overflow: hidden;
+  padding: 0.75em 2em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) translate3d(0, -10cm, -2cm);
+  white-space: nowrap;
+  width: var(--hud-width);
+}
+
+.title__text {
+}
+
+.title__icon {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  display: none;
+  height: var(--icon-size);
+  margin-left: calc(var(--icon-size) * -1);
+  width: var(--icon-size);
+}
+
+
+/**
+ * Directory
+ */
+
+.directory { 
+  text-align: center;
+  transform: translate(-50%, -100%) translate3d(0, 9cm, 0);
+  width: 40cm;
+}
+
+.directory__tile {
+  background: white;
+  border: 0.25cm solid black;
+  color: black;
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin-right: 8px;
-  border-radius: 50%;
+  font: 500 1.1rem/1em sans-serif;
+  height: 7cm;
+  margin: 0.25cm;
+  overflow: hidden;
+  padding: 0.5cm;
+  position: relative;
+  text-align: left;
+  width: 7cm;
+  text-decoration: none;
 }
 
-.window-controls .control--shutdown {
-  background: #FC5753;
+.directory__tile:hover {
+  background-color: black;
+  color: white;
 }
 
-.window-controls .control--minimize {
-  background: #FDBC40;
+.directory__tile:active {
+  background: var(--color-blue-vibrant);
+  border: 0.25cm solid var(--color-blue-vibrant);
 }
 
-.window-controls .control--fullscreen {
-  background: #33C748;
+.directory__tile .type {
+  color: gray;
+  display: inline-block;
+  font: 400 0.75em/1em sans-serif;
 }
 
-.window-controls .control:hover {
-  background: hsl(0, 0%, 86%);
+
+
+/**
+ * URL Bar
+ */
+
+.urlbar {
+  background-color: hsla(228, 15%, 6%, 0.75);
+  padding: 0.25rem;
+  text-align: left;
+  transform: translate(-50%, 0) translate3d(0, 10cm, 0);
+  width: var(--hud-width);
 }
+
+.urlbar__input {
+  font: 500 1.2rem/1 sans-serif;
+  letter-spacing: 0.05em;
+  padding: 0.5em 1em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: .25s width ease;
+  width: 100%;
+}
+
+.urlbar__input:hover {
+  background: black;
+  color: white;
+}
+
+.urlbar__input, .urlbar__input::-moz-selection {
+  background: white;
+  color: hsl(0, 0%, 20%);
+}
+
+.urlbar__input:focus {
+  background: var(--color-blue-vibrant);
+  color: white;
+}
+
+.urlbar__input:focus::-moz-selection  {
+  background: hsla(0, 0%, 0%, 0.2);
+  color: white;
+}
+
+
+/**
+ * Navigation controls
+ */
+
+.backfwd {
+  transform: translate(-50%, 0) translate3d(-12cm, 14cm, 0);
+}
+
+.backfwd__back {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.backfwd__forward {
+  left: 3cm;
+  position: absolute;
+  top: 0;
+}
+
+
+.stopreload {
+  transform: translate(-50%, 0) translate3d(3cm, 14cm, 0);
+}
+
+.stopreload--stop, .stopreload--reload {
+  left: 0;
+  position: absolute;
+  top: 0;  
+}
+
+
+.nav,
+.fa.nav {
+  -moz-user-select: none; /* Disable selection of navigation controls. */
+  background: white;
+  border: 0.25cm solid black;
+  color: black;
+  line-height: 1em;
+  margin: 0;
+  padding: 0.5em;
+  transition: .1s opacity;
+}
+
+.nav:not([disabled]):hover {
+  background: black;
+  color: white;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.nav[disabled] {
+  opacity: .25;
+  pointer-events: none;
+}
+
+.nav:not([disabled]):active {
+  background: var(--color-blue-vibrant);
+  border: 0.25cm solid var(--color-blue-vibrant);;
+}
+
+
+/**
+ * Close HUD, Reset Sensor
+ */
+
+.closehud, .resetsensor {
+  background: white;
+  border: 0.25cm solid black;
+  color: black;
+  cursor: pointer;
+  font: 600 0.75rem/1em sans-serif;
+  padding: 0.6em;
+  text-align: center;
+  text-transform: uppercase;
+  width: 7cm;
+}
+
+.closehud {
+  transform: translate(-50%, 0) translate3d(0, 17cm, 0);
+}
+
+.resetsensor {
+  transform: translate(-50%, 0) translate3d(0, 20cm, 0);
+}
+
+.resetsensor:hover, .closehud:hover {
+  background: black;
+  color: white;
+}
+
+.resetsensor:active, .closehud:active {
+  background: var(--color-blue-vibrant);
+  border: 0.25cm solid var(--color-blue-vibrant);
+  color: white;
+}
+
+
+
+/**
+ * Background
+ */
+/* The goal here is the obscured the active site while the HUD is open, for the sake of legibility. */
+/* Alternative would be to reduce opacity on the container, but this creates glitches on 3D transformed elements (they disappear) */
+
+.background {
+  background: hsla(228, 20%, 13%, 0.9);
+  height: var(--content-height);
+  transform: translate(-50%, -50%) translate3d(0, 0, -4cm);
+  width: var(--content-width);
+}
+
+@keyframes background-fadeIn {
+  from { background-color: hsla(228, 20%, 13%, 0); }
+  to { background-color: hsla(228, 20%, 13%, 0.95); }
+}
+
+@keyframes background-fadeOut {
+  from { background-color: hsla(228, 20%, 13%, 0.95); }
+  to { background-color: hsla(228, 20%, 13%, 0); }
+}
+
 
 
 /**
  * Other interface
  */
+
 .btn--entervr {
+  background: hsl(0, 0%, 30%);
+  border: 0;
+  color: white;
+  font: 300 0.5rem/1 sans-serif;
+  letter-spacing: 0.1em;
+  padding: 0.25rem;
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 2em;
+  text-transform: uppercase;
+  top: 2em;
+}
+
+.btn--entervr:hover {
+  background: hsl(0, 0%, 45%);
+  cursor: pointer;
 }
