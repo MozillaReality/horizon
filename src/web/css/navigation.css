@@ -440,6 +440,25 @@ input {
 
 
 /**
+ * Menu
+ */
+
+.menu__box {
+  background-color: hsla(0, 0%, 0%, 0.4);
+  color: white;
+  font: 200 3rem/1em sans-serif;
+  padding: 0.25em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translate3d(-50%, -50%, var(--hud-depth));
+}
+
+.menu__box span {
+  /*border-bottom: 0.05em solid white;*/
+}
+
+
+/**
  * Background
  */
 /* The goal here is the obscured the active site while the HUD is open, for the sake of legibility. */

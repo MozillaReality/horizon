@@ -1,4 +1,7 @@
 import Frame from './frame.js';
+import Matrix from './lib/matrix.js';
+
+var matrix = new Matrix();
 
 const scrollConfig = {
   step: 50,
@@ -14,6 +17,7 @@ export default class FrameManager {
 
     // Variables for frame and HUD elements.
     this.hudVisible = false;
+    this.menuVisible = false;
     this.isLoading = false;
     this.container = $('#fs-container');
     this.contentContainer = $('#container--mono');
@@ -35,6 +39,7 @@ export default class FrameManager {
     this.loading = $('#loading');
     this.closehudButton = $('#closehud');
     this.resetsensorButton = $('#resetsensor');
+    this.menuBox = $('#menu__box');
     this.hudBackground = $('#background');
 
     // Variables for sound effects.
@@ -374,6 +379,47 @@ export default class FrameManager {
   }
 
 
+  /*
+   * Show/Hides contextual menu.
+   * We appy cssMatrix to parent `menu` element. We show/hide the child `menu__box`, which is set out in z-space.
+   */
+  positionMenu() {
+
+    let menu = $('#menu');
+    let orientation = this.runtime.hmdState.orientation;
+
+    // invert orientation
+    orientation.y *= -1;
+    orientation.x *= -1;
+    orientation.z = 0;
+
+    // apply matrix to dialogue
+    let cssMatrix = matrix.cssMatrixFromOrientation(orientation);
+    menu.style.transform = cssMatrix;
+  }
+
+  showMenu() {
+    this.menuVisible = true;
+    this.positionMenu();
+    this.menuBox.style.animation = 'show 0.1s ease forwards';
+  }
+
+  hideMenu() {
+    this.menuVisible = false;
+    this.menuBox.style.animation = 'hide 0.1s ease forwards';
+  }
+
+  toggleMenu() {
+    if(this.hudVisible) {
+      return;
+    } else if (this.menuVisible) {
+      this.hideMenu();
+    } else {
+      this.showMenu();
+    }
+  }
+
+
   /**
    * Show/Hide loading indicators.
    * Called by mozbrowserloadstart and mozbrowserloadend events.
@@ -410,11 +456,13 @@ export default class FrameManager {
   }
 
   init(runtime) {
+    this.runtime = runtime;
     this.utils = runtime.utils;
     this.viewportManager = runtime.viewportManager;
 
     // Creates listeners for HUD element states and positions.
     window.addEventListener('resize', this.positionFrames.bind(this));
+    window.addEventListener('contextmenu', this.toggleMenu.bind(this));
     this.hud.addEventListener('click', this);
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
@@ -490,6 +538,7 @@ export default class FrameManager {
       'ctrl ArrowRight': () => this.activeFrame.on_forward(),
       'ctrl tab': () => this.nextFrame(),
       'ctrl shift tab': () => this.prevFrame(),
+      'enter': () => this.toggleMenu(),
       'backspace': () => this.backspace(),
       ' ': () => this.toggleHud(),
       'alt arrowup': () => {
