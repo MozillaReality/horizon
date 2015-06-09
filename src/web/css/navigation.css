@@ -12,7 +12,7 @@
   --content-depth-hud--open: calc(var(--hud-depth) - 8cm);
 
   /* default content dimensions */
-  --content-width: 32cm; 
+  --content-width: 32cm;
   --content-height: 26cm;
 
   /* icons size */
@@ -107,7 +107,7 @@ input {
   from { background-color: hsl(228, 15%, 19%); }
   to { background-color: hsl(228, 20%, 13%); }
 }
- 
+
 
 /* 2D content container */
 
@@ -125,17 +125,17 @@ input {
   from {
     transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
   }
-  to { 
+  to {
     transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
   }
 }
 
 @keyframes container-pullForward {
-  from { 
+  from {
     transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
   }
-  to { 
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1); 
+  to {
+    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
   }
 }
 
@@ -191,7 +191,7 @@ input {
  * HUD
  */
 
-.hud {  
+.hud {
   --hud-width: 28cm;
   top: 18cm;
   left: 18cm;
@@ -257,7 +257,7 @@ input {
  * Directory
  */
 
-.directory { 
+.directory {
   text-align: center;
   transform: translate(-50%, -100%) translate3d(0, 9cm, 0);
   width: 40cm;
@@ -368,7 +368,7 @@ input {
 .stopreload--stop, .stopreload--reload {
   left: 0;
   position: absolute;
-  top: 0;  
+  top: 0;
 }
 
 
