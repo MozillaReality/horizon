@@ -201,11 +201,8 @@ export default class FrameManager {
     for (var i = 0; i < this.frames.length; i++) {
       var width = this.frames[i].element.offsetWidth;
       var x = (i - this.activeFrameIndex) * width;
-      var distance = 1000;
       var rotate = 20 * (i - this.activeFrameIndex) * -1;
-      this.frames[i].element.style.transform = `translateX(${x}px)
-        perspective(${distance}px)
-        rotateY(${rotate}deg)`;
+      this.frames[i].element.style.transform = `translateX(${x}px) rotateY(${rotate}deg)`;
     }
     this.updateHUDForNavButtons();
     this.updateHUDForActiveFrame();
