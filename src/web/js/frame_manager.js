@@ -330,6 +330,9 @@ export default class FrameManager {
     if (!this.activeFrame) {
       this.newFrame();
     }
+    if (this.activeFrame.isStereo) {
+      this.toMono(this.activeFrame);
+    }
     this.activeFrame.navigate(url);
   }
 
