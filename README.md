@@ -5,7 +5,7 @@
 
 # Horizon
 
-An experimental browser written using web standards. This browser can be run inside of a standalone Graphene build, or as an addon. Find the addon here: http://mozvr.github.io/horizon/horizon.xpi
+An experimental browser written using web standards. This browser can be run inside of a standalone Graphene build, or as an add-on. Find the add-on here: http://mozvr.github.io/horizon/horizon.xpi
 
 ## Installation
 
@@ -55,15 +55,15 @@ You can run the built binary like so:
 /path/to/gecko-projects/obj-graphene/dist/Horizon.app/Contents/MacOS/graphene --start-manifest http://localhost:8000/manifest.webapp
 ```
 
-### Running as an addon.
+### Running as an add-on
 
-This will build and package the addon into the .xpi file.
+This will build and package the add-on into the .xpi file.
 
 ```
 gulp addon
 ```
 
-To run as an addon, you will need to simply drop the addon onto Firefox, or navigate to it with File -> Open.
+To run as an add-on, you will need to simply drop the add-on onto Firefox, or navigate to it with File -> Open.
 
 ## Deployment
 
