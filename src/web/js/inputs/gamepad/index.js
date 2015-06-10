@@ -1,5 +1,6 @@
 import Gamepads from '../../../../../node_modules/gamepad-plus/src/lib/gamepads.js';
 import GamepadScroll from './scroll.js';
+import GamepadFocus from './focus.js';
 
 
 export default class GamepadInput {
@@ -42,6 +43,11 @@ export default class GamepadInput {
       config: this.config.scroll
     });
     this.scroll.init(runtime);
+
+    this.focus = new GamepadFocus({
+      config: this.config.focus
+    });
+    this.focus.init(runtime);
 
     // At the time of this writing, Firefox is the only browser that
     // fires the `gamepadconnected` event. For the other browsers

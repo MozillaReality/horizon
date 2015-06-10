@@ -89,10 +89,34 @@ export default class ViewportManager {
     }
   }
 
+  exitFs(element) {
+    element = element || document;
+    if (element.exitFullscreen) {
+      element.exitFullscreen();
+    } else if (element.msExitFullscreen) {
+      element.msExitFullscreen();
+    } else if (element.mozCancelFullScreen) {
+      element.mozCancelFullScreen();
+    } else if (element.webkitExitFullscreen) {
+      element.webkitExitFullscreen();
+    }
+  }
+
+  isFs(element) {
+    element = element || document;
+    return !!(element.fullscreenElement ||
+              element.mozFullScreenElement ||
+              element.webkitFullscreenElement);
+  }
+
   enterVr() {
     this.launchFs(this.container, {
       vrDisplay: this.vrDevices.headset
     });
+  }
+
+  exitVr() {
+    this.exitFs();
   }
 
   onFrame() {
@@ -101,6 +125,7 @@ export default class ViewportManager {
     }
 
     let state = this.vrDevices.position.getState();
+    this.runtime.hmdState = state;
     let orientation = state.orientation;
     let position = state.position || this.lastPosition;
     let cssPosition = '';
@@ -121,10 +146,13 @@ export default class ViewportManager {
     }
     this.camera.style.transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
 
+    this.runtime.frameManager.positionCursor();
+
     window.requestAnimationFrame(this.onFrame.bind(this));
   }
 
   init(runtime) {
+    this.runtime = runtime;
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
     runtime.keyboardInput.assign({
