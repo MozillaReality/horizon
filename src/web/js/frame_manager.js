@@ -1,4 +1,7 @@
 import Frame from './frame.js';
+import Matrix from './lib/matrix.js';
+
+var matrix = new Matrix();
 
 const scrollConfig = {
   step: 50,
@@ -15,9 +18,11 @@ export default class FrameManager {
     // Variables for frame and HUD elements.
     this.hudVisible = false;
     this.isLoading = false;
+    this.body = document.body;
     this.container = $('#fs-container');
     this.contentContainer = $('#container--mono');
     this.contentStereoContainer = $('#container--stereo');
+    this.cursor = $('#container--cursor');
     this.hud = $('#hud');
     this.title = $('#title');
     this.titleText = $('#title__text');
@@ -360,6 +365,7 @@ export default class FrameManager {
   showHud() {
     this.hudVisible = true;
     this.sfxHudShow.play();
+    this.body.dataset.hud = 'open';
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
     this.contentContainer.style.animation = 'container-pushBack 0.3s ease forwards';
     this.title.style.animation = 'show 0.1s ease forwards';
@@ -376,6 +382,7 @@ export default class FrameManager {
     this.hudVisible = false;
     this.urlInput.blur();
     this.sfxHudHide.play();
+    this.body.dataset.hud = 'closed';
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
     this.contentContainer.style.animation = 'container-pullForward 0.3s ease forwards';
     this.title.style.animation = 'hide 0.1s ease forwards';
@@ -470,7 +477,40 @@ export default class FrameManager {
     });
   }
 
+  positionCursor() {
+    let orientation = this.runtime.hmdState.orientation;
+
+    // Invert orientation.
+    orientation.y *= -1;
+    orientation.x *= -1;
+    orientation.z *= -1;
+
+    // Apply matrix to cursor.
+    let cssMatrix = matrix.cssMatrixFromOrientation(orientation);
+
+    // console.log('setting cursor', cssMatrix + '');
+
+    this.cursor.style.transform = cssMatrix;
+
+    // var rect = this.cursor.getBoundingClientRect();
+    // // console.log(rect.x, rect.y);
+
+    // var el = document.elementFromPoint(rect.x, rect.y);
+    // console.log('eFP', el);
+  }
+
+  logPos() {
+    var rect;
+
+    rect = this.cursor.getBoundingClientRect();
+    console.log('cursor', rect.top, rect.left);
+
+    rect = this.urlbar.getBoundingClientRect();
+    console.log('urlbar', rect.top, rect.left);
+  }
+
   init(runtime) {
+    this.runtime = runtime;
     this.utils = runtime.utils;
     this.viewportManager = runtime.viewportManager;
 
@@ -563,6 +603,7 @@ export default class FrameManager {
       'ctrl shift tab': () => this.prevFrame(),
       'backspace': () => this.backspace(),
       ' ': () => this.toggleHud(),
+      'x': () => this.logPos(),
       'alt arrowup': () => {
         runtime.frameCommunicator.send('scroll.step', {
           scrollTop: -scrollConfig.step

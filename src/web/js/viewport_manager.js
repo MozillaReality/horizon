@@ -125,6 +125,7 @@ export default class ViewportManager {
     }
 
     let state = this.vrDevices.position.getState();
+    this.runtime.hmdState = state;
     let orientation = state.orientation;
     let position = state.position || this.lastPosition;
     let cssPosition = '';
@@ -145,10 +146,13 @@ export default class ViewportManager {
     }
     this.camera.style.transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
 
+    this.runtime.frameManager.positionCursor();
+
     window.requestAnimationFrame(this.onFrame.bind(this));
   }
 
   init(runtime) {
+    this.runtime = runtime;
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
     runtime.keyboardInput.assign({
