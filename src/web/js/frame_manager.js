@@ -38,6 +38,10 @@ export default class FrameManager {
     this.resetsensorButton = $('#resetsensor');
     this.hudBackground = $('#background');
 
+    // element at cursor
+    this.cursorElement = null;
+    this.cursor = $('#cursor');
+
     // Helper object for playing sound effects.
     this.sfx = {
       init: win => {
@@ -376,6 +380,7 @@ export default class FrameManager {
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
     this.resetsensorButton.style.animation = 'show 0.1s ease forwards';
     this.hudBackground.style.animation = 'background-fadeIn 0.3s ease forwards';
+    this.cursor.style.visibility = 'visible';
   }
 
   hideHud(firstLoad) {
@@ -394,6 +399,7 @@ export default class FrameManager {
     this.closehudButton.style.animation = 'hide 0.1s ease forwards';
     this.resetsensorButton.style.animation = 'hide 0.1s ease forwards';
     this.hudBackground.style.animation = 'background-fadeOut 0.3s ease forwards';
+    this.cursor.style.visibility = 'hidden';
   }
 
   toggleHud() {
@@ -453,6 +459,25 @@ export default class FrameManager {
       tile.appendChild(type);
       this.directory.appendChild(tile);
     });
+  }
+
+
+  /**
+   * Cursor
+   */
+  intersectCursor() {
+    // The innerheight should be divided by 2, but somethings up with viewport dimensions in platform.
+    var el = document.elementFromPoint(0, window.innerHeight / 8);
+    if (el !== this.cursorElement) {
+      this.cursorElement = el;
+    }
+  }
+
+  cursorClick() {
+    console.log('dispatching', this.cursorElement);
+    var mouseEvent = document.createEvent('MouseEvents');
+    mouseEvent.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+    this.cursorElement.dispatchEvent(mouseEvent);
   }
 
   init(runtime) {
@@ -522,6 +547,8 @@ export default class FrameManager {
 
             // Vertical scrolling.
             'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
+
+            'b11': () => this.cursorClick(),
           }
         },
       },
@@ -531,6 +558,8 @@ export default class FrameManager {
         velocityThreshold: 0.05
       }
     });
+
+    setInterval(this.intersectCursor.bind(this), 100);
 
     runtime.keyboardInput.assign({
       'ctrl =': () => this.activeFrame.zoomIn(),
