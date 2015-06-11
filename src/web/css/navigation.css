@@ -190,6 +190,16 @@ button {
 }
 
 
+/**
+ * Cursor
+ */
+.cursor {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: red;
+  transform: translate3d(-50%, -50%, var(--hud-depth));
+}
 
 /**
  * HUD
