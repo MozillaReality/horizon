@@ -53,6 +53,20 @@ class FrameCommunicator extends EventEmitter {
 
 
 class Page {
+  constructor() {
+    window.$ = this.$;
+    window.$$ = this.$$;
+  }
+
+  $(sel) {
+    return document.querySelector(sel);
+  }
+
+  $$(sel, el) {
+    el = el || document;
+    return Array.prototype.slice.call(el.querySelectorAll(sel));
+  }
+
   get activeScrollElement() {
     // This is the element that currently has focus.
     var el = document.activeElement;
@@ -139,6 +153,11 @@ fc.on('scroll.end', () => {
 
 window.addEventListener('load', () => {
   log('Loaded content script', window.location.href);
+});
+
+// Remove all `<meta>` tags so `mozbrowsermetachange` events get called.
+window.addEventListener('beforeunload', () => {
+  $$('meta', document.head).forEach(document.head.removeChild);
 });
 
 
