@@ -75,7 +75,7 @@ export default class Frame {
 
     var {projection} = values;
 
-    // If the meta-tag is removed, we revert to the default mono viewmode.
+    // If the meta tag is removed, we revert to the default mono viewmode.
     if (detail.type === 'removed') {
       projection = 'mono';
     }
@@ -84,7 +84,8 @@ export default class Frame {
       window.dispatchEvent(new CustomEvent('stereo-viewmode', {
         detail: this
       }));
-    } else if (!projection || projection === 'mono') {
+    } else {
+      // If we encounter an empty/invalid projection, we assume it's mono.
       window.dispatchEvent(new CustomEvent('mono-viewmode', {
         detail: this
       }));
