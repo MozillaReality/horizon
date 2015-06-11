@@ -33,7 +33,6 @@ export default class FrameManager {
     this.stopButton = $('#stopreload--stop');
     this.loading = $('#loading');
     this.closehudButton = $('#closehud');
-    this.resetsensorButton = $('#resetsensor');
     this.hudBackground = $('#background');
 
     // element at cursor
@@ -359,7 +358,6 @@ export default class FrameManager {
     this.backfwd.style.animation = 'show 0.1s ease forwards';
     this.showStopreload();
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
-    this.resetsensorButton.style.animation = 'show 0.1s ease forwards';
     this.hudBackground.style.animation = 'background-fadeIn 0.3s ease forwards';
     this.cursor.style.visibility = 'visible';
   }
@@ -378,7 +376,6 @@ export default class FrameManager {
     this.backfwd.style.animation = 'hide 0.1s ease forwards';
     this.hideStopreload();
     this.closehudButton.style.animation = 'hide 0.1s ease forwards';
-    this.resetsensorButton.style.animation = 'hide 0.1s ease forwards';
     this.hudBackground.style.animation = 'background-fadeOut 0.3s ease forwards';
     this.cursor.style.visibility = 'hidden';
   }
@@ -494,7 +491,6 @@ export default class FrameManager {
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.closehudButton.addEventListener('click', this.hideHud.bind(this));
-    this.resetsensorButton.addEventListener('click', this.viewportManager.resetSensor.bind(this));
 
     // Creates initial frame.
     this.newFrame();

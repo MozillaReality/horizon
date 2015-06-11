@@ -419,7 +419,7 @@ button {
  * Close HUD, Reset Sensor
  */
 
-.closehud, .resetsensor {
+.closehud {
   background: white;
   border: 0.25cm solid black;
   color: black;
@@ -434,16 +434,12 @@ button {
   transform: translate(-50%, 0) translate3d(0, 17cm, 0);
 }
 
-.resetsensor {
-  transform: translate(-50%, 0) translate3d(0, 20cm, 0);
-}
-
-.resetsensor:hover, .closehud:hover {
+.closehud:hover {
   background: black;
   color: white;
 }
 
-.resetsensor:active, .closehud:active {
+.closehud:active {
   background: var(--color-blue-vibrant);
   border: 0.25cm solid var(--color-blue-vibrant);
   color: white;
