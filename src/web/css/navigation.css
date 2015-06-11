@@ -215,7 +215,6 @@ button {
 *:-moz-full-screen .hud {
   left: 0;
   top: 0;
-  transform: translate3d(0, 0, var(--hud-depth));
 }
 
 
@@ -338,17 +337,22 @@ button {
   color: white;
 }
 
-.urlbar__input, .urlbar__input::-moz-selection {
-  background: white;
-  color: hsl(0, 0%, 20%);
-}
-
 .urlbar__input:focus {
   background: var(--color-blue-vibrant);
   color: white;
 }
 
-.urlbar__input:focus::-moz-selection  {
+.urlbar__input {
+  background: white;
+  color: hsl(0, 0%, 20%);
+}
+
+/* NOTE: These selectors cannot be combined: https://developer.mozilla.org/en-US/docs/Web/CSS/::selection#Examples */
+.urlbar__input::selection {
+  background: hsla(0, 0%, 0%, 0.2);
+  color: white;
+}
+.urlbar__input::-moz-selection {
   background: hsla(0, 0%, 0%, 0.2);
   color: white;
 }
@@ -362,13 +366,13 @@ button {
   transform: translate(-50%, 0) translate3d(-12cm, 14cm, 0);
 }
 
-.backfwd__back {
+.back {
   left: 0;
   position: absolute;
   top: 0;
 }
 
-.backfwd__forward {
+.forward {
   left: 3cm;
   position: absolute;
   top: 0;
@@ -379,14 +383,15 @@ button {
   transform: translate(-50%, 0) translate3d(3cm, 14cm, 0);
 }
 
-.stopreload--stop, .stopreload--reload {
+.stop,
+.reload {
   left: 0;
   position: absolute;
   top: 0;
 }
 
 
-.nav,
+/* button */.nav,
 .fa.nav {
   -moz-user-select: none; /* Disable selection of navigation controls. */
   background: white;
@@ -416,22 +421,16 @@ button {
 
 
 /**
- * Close HUD, Reset Sensor
+ * Close HUD
  */
 
 .closehud {
-  background: white;
-  border: 0.25cm solid black;
-  color: black;
   font: 600 0.75rem/1em sans-serif;
   padding: 0.6em;
   text-align: center;
   text-transform: uppercase;
-  width: 7cm;
-}
-
-.closehud {
   transform: translate(-50%, 0) translate3d(0, 17cm, 0);
+  width: 7cm;
 }
 
 .closehud:hover {
@@ -446,12 +445,14 @@ button {
 }
 
 
-
 /**
  * Background
+ *
+ * NOTE: We obscure the active site while the HUD is open, for the sake of
+ * legibility. An alternative would be to reduce opacity on the container,
+ * but that creates glitches on/vanishes 3D transformed elements.
+ *
  */
-/* The goal here is the obscured the active site while the HUD is open, for the sake of legibility. */
-/* Alternative would be to reduce opacity on the container, but this creates glitches on 3D transformed elements (they disappear) */
 
 .background {
   background: hsla(228, 20%, 13%, 0.9);
