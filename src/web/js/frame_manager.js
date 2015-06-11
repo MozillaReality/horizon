@@ -410,6 +410,18 @@ export default class FrameManager {
     }
   }
 
+  /**
+   * Returns a promise if the HUD is open.
+   *
+   * (Useful for conditionally calling functions based on HUD visibility.)
+   */
+  requireHudOpen() {
+    if (this.hudVisible) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  }
 
   /**
    * Show/Hide the stop-reload buttons.
@@ -578,6 +590,7 @@ export default class FrameManager {
       'ctrl shift tab': () => this.prevFrame(),
       'backspace': () => this.backspace(),
       ' ': () => this.toggleHud(),
+      'c': () => this.requireHudOpen().then(() => this.cursorClick()),
       'alt arrowup': () => {
         runtime.frameCommunicator.send('scroll.step', {
           scrollTop: -scrollConfig.step
