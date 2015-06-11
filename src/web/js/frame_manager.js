@@ -579,5 +579,14 @@ export default class FrameManager {
         runtime.frameCommunicator.send('scroll.end');
       },
     });
+
+    if (runtime.settings.play_audio_on_browser_start) {
+      neatAudio.fetchSound(runtime.settings.www_browser_start_src).then(sound => {
+        this.sfx.browserStart = sound;
+
+        // Sound chime when browser has (re)started.
+        this.sfx.play('browserStart');
+      });
+    }
   }
 }
