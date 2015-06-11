@@ -1,4 +1,5 @@
 import Frame from './frame.js';
+import neatAudio from '../../../node_modules/neat-audio/neat-audio.js';
 
 const scrollConfig = {
   step: 50,
@@ -37,9 +38,17 @@ export default class FrameManager {
     this.resetsensorButton = $('#resetsensor');
     this.hudBackground = $('#background');
 
-    // Variables for sound effects.
-    this.sfxHudHide = $('#hud_hide');
-    this.sfxHudShow = $('#hud_show');
+    // Helper object for playing sound effects.
+    this.sfx = {
+      init: win => {
+        neatAudio.init(win || window);
+      },
+      play: name => {
+        neatAudio.playSound(this.sfx[name]);
+      }
+    };
+
+    this.sfx.init();
   }
 
 
@@ -359,7 +368,7 @@ export default class FrameManager {
    */
   showHud() {
     this.hudVisible = true;
-    this.sfxHudShow.play();
+    this.sfx.play('hudShow');
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
     this.contentContainer.style.animation = 'container-pushBack 0.3s ease forwards';
     this.title.style.animation = 'show 0.1s ease forwards';
@@ -372,10 +381,12 @@ export default class FrameManager {
     this.hudBackground.style.animation = 'background-fadeIn 0.3s ease forwards';
   }
 
-  hideHud() {
+  hideHud(firstLoad) {
     this.hudVisible = false;
+    if (!firstLoad) {
+      this.sfx.play('hudHide');
+    }
     this.urlInput.blur();
-    this.sfxHudHide.play();
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
     this.contentContainer.style.animation = 'container-pullForward 0.3s ease forwards';
     this.title.style.animation = 'hide 0.1s ease forwards';
@@ -451,6 +462,17 @@ export default class FrameManager {
     this.utils = runtime.utils;
     this.viewportManager = runtime.viewportManager;
 
+    // Preload the sound effects so we can play them later.
+    Promise.all([
+      neatAudio.fetchSound(runtime.settings.www_hud_hide_src),
+      neatAudio.fetchSound(runtime.settings.www_hud_show_src)
+    ]).then(sounds => {
+      this.sfx.hudHide = sounds[0];
+      this.sfx.hudShow = sounds[1];
+    }, err => {
+      console.error('Could not fetch sound:', err.stack);
+    });
+
     // Creates listeners for HUD element states and positions.
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
@@ -472,7 +494,7 @@ export default class FrameManager {
     });
 
     // Hides the HUD and loading indicators on first load.
-    this.hideHud();
+    this.hideHud(true);
     this.hideLoadingIndicator();
 
     /**
