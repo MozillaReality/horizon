@@ -5,6 +5,13 @@ const scrollConfig = {
   step: 50,
 };
 
+const mouseConfig = {
+  activeClassName: 'active',
+  hoverClassName: 'hover',
+  focusClassName: 'focus',
+  formSubmitThreshold: 1500,  // Time to wait for mousedown (buttondown) before triggering a form submit.
+};
+
 export default class FrameManager {
   constructor() {
 
@@ -16,6 +23,7 @@ export default class FrameManager {
     // Variables for frame and HUD elements.
     this.hudVisible = false;
     this.isLoading = false;
+    this.body = document.body;
     this.container = $('#fs-container');
     this.hud = $('#hud');
     this.title = $('#title');
@@ -34,9 +42,8 @@ export default class FrameManager {
     this.closehudButton = $('#closehud');
     this.hudBackground = $('#background');
 
-    // element at cursor
+    // Element at cursor.
     this.cursorElement = null;
-    this.cursor = $('#cursor');
 
     // Helper object for playing sound effects.
     this.sfx = {
@@ -348,6 +355,7 @@ export default class FrameManager {
    */
   showHud() {
     this.hudVisible = true;
+    this.body.dataset.hud = 'open';
     this.sfx.play('hudShow');
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
     this.viewportManager.monoContainer.style.animation = 'container-pushBack 0.3s ease forwards';
@@ -358,11 +366,11 @@ export default class FrameManager {
     this.showStopreload();
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
     this.hudBackground.style.animation = 'background-fadeIn 0.3s ease forwards';
-    this.cursor.style.visibility = 'visible';
   }
 
   hideHud(firstLoad) {
     this.hudVisible = false;
+    this.body.dataset.hud = 'closed';
     if (!firstLoad) {
       this.sfx.play('hudHide');
     }
@@ -376,10 +384,15 @@ export default class FrameManager {
     this.hideStopreload();
     this.closehudButton.style.animation = 'hide 0.1s ease forwards';
     this.hudBackground.style.animation = 'background-fadeOut 0.3s ease forwards';
-    this.cursor.style.visibility = 'hidden';
   }
 
   toggleHud() {
+    // Steal focus from whichever element is currently focussed.
+    var el = document.activeElement;
+    if (el) {
+      el.blur();
+    }
+
     if (this.hudVisible) {
       this.hideHud();
     } else {
@@ -463,15 +476,88 @@ export default class FrameManager {
   intersectCursor() {
     // the Y value needs to be set to half offsetHeight of cursor element.
     var el = document.elementFromPoint(0, 10);
+
     if (el !== this.cursorElement) {
+      this.cursorMouseOut();
       this.cursorElement = el;
     }
+
+    this.cursorMouseOver();
   }
 
   cursorClick() {
-    var mouseEvent = document.createEvent('MouseEvents');
-    mouseEvent.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-    this.cursorElement.dispatchEvent(mouseEvent);
+    // Delays added to simulate a browser's mousedown/mouseup events on a mouse click.
+    return this.cursorMouseDown()
+    .then(() => this.utils.sleep(150))
+    .then(() => this.cursorMouseUp());
+  }
+
+  cursorMouseOut() {
+    let el = this.cursorElement;
+
+    if (el) {
+      this.utils.emitMouseEvent('mouseout', el);
+
+      // Blur and remove hover/active classes from the element we were previously focussed on/cursored over.
+      el.classList.remove(mouseConfig.hoverClassName, mouseConfig.activeClassName, mouseConfig.focusClassName);
+
+      this.cursorDownElement = null;
+    }
+
+    return Promise.resolve();
+  }
+
+  cursorMouseOver() {
+    let el = this.cursorElement;
+
+    if (el) {
+      this.utils.emitMouseEvent('mouseover', el);
+      el.classList.add(mouseConfig.hoverClassName);
+    }
+
+    return Promise.resolve();
+  }
+
+  cursorMouseDown() {
+    let el = this.cursorElement;
+
+    if (el) {
+      this.cursorDownElement = el;
+
+      this.utils.emitMouseEvent('mousedown', el);
+      el.classList.remove(mouseConfig.hoverClassName);
+      el.classList.add(mouseConfig.activeClassName, mouseConfig.focusClassName);
+      el.focus();
+
+      this.utils.sleep(mouseConfig.formSubmitThreshold).then(() => {
+        // If the click button has been depressed for a long time, assume a form submission.
+        if (el === this.cursorDownElement) {
+          // Check if the active element is in a form element.
+          let form = this.utils.getFocusedForm(el);
+          if (form) {
+            // If so, submit the form.
+            form.submit();
+            form.dispatchEvent(new Event('submit'));
+          }
+        }
+      });
+    }
+
+    return Promise.resolve();
+  }
+
+  cursorMouseUp() {
+    let el = this.cursorElement;
+
+    if (el) {
+      this.cursorDownElement = null;
+
+      this.utils.emitMouseEvent('mouseup', el);
+      this.utils.emitMouseEvent('click', el);
+      el.classList.remove(mouseConfig.hoverClassName, mouseConfig.activeClassName, mouseConfig.focusClassName);
+    }
+
+    return Promise.resolve();
   }
 
   init(runtime) {
@@ -533,14 +619,17 @@ export default class FrameManager {
             // Vertical scrolling.
             'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
 
-            'b11': () => this.cursorClick(),
+            // Use the "A" button to click on elements (and hold to submit forms).
+            'b11.down': () => this.cursorMouseDown(),
+            'b11.up': () => this.cursorMouseUp(),
           },
           '54c-268-PLAYSTATION(R)3 Controller': {
             'b16': () => this.toggleHud(),
             'b3': () => this.toggleHud(),
             'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
             'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
-            'b14': () => this.cursorClick(),
+            'b14.down': () => this.cursorMouseDown(),
+            'b14.up': () => this.cursorMouseUp(),
           },
         },
       },
