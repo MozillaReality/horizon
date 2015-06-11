@@ -81,11 +81,13 @@ export default class Frame {
     }
 
     if (projection === 'stereo' && !this.isStereo) {
+      this.isStereo = true;
       window.dispatchEvent(new CustomEvent('stereo-viewmode', {
         detail: this
       }));
     } else {
       // If we encounter an empty/invalid projection, we assume it's mono.
+      this.isStereo = false;
       window.dispatchEvent(new CustomEvent('mono-viewmode', {
         detail: this
       }));

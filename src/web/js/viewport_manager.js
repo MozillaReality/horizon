@@ -8,10 +8,11 @@ var matrix = new Matrix();
 
 export default class ViewportManager {
   constructor() {
+    this.container = $('#fs-container');
+    this.monoContainer = $('#container--mono');
+    this.stereoContainer = $('#container--stereo');
     this.vrDevices = null;
     this.lastPosition = null;
-
-    this.container = $('#fs-container');
     this.camera = $('#camera');
     this.enter = $('#entervr');
 
@@ -20,6 +21,21 @@ export default class ViewportManager {
     }).catch(function(err) {
       console.warn(err);
     });
+  }
+
+
+  /**
+   * Handles view mode changes for content iframes.
+   * Attaches iframe to appropriate container in DOM for projection.
+   */
+  toStereo(app) {
+    app.element.className = 'frame--stereo';
+    this.stereoContainer.appendChild(app.element);
+  }
+
+  toMono(app) {
+    app.element.className = 'frame--mono threed';
+    this.monoContainer.appendChild(app.element);
   }
 
   filterInvalidDevices(devices) {
@@ -126,6 +142,14 @@ export default class ViewportManager {
 
   init(runtime) {
     this.enter.addEventListener('click', this.enterVr.bind(this));
+
+    // Handles moving between stereo and mono view modes.
+    window.addEventListener('stereo-viewmode', e => {
+      this.toStereo(e.detail);
+    });
+    window.addEventListener('mono-viewmode', e => {
+      this.toMono(e.detail);
+    });
 
     runtime.keyboardInput.assign({
       'ctrl z': () => this.resetSensor(),

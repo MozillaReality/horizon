@@ -17,8 +17,6 @@ export default class FrameManager {
     this.hudVisible = false;
     this.isLoading = false;
     this.container = $('#fs-container');
-    this.contentContainer = $('#container--mono');
-    this.contentStereoContainer = $('#container--stereo');
     this.hud = $('#hud');
     this.title = $('#title');
     this.titleText = $('#title__text');
@@ -170,7 +168,7 @@ export default class FrameManager {
     var app = new Frame({
       id: this.nextId(),
       url: location,
-      container: this.contentContainer,
+      container: this.viewportManager.monoContainer,
       browserEvent: this.browserEvent.bind(this)
     });
 
@@ -348,30 +346,13 @@ export default class FrameManager {
 
 
   /**
-   * Handles view mode changes for content iframes.
-   * Attaches iframe to appropriate container in DOM for projection.
-   */
-  toStereo(app) {
-    app.isStereo = true;
-    app.element.className = 'frame--stereo';
-    this.contentStereoContainer.appendChild(app.element);
-  }
-
-  toMono(app) {
-    app.isStereo = false;
-    app.element.className = 'frame--mono threed';
-    this.contentContainer.appendChild(app.element);
-  }
-
-
-  /**
    * Shows/Hides majority of the HUD elements.
    */
   showHud() {
     this.hudVisible = true;
     this.sfx.play('hudShow');
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
-    this.contentContainer.style.animation = 'container-pushBack 0.3s ease forwards';
+    this.viewportManager.monoContainer.style.animation = 'container-pushBack 0.3s ease forwards';
     this.title.style.animation = 'show 0.1s ease forwards';
     this.directory.style.animation = 'show 0.1s ease forwards';
     this.urlbar.style.animation = 'show 0.1s ease forwards';
@@ -390,7 +371,7 @@ export default class FrameManager {
     }
     this.urlInput.blur();
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
-    this.contentContainer.style.animation = 'container-pullForward 0.3s ease forwards';
+    this.viewportManager.monoContainer.style.animation = 'container-pullForward 0.3s ease forwards';
     this.title.style.animation = 'hide 0.1s ease forwards';
     this.directory.style.animation = 'hide 0.1s ease forwards';
     this.urlbar.style.animation = 'hide 0.1s ease forwards';
@@ -474,7 +455,6 @@ export default class FrameManager {
   }
 
   cursorClick() {
-    console.log('dispatching', this.cursorElement);
     var mouseEvent = document.createEvent('MouseEvents');
     mouseEvent.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     this.cursorElement.dispatchEvent(mouseEvent);
@@ -506,14 +486,6 @@ export default class FrameManager {
 
     // Creates initial frame.
     this.newFrame();
-
-    // Handles moving between stereo and mono view modes.
-    window.addEventListener('stereo-viewmode', e => {
-      this.toStereo(e.detail);
-    });
-    window.addEventListener('mono-viewmode', e => {
-      this.toMono(e.detail);
-    });
 
     // Hides the HUD and loading indicators on first load.
     this.hideHud(true);
