@@ -534,7 +534,14 @@ export default class FrameManager {
             'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
 
             'b11': () => this.cursorClick(),
-          }
+          },
+          '54c-268-PLAYSTATION(R)3 Controller': {
+            'b16': () => this.toggleHud(),
+            'b3': () => this.toggleHud(),
+            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
+            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
+            'b14': () => this.cursorClick(),
+          },
         },
       },
       scroll: {
