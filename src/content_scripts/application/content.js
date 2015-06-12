@@ -157,7 +157,9 @@ window.addEventListener('load', () => {
 
 // Remove all `<meta>` tags so `mozbrowsermetachange` events get called.
 window.addEventListener('beforeunload', () => {
-  $$('meta', document.head).forEach(document.head.removeChild);
+  $$('meta', document.head).forEach(el => {
+    el.parentNode.removeChild(el);
+  });
 });
 
 
