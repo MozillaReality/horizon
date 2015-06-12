@@ -380,6 +380,10 @@ export default class FrameManager {
   }
 
   toggleHud() {
+    if (!this.viewportManager.isFs()) {
+      this.viewportManager.enterVr();
+    }
+
     if (this.hudVisible) {
       this.hideHud();
     } else {
