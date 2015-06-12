@@ -36,21 +36,21 @@
         <div id="directory" class="directory threed"></div>
 
         <form id="urlbar" class="urlbar threed" action="#">
-          <input class="urlbar__input" type="text">
+          <input id="urlbar__input" class="urlbar__input" type="text">
         </form>
 
         <div id="backfwd" class="backfwd threed">
-          <button class="fa fa-arrow-left nav backfwd__back" data-action="back" id="backfwd__back"></button>
-          <button class="fa fa-arrow-right nav backfwd__forward" data-action="forward" id="backfwd__forward"></button>
+          <button class="fa fa-arrow-left nav back" data-action="back" id="back"></button>
+          <button class="fa fa-arrow-right nav forward" data-action="forward" id="forward"></button>
         </div>
 
         <div id="stopreload" class="stopreload threed">
-          <button class="fa fa-repeat nav stopreload--reload" data-action="reload" id="stopreload--reload"></button>
-          <button class="fa fa-times nav stopreload--stop" data-action="stop" id="stopreload--stop"></button>
+          <button class="fa fa-repeat nav reload" data-action="reload" id="reload"></button>
+          <button class="fa fa-times nav stop" data-action="stop" id="stop"></button>
         </div>
-        <!-- <button class="fa fa-plus nav nav--new" data-action="new"></button> -->
+        <!-- <button class="fa fa-plus nav new" data-action="new" id="new"></button> -->
 
-        <button id="closehud" class="closehud threed">Close HUD</button>
+        <button id="closehud" class="nav closehud threed">Close HUD</button>
 
         <div id="loading" class="loading threed">LOADING</div>
 
