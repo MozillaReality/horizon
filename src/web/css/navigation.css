@@ -15,6 +15,9 @@
   --content-width: 32cm;
   --content-height: 26cm;
 
+  /* transitions */
+  --transition-depth: calc(var(--hud-depth) - 2cm);
+
   /* icons size */
   --icon-size: 25px;
 
@@ -199,6 +202,18 @@ button {
   border-radius: 50%;
   background: red;
   transform: translate3d(-50%, -50%, var(--hud-depth));
+}
+
+
+/**
+ * Transitions
+ */
+
+.transitions {
+  transform: translate3d(-50%, -50%, var(--transition-depth));
+  width: 3000px;
+  height: 6000px;
+  background: purple;
 }
 
 /**
