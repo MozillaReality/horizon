@@ -461,14 +461,15 @@ export default class FrameManager {
    * Cursor
    */
   intersectCursor() {
-    // The innerheight should be divided by 2, but somethings up with viewport dimensions in platform.
-    var el = document.elementFromPoint(0, window.innerHeight / 8);
+    var el = document.elementFromPoint(0, 10);
     if (el !== this.cursorElement) {
       this.cursorElement = el;
+      this.cursorElement.focus();
     }
   }
 
   cursorClick() {
+    console.log('clicking ->', document.activeElement);
     var mouseEvent = document.createEvent('MouseEvents');
     mouseEvent.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     this.cursorElement.dispatchEvent(mouseEvent);

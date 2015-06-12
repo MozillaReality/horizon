@@ -292,7 +292,8 @@ button {
   text-decoration: none;
 }
 
-.directory__tile:hover {
+.directory__tile:hover,
+.directory__tile:focus {
   background-color: black;
   color: white;
 }
@@ -403,7 +404,8 @@ button {
   transition: .1s opacity;
 }
 
-.nav:not([disabled]):hover {
+.nav:not([disabled]):hover,
+.nav:not([disabled]):focus {
   background: black;
   color: white;
   opacity: 1;
@@ -433,7 +435,8 @@ button {
   width: 7cm;
 }
 
-.closehud:hover {
+.closehud:hover,
+.closehud:focus {
   background: black;
   color: white;
 }
