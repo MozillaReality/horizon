@@ -26,8 +26,16 @@ export default class ViewportManager {
 
   /**
    * Handles view mode changes for content iframes.
-   * Attaches iframe to appropriate container in DOM for projection.
+   *
+   * We use appendChild to move the app.element iframe into the 
+   * appropriate place within the DOM for each type of projection.
+   * 
+   * Be warned that this causes the iframe to refresh and fire 
+   * an additional set of browser events!
+   * 
+   * See issue: https://github.com/MozVR/horizon/issues/118
    */
+  
   toStereo(app) {
     app.element.className = 'frame--stereo';
     this.stereoContainer.appendChild(app.element);
