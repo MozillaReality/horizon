@@ -33,6 +33,7 @@ export default class FrameManager {
     this.loading = $('#loading');
     this.closehudButton = $('#closehud');
     this.hudBackground = $('#background');
+    this.transitions = $('#transitions');
 
     // element at cursor
     this.cursorElement = null;
@@ -474,6 +475,19 @@ export default class FrameManager {
     this.cursorElement.dispatchEvent(mouseEvent);
   }
 
+  /**
+   * Transition
+   */
+  transitionToggle() {
+    var style = window.getComputedStyle(this.transitions);
+    console.log(style.opacity);
+    if (style.opacity === '0') {
+      this.transitions.style.opacity = 1;
+    } else {
+      this.transitions.style.opacity = 0;
+    }
+  }
+
   init(runtime) {
     this.utils = runtime.utils;
     this.viewportManager = runtime.viewportManager;
@@ -590,6 +604,7 @@ export default class FrameManager {
       'ctrl arrowdown': () => {
         runtime.frameCommunicator.send('scroll.end');
       },
+      'shift t': () => this.transitionToggle(),
     });
 
     if (runtime.settings.play_audio_on_browser_start) {

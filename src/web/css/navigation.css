@@ -212,8 +212,10 @@ button {
 .transitions {
   transform: translate3d(-50%, -50%, var(--transition-depth));
   width: 3000px;
-  height: 6000px;
+  height: 3500px;
   background: purple;
+  opacity: 1;
+  transition: opacity 1s;
 }
 
 /**
