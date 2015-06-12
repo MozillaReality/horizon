@@ -461,8 +461,8 @@ export default class FrameManager {
    * Cursor
    */
   intersectCursor() {
-    // The innerheight should be divided by 2, but somethings up with viewport dimensions in platform.
-    var el = document.elementFromPoint(0, window.innerHeight / 8);
+    // the Y value needs to be set to half offsetHeight of cursor element.
+    var el = document.elementFromPoint(0, 10);
     if (el !== this.cursorElement) {
       this.cursorElement = el;
     }
