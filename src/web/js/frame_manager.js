@@ -311,7 +311,7 @@ export default class FrameManager {
    * Handles backspace. If HUD is open, close HUD. Else, trigger back action in active frame.
    */
   backspace() {
-    if(this.hudVisible) {
+    if (this.hudVisible) {
       this.hideHud();
     } else {
       this.activeFrame.on_back();
@@ -404,12 +404,14 @@ export default class FrameManager {
    * Show/Hide the stop-reload buttons.
    * Called by both loading events (mozbrowserloadstart and mozbrowserloadend) and user action (toggleHud).
    */
-  showStopreload(){
+  showStopreload() {
     this.stopreload.style.animation = 'show 0.1s ease forwards';
   }
 
-  hideStopreload(){
-    if(!this.isLoading){ // Only hide if activeFrame is not currently loading. This ensures the stop button stays visible during loading.
+  hideStopreload() {
+    // Hide stop-reload buttons only if activeFrame is not currently loading.
+    // This ensures the stop button stays visible during loading.
+    if (!this.isLoading) {
       this.stopreload.style.animation = 'hide 0.1s ease forwards';
     }
   }
@@ -422,13 +424,17 @@ export default class FrameManager {
   showLoadingIndicator() {
     this.showStopreload();
     this.loading.style.animation = 'show 0.1s ease forwards';
-    this.stopButton.style.display = 'inline'; // When loading starts, show the stop button.
+
+    // When loading starts, show the stop button.
+    this.stopButton.style.display = 'inline';
   }
 
   hideLoadingIndicator() {
     this.hideStopreload();
     this.loading.style.animation = 'hide 0.1s ease forwards';
-    this.stopButton.style.display = 'none'; // When loading ends, hide the stop button to reveal the underlying reload button.
+
+    // When loading ends, hide the stop button to reveal the underlying reload button.
+    this.stopButton.style.display = 'none';
   }
 
 
