@@ -329,11 +329,18 @@ export default class FrameManager {
 
   /**
    * Handles loading new URLs into active frame.
+   *
+   * @param {Event} e A 'click' event (delegated on document).
    */
   handleLinkClick(e) {
-    e.preventDefault();
-    this.navigate(e.target.href);
-    this.hideHud();
+    var a = this.utils.getHijackableAnchor(e);
+    if (a) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.navigate(a.href);
+      this.hideHud();
+    }
   }
 
   handleUrlEntry(e) {
@@ -461,7 +468,7 @@ export default class FrameManager {
       tile.className = 'directory__tile';
       tile.setAttribute('href', site.url);
       tile.innerHTML = site.name;
-      tile.addEventListener('click', this.handleLinkClick.bind(this), false);
+
       var type = document.createElement('span');
       type.className = 'type';
       type.innerHTML = site.type;
@@ -619,6 +626,7 @@ export default class FrameManager {
     // Creates listeners for HUD element states and positions.
     window.addEventListener('resize', this.positionFrames.bind(this));
     this.hud.addEventListener('click', this);
+    document.addEventListener('click', this.handleLinkClick.bind(this));
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));

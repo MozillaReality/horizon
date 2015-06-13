@@ -69,4 +69,27 @@ export default class Utils {
       }, duration);
     });
   }
+
+  /**
+   * Returns an anchor element if its 'click' event can he hijacked by Horizon.
+   *
+   * @param {Event} e A 'click' event (delegated on document).
+   * @returns {(Element|null)} a The parent anchor element that was clicked and can be hijacked.
+   */
+  getHijackableAnchor(e) {
+    if (!e || !e.target) {
+      return null;
+    }
+
+    var a = e.target.closest('a');
+
+    // Ignore an element/anchor if…
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey ||
+        a.hasAttribute('download') || a.target || a.href[0] === '#' ||
+        a.protocol !== 'http:' && a.protocol !== 'https:') {
+      return null;
+    }
+
+    return a;
+  }
 }
