@@ -157,28 +157,23 @@ button {
 
 /* iframe */
 .frame--mono {
+  background: white;
   border: 0;
-  width: var(--content-width);
+  width: 100%;
   height: var(--content-height);
   top: 18cm;
   left: 18cm;
   transition: transform 0.5s ease;
-  background: white;
+  /* Prevent iframe's pointer events from stealing focus away from the app.
+     Uncomment this if you want the user to be able to click on any scrollable
+     element and scroll within that element using a gamepad. */
+  pointer-events: none;
 }
 
 *:-moz-full-screen .frame--mono {
   top: 0;
   left: 0;
   transform: translate3d(0, 0, var(--hud-depth));
-}
-
-[data-frame-pointer-events="none"] /* iframe */.frame--mono {
-  /* Prevent iframe's pointer events from stealing focus away from the app.
-     Uncomment this if you want the user to be able to click on any scrollable
-     element and scroll within that element using a gamepad. */
-  pointer-events: none;
-  transition: transform 0.5s ease;
-  width: 100%;
 }
 
 /* iframe */
