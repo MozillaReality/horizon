@@ -319,6 +319,7 @@ button {
   color: gray;
   display: inline-block;
   font: 400 0.75em/1em sans-serif;
+  pointer-events: none;
 }
 
 
