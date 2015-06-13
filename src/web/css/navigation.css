@@ -20,6 +20,7 @@
 
   /* colors */
   --color-blue-vibrant: hsl(200, 89%, 50%);
+  --color-blue-vibrant-faded: hsla(200, 89%, 70%, .75);
 }
 
 
@@ -194,12 +195,36 @@ button {
  * Cursor
  */
 .cursor {
-  width: 20px;
-  height: 20px;
+  width: 1cm;
+  height: 1cm;
+  background: var(--color-blue-vibrant-faded);
   border-radius: 50%;
-  background: red;
+  display: block;
+  left: .5cm;
+  opacity: 0;
+  position: relative;
+  top: .5cm;
   transform: translate3d(-50%, -50%, var(--hud-depth));
+  transform-origin: .25cm .25cm 0;
+  /* NOTE: For perf reasons, do not transition on opacity. */
+  transition: .1s width, .1s height, .1s left, .1s top, .1s visibility, .1s transform;
+  visibility: hidden;
 }
+
+[data-hud="open"] .cursor {
+  width: 2cm;
+  height: 2cm;
+  left: 1cm;
+  opacity: 1;
+  top: 1cm;
+  transform-origin: .5cm .5cm 0;
+  visibility: visible;
+}
+
+*:-moz-full-screen {
+  cursor: none;
+}
+
 
 /**
  * HUD
@@ -292,12 +317,14 @@ button {
   text-decoration: none;
 }
 
-.directory__tile:hover {
+.directory__tile:hover,
+.directory__tile.hover {
   background-color: black;
   color: white;
 }
 
-.directory__tile:active {
+.directory__tile:active,
+ .directory__tile.active {
   background: var(--color-blue-vibrant);
   border: 0.25cm solid var(--color-blue-vibrant);
 }
@@ -332,7 +359,8 @@ button {
   width: 100%;
 }
 
-.urlbar__input:hover {
+.urlbar__input:hover,
+.urlbar__input.hover {
   background: black;
   color: white;
 }
@@ -403,7 +431,8 @@ button {
   transition: .1s opacity;
 }
 
-.nav:not([disabled]):hover {
+.nav:not([disabled]):hover,
+.nav:not([disabled]).hover {
   background: black;
   color: white;
   opacity: 1;
@@ -414,7 +443,8 @@ button {
   pointer-events: none;
 }
 
-.nav:not([disabled]):active {
+.nav:not([disabled]):active,
+.nav:not([disabled]).active {
   background: var(--color-blue-vibrant);
   border: 0.25cm solid var(--color-blue-vibrant);;
 }
@@ -433,12 +463,14 @@ button {
   width: 7cm;
 }
 
-.closehud:hover {
+.closehud:hover,
+.closehud.hover {
   background: black;
   color: white;
 }
 
-.closehud:active {
+.closehud:active,
+.closehud.active {
   background: var(--color-blue-vibrant);
   border: 0.25cm solid var(--color-blue-vibrant);
   color: white;
@@ -490,7 +522,16 @@ button {
   top: 2em;
 }
 
-.btn--entervr:hover {
+.btn--entervr:hover,
+.btn--entervr.hover {
   background: hsl(0, 0%, 45%);
   cursor: pointer;
+}
+
+.btn--entervr:active,
+.btn--entervr.active,
+.btn--entervr:focus,
+.btn--entervr.focus {
+  background-color: var(--color-blue-vibrant);
+  color: #fff;
 }
