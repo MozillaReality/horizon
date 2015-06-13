@@ -44,6 +44,7 @@ export default class FrameManager {
 
     // Element at cursor.
     this.cursorElement = null;
+    this.cursorMouseLeaveQueue = [];
 
     // Helper object for playing sound effects.
     this.sfx = {
@@ -478,11 +479,10 @@ export default class FrameManager {
     var el = document.elementFromPoint(0, 10);
 
     if (el !== this.cursorElement) {
-      this.cursorMouseOut();
+      this.cursorMouseLeave(el);
       this.cursorElement = el;
+      this.cursorMouseEnter();
     }
-
-    this.cursorMouseOver();
   }
 
   cursorClick() {
@@ -492,27 +492,38 @@ export default class FrameManager {
     .then(() => this.cursorMouseUp());
   }
 
-  cursorMouseOut() {
-    let el = this.cursorElement;
+  cursorMouseLeave(newEl) {
+    let prevEl = this.cursorElement;
 
-    if (el) {
-      this.utils.emitMouseEvent('mouseout', el);
-
-      // Blur and remove hover/active classes from the element we were previously focussed on/cursored over.
-      el.classList.remove(mouseConfig.hoverClassName, mouseConfig.activeClassName, mouseConfig.focusClassName);
+    if (prevEl) {
+      prevEl.mock = true;
 
       this.cursorDownElement = null;
+
+      // Mark a leave only if `previousEl` isn't a child of `el`.
+      if (prevEl.contains(newEl)) {
+        // The new element is still a parent of the new element, so emit the 'mouseleave' event later.
+        this.cursorMouseLeaveQueue.push(prevEl);
+      } else {
+        // Clear the queue of elements we are no longer focussed on.
+        while (this.cursorMouseLeaveQueue.length) {
+          this.utils.emitMouseEvent('mouseleave', this.cursorMouseLeaveQueue.pop());
+        }
+
+        this.utils.emitMouseEvent('mouseleave', prevEl);
+      }
     }
 
     return Promise.resolve();
   }
 
-  cursorMouseOver() {
+  cursorMouseEnter() {
     let el = this.cursorElement;
 
     if (el) {
-      this.utils.emitMouseEvent('mouseover', el);
-      el.classList.add(mouseConfig.hoverClassName);
+      el.mock = true;
+
+      this.utils.emitMouseEvent('mouseenter', el);
     }
 
     return Promise.resolve();
@@ -524,9 +535,11 @@ export default class FrameManager {
     if (el) {
       this.cursorDownElement = el;
 
+      el.mock = true;
       this.utils.emitMouseEvent('mousedown', el);
-      el.classList.remove(mouseConfig.hoverClassName);
-      el.classList.add(mouseConfig.activeClassName, mouseConfig.focusClassName);
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
       el.focus();
 
       this.utils.sleep(mouseConfig.formSubmitThreshold).then(() => {
@@ -554,10 +567,39 @@ export default class FrameManager {
 
       this.utils.emitMouseEvent('mouseup', el);
       this.utils.emitMouseEvent('click', el);
-      el.classList.remove(mouseConfig.hoverClassName, mouseConfig.activeClassName, mouseConfig.focusClassName);
     }
 
     return Promise.resolve();
+  }
+
+  handleMouseLeave(e) {
+    var el = e.target;
+    if (el && el.mock) {
+      // Blur and remove hover/active classes from the element we were previously focussed on/cursored over.
+      el.classList.remove(mouseConfig.hoverClassName, mouseConfig.activeClassName, mouseConfig.focusClassName);
+    }
+  }
+
+  handleMouseEnter(e) {
+    var el = e.target;
+    if (el && el.mock) {
+      el.classList.add(mouseConfig.hoverClassName);
+    }
+  }
+
+  handleMouseDown(e) {
+    var el = e.target;
+    if (el && el.mock) {
+      el.classList.remove(mouseConfig.hoverClassName);
+      el.classList.add(mouseConfig.activeClassName, mouseConfig.focusClassName);
+    }
+  }
+
+  handleMouseUp(e) {
+    var el = e.target;
+    if (el && el.mock) {
+      el.classList.remove(mouseConfig.hoverClassName, mouseConfig.activeClassName, mouseConfig.focusClassName);
+    }
   }
 
   init(runtime) {
@@ -582,6 +624,12 @@ export default class FrameManager {
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.closehudButton.addEventListener('click', this.hideHud.bind(this));
+
+    // Listeners for mimicked mouse events from gaze-based cursor.
+    window.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+    window.addEventListener('mouseenter', this.handleMouseEnter.bind(this));
+    window.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    window.addEventListener('mouseup', this.handleMouseUp.bind(this));
 
     // Creates initial frame.
     this.newFrame();

@@ -103,6 +103,10 @@ button {
   background-color: hsl(228, 15%, 19%);
 }
 
+#fs-container:-moz-full-screen * {
+  cursor: none;
+}
+
 @keyframes fs-container-lighten {
   from { background-color: hsl(228, 20%, 13%); }
   to { background-color: hsl(228, 15%, 19%); }
@@ -221,10 +225,6 @@ button {
   visibility: visible;
 }
 
-*:-moz-full-screen {
-  cursor: none;
-}
-
 
 /**
  * HUD
@@ -334,7 +334,6 @@ button {
   display: inline-block;
   font: 400 0.75em/1em sans-serif;
 }
-
 
 
 /**
