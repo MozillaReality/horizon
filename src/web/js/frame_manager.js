@@ -474,8 +474,7 @@ export default class FrameManager {
    * Cursor
    */
   intersectCursor() {
-    // the Y value needs to be set to half offsetHeight of cursor element.
-    var el = document.elementFromPoint(0, 10);
+    var el = document.elementFromPoint(0, 0);
 
     if (el !== this.cursorElement) {
       this.cursorMouseOut();
