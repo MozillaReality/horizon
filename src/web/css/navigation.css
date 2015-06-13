@@ -103,6 +103,10 @@ button {
   background-color: hsl(228, 15%, 19%);
 }
 
+#fs-container:-moz-full-screen * {
+  cursor: none;
+}
+
 @keyframes fs-container-lighten {
   from { background-color: hsl(228, 20%, 13%); }
   to { background-color: hsl(228, 15%, 19%); }
@@ -205,10 +209,6 @@ button {
 [data-hud="open"] .cursor {
   opacity: 1;
   visibility: visible;
-}
-
-*:-moz-full-screen {
-  cursor: none;
 }
 
 
@@ -321,7 +321,6 @@ button {
   font: 400 0.75em/1em sans-serif;
   pointer-events: none;
 }
-
 
 
 /**
