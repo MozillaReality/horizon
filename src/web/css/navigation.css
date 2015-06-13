@@ -60,7 +60,7 @@ body {
   width: 100%;
 }
 
-input, button {
+input, button, iframe {
   border: 0;
 }
 
@@ -162,7 +162,6 @@ button {
 /* iframe */
 .frame--mono {
   background: white;
-  border: 0;
   top: 18cm;
   left: 18cm;
   width: 100%;
