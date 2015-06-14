@@ -686,6 +686,14 @@ export default class FrameManager {
             'b14.down': () => this.cursorMouseDown(),
             'b14.up': () => this.cursorMouseUp(),
           },
+          // XBOX Wired controller (Windows)
+          'xinput': {
+            'b9': () => this.toggleHud(),
+            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
+            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
+            'b0.down': () => this.cursorMouseDown(),
+            'b0.up': () => this.cursorMouseUp(),
+          }
         },
       },
       scroll: {
