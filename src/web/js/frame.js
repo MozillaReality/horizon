@@ -1,3 +1,4 @@
+import cache from './lib/cache.js';
 import Url from './lib/url.js';
 
 var url = new Url();
@@ -49,6 +50,22 @@ export default class Frame {
     return this.icons[0].href;
   }
 
+  setProjection(projection) {
+    if (projection === 'stereo' && !this.isStereo) {
+      this.isStereo = true;
+      window.dispatchEvent(new CustomEvent('stereo-viewmode', {
+        detail: this
+      }));
+    }
+
+    if (projection === 'mono' && this.isStereo) {
+      this.isStereo = false;
+      window.dispatchEvent(new CustomEvent('mono-viewmode', {
+        detail: this
+      }));
+    }
+  }
+
   on_mozbrowserlocationchange(e) {
     this.location = e.detail;
     this.icons = [];
@@ -80,18 +97,13 @@ export default class Frame {
       projection = 'mono';
     }
 
-    if (projection === 'stereo' && !this.isStereo) {
-      this.isStereo = true;
-      window.dispatchEvent(new CustomEvent('stereo-viewmode', {
-        detail: this
-      }));
-    }
+    if (projection) {
+      // Dispatch events so `ViewportManager` knows to change the view mode.
+      this.setProjection(projection);
 
-    if (projection === 'mono' && this.isStereo) {
-      this.isStereo = false;
-      window.dispatchEvent(new CustomEvent('mono-viewmode', {
-        detail: this
-      }));
+      // Cache the projection in IndexedDB so we can set the view-mode
+      // projection before `mozbrowsermetachange` fires next we load this URL.
+      cache.setItem('viewmode:' + this.location, projection);
     }
   }
 
@@ -121,13 +133,41 @@ export default class Frame {
     element.setAttribute('src', this.config.url);
     element.setAttribute('mozbrowser', 'true');
     element.setAttribute('remote', 'true');
-    element.className = 'frame--mono threed';
+    if (this.config.container.dataset.projection === 'stereo') {
+      element.className = 'frame--stereo';
+    } else {
+      element.className = 'frame--mono threed';
+    }
     this.config.container.appendChild(element);
 
     this.element = element;
 
     this.browserEvents.forEach(event => {
       element.addEventListener(event, this);
+    });
+
+    window.addEventListener('frame_mozbrowserlocationchange',
+      this.setProjectionFromCache.bind(this));
+  }
+
+  /**
+   * Uses the last cached view-mode projection to fire view-mode change events.
+   *
+   * We retrieve from IndexedDB the last-known projection value for
+   * this URL - so we can set the view-mode projection immediately
+   * and not have to wait until the document has completely loaded
+   * and `mozbrowsermetachange` has fired.
+   *
+   * If our cached projection value has changed, once
+   * `mozbrowsermetachange` fires, the projection will change.
+   *
+   * @param e A `frame_mozbrowserlocationchange` event.
+   */
+  setProjectionFromCache(e) {
+    cache.getItem('viewmode:' + e.detail).then(projection => {
+      if (projection) {
+        this.setProjection(projection);
+      }
     });
   }
 
