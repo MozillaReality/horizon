@@ -44,7 +44,7 @@
     {
       "description": "",
       "icon": "",
-      "name": "Vimeo Player",
+      "name": "WebM Player",
       "tagline": "Test",
       "type": "Full-VR CSS",
       "url": "http://mozvr.github.io/cssvr-experiments/20150516/webm.html"
