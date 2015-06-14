@@ -714,7 +714,8 @@ export default class FrameManager {
       'ctrl shift tab': () => this.prevFrame(),
       'backspace': () => this.backspace(),
       ' ': () => this.toggleHud(),
-      'c': () => this.requireHudOpen().then(() => this.cursorClick()),
+      'c.down': () => this.requireHudOpen().then(() => this.cursorMouseDown()),
+      'c.up': () => this.requireHudOpen().then(() => this.cursorMouseUp()),
       'alt arrowup': () => {
         runtime.frameCommunicator.send('scroll.step', {
           scrollTop: -scrollConfig.step
