@@ -18,6 +18,9 @@
   /* icons size */
   --icon-size: 25px;
 
+  /* depth of overlay for navigation transition */
+  --transition-depth: calc(var(--hud-depth) - 3cm);
+
   /* colors */
   --color-blue-vibrant: hsl(200, 89%, 50%);
   --color-blue-vibrant-faded: hsla(200, 89%, 70%, .75);
@@ -122,6 +125,7 @@ button {
 
 .container--mono {
   height: var(--content-height);
+  transition: transform 0.5s ease;
   width: var(--content-width);
 }
 
@@ -130,22 +134,18 @@ button {
   transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth));
 }
 
-@keyframes container-pushBack {
-  from {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
-  }
-  to {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
-  }
+/**
+ * transition the mono container's Z position and scale
+ * (using transitions instead of CSS animations in JS to avoid clashing with navigation transitions)
+ */
+[data-hud="open"] .container--mono {
+  /* push back */
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
 }
 
-@keyframes container-pullForward {
-  from {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
-  }
-  to {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
-  }
+[data-hud="closed"] .container--mono {
+  /* pull forward */
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
 }
 
 
@@ -209,6 +209,35 @@ button {
 [data-hud="open"] .cursor {
   opacity: 1;
   visibility: visible;
+}
+
+
+/**
+ * Transitions
+ */
+
+.transitions {
+  transform: translate3d(-50%, -50%, var(--transition-depth));
+  width: 3000px;
+  height: 3500px;
+  background: hsla(228, 15%, 19%, 0);
+  opacity: 1;
+  pointer-events: none;
+  transition: background .25s;
+}
+
+/* transition for when actual loading is happening */
+[data-navigating] .transitions {
+  background: hsla(228, 15%, 19%, 1);
+}
+
+/* transitions for mono container when navigation delay is happening */
+[data-navigating][data-hud="open"] .container--mono {
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0, 0);
+}
+
+[data-navigating][data-hud="closed"] .container--mono {
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(0, 0);
 }
 
 
