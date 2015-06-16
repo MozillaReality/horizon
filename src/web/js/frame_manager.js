@@ -422,6 +422,28 @@ export default class FrameManager {
   }
 
   /**
+   * Returns a promise if the active frame is mono.
+   */
+  requireMonoFrameOpen() {
+    if (!this.activeFrame.isStereo) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  }
+
+  /**
+   * Returns a promise if the active frame is stereo.
+   */
+  requireStereoFrameOpen() {
+    if (this.activeFrame.isStereo) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  }
+
+  /**
    * Show/Hide the stop-reload buttons.
    * Called by both loading events (mozbrowserloadstart and mozbrowserloadend) and user action (toggleHud).
    */
@@ -669,30 +691,42 @@ export default class FrameManager {
             'b4': () => this.toggleHud(),
 
             // Horizontal scrolling.
-            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
+            'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollX(axis, value)
+            ),
 
             // Vertical scrolling.
-            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
+            'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollY(axis, value)
+            ),
 
             // Use the "A" button to click on elements (and hold to submit forms).
-            'b11.down': () => this.cursorMouseDown(),
-            'b11.up': () => this.cursorMouseUp(),
+            'b11.down': () => this.requireHudOpen().then(this.cursorMouseDown.bind(this)),
+            'b11.up': () => this.requireHudOpen().then(this.cursorMouseUp.bind(this)),
           },
           '54c-268-PLAYSTATION(R)3 Controller': {
             'b16': () => this.toggleHud(),
             'b3': () => this.toggleHud(),
-            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
-            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
-            'b14.down': () => this.cursorMouseDown(),
-            'b14.up': () => this.cursorMouseUp(),
+            'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollX(axis, value)
+            ),
+            'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollY(axis, value)
+            ),
+            'b14.down': () => this.requireHudOpen().then(this.cursorMouseDown.bind(this)),
+            'b14.up': () => this.requireHudOpen().then(this.cursorMouseUp.bind(this)),
           },
           // XBOX Wired controller (Windows)
           'xinput': {
             'b9': () => this.toggleHud(),
-            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
-            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
-            'b0.down': () => this.cursorMouseDown(),
-            'b0.up': () => this.cursorMouseUp(),
+            'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollX(axis, value)
+            ),
+            'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollY(axis, value)
+            ),
+            'b0.down': () => this.requireHudOpen().then(this.cursorMouseDown.bind(this)),
+            'b0.up': () => this.requireHudOpen().then(this.cursorMouseUp.bind(this)),
           }
         },
       },
