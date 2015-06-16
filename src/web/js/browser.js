@@ -18,7 +18,7 @@ runtime.gamepadInput = new GamepadInput();
 runtime.keyboardInput = new KeyboardInput();
 runtime.viewportManager = new ViewportManager();
 runtime.settings = {
-  www_directory_src: '/directory.json',
+  www_directory_src: '/demos/index.json',
   www_browser_start_src: '/media/browser_start.wav',
   www_hud_hide_src: '/media/hud_hide.wav',
   www_hud_show_src: '/media/hud_show.wav',

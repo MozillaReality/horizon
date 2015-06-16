@@ -20,6 +20,7 @@ const DIST_ROOT = './dist/';
 const DIST_ADDON_ROOT = './dist/addon/';
 const DIST_CONTENT_SCRIPTS_ROOT = './dist/content_scripts/';
 const DIST_WEB_ROOT = './dist/web/';
+const DIST_WEBVR_DEMOS_ROOT = './node_modules/webvr-demos/public/';
 
 
 /**
@@ -226,7 +227,7 @@ gulp.task('watch', function() {
 
 
 gulp.task('webserver', function() {
-  gulp.src(DIST_WEB_ROOT)
+  gulp.src([DIST_WEB_ROOT, DIST_WEBVR_DEMOS_ROOT])
     .pipe(webserver({
       port: process.env.PORT || 8000,
       host: process.env.HOST || 'localhost',

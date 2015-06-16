@@ -30,6 +30,9 @@ export default class FrameManager {
     this.titleText = $('#title__text');
     this.titleIcon = $('#title__icon');
     this.directory = $('#directory');
+    this.directoryUrls = {
+      '/demos/mozvr-site/posts/quick-vr-prototypes/': 'http://mozvr.com/posts/quick-vr-prototypes/'
+    };
     this.urlbar = $('#urlbar');
     this.urlInput = this.urlbar.querySelector('#urlbar__input');
     this.backfwd = $('#backfwd');
@@ -170,7 +173,7 @@ export default class FrameManager {
   /**
    * Creates a new browsing frame.
    */
-  newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
+  newFrame(location = 'http://localhost:8000/demos/mozvr-site/posts/quick-vr-prototypes/', openInForeground = true) {
     var app = new Frame({
       id: this.nextId(),
       url: location,
@@ -246,7 +249,15 @@ export default class FrameManager {
   updateHUDForActiveFrame() {
     if (this.activeFrame) {
       var url = new URL(this.activeFrame.location);
-      this.urlInput.value = url.hostname;
+      if (url.pathname.startsWith('/demos/') && url.origin === window.location.origin) {
+        // Fake the URL so it looks like it's not being served from http://localhost:8000
+        let demosPath = url.pathname + url.search + url.hash;
+        let fakePath = this.directoryUrls[demosPath] || url.hostname;
+        this.urlInput.value = fakePath;
+        console.log('Masquerading %s as %s', demosPath, fakePath);
+      } else {
+        this.urlInput.value = url.hostname;
+      }
       this.updateTitle(this.activeFrame.title);
       this.titleIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
@@ -485,10 +496,21 @@ export default class FrameManager {
    * Populate the directory using the loaded JSON.
    */
   buildDirectory(data) {
+    this.directorySites = data.sites;
+    this.directoryUrls = {};
+
     data.sites.forEach(site => {
       var tile = document.createElement('a');
       tile.className = 'directory__tile';
-      tile.setAttribute('href', site.url);
+
+      if (site.path) {
+        let path = '/demos' + site.path;
+        tile.setAttribute('href', path);
+        this.directoryUrls[path] = site.url;
+      } else {
+        tile.setAttribute('href', site.url);
+      }
+
       tile.innerHTML = site.name;
 
       var type = document.createElement('span');
@@ -676,6 +698,15 @@ export default class FrameManager {
     })
     .then(data => {
       this.buildDirectory(data);
+    }).catch(err => {
+      console.warn('Could not fetch directory:', runtime.settings.www_directory_src, err);
+      console.log('Attempting to load fallback JSON file…');
+      fetch('/directory.json')
+      .then(response => {
+        return response.json();
+      }).then(data => {
+        this.buildDirectory(data);
+      });
     });
 
     runtime.gamepadInput.assign({
