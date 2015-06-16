@@ -7,7 +7,7 @@
       "name": "Sechelt",
       "tagline": "Fly Through",
       "type": "Full-VR WebGL",
-      "url": "http://mozvr.github.io/sechelt/"
+      "url": "http://mozvr.github.io/sechelt/?mode=vr"
     },
     {
       "description": "A documentary by DEEP that takes users to the Arctic in 360° VR video, powered by eleVR’s WebGL VR video player.",
