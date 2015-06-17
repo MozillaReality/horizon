@@ -109,8 +109,9 @@ export default class Frame {
 
   /**
    * Reloads the current page.
-   * @param e The mozbrowser event.
-   * @param hardReload Whether or not to perform a hard reload.
+   *
+   * @param {(Event|null)} e The mozbrowser event.
+   * @param {Boolean} hardReload Whether or not to perform a hard reload.
    */
   on_reload(e, hardReload = false) {
     this.element.reload(hardReload);
