@@ -8,6 +8,7 @@ var matrix = new Matrix();
 
 export default class ViewportManager {
   constructor() {
+    this.body = document.body;
     this.container = $('#fs-container');
     this.monoContainer = $('#container--mono');
     this.stereoContainer = $('#container--stereo');
@@ -38,6 +39,7 @@ export default class ViewportManager {
    * @param {Object} app Details object of the 'stereo-viewmode' event fired.
    */
   toStereo(app) {
+    this.body.dataset.projection = 'stereo';
     app.element.className = 'frame--stereo';
     this.stereoContainer.appendChild(app.element);
   }
@@ -50,6 +52,7 @@ export default class ViewportManager {
    * @param {Object} app Details object of the 'mono-viewmode' event fired.
    */
   toMono(app) {
+    this.body.dataset.projection = 'mono';
     app.element.className = 'frame--mono threed';
     this.monoContainer.appendChild(app.element);
   }
@@ -137,12 +140,15 @@ export default class ViewportManager {
     let position = state.position || this.lastPosition;
     let cssPosition = '';
 
+    this.orientation = orientation;
+    this.position = position;
+
     if (position !== null) {
       // The scaled position to use.
       let val = {};
 
       for (let p in position) {
-        val[p] = position[p] * -50; /* scale position from HMD to match CSS values */
+        val[p] = position[p] * -100; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
       val.y *= -1;
