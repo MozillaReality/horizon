@@ -124,6 +124,20 @@ class Page {
   scrollEnd() {
     this.scrollTo({scrollTop: Infinity});
   }
+
+  mouseClick(data) {
+    if ('top' in data && 'left' in data) {
+      var el = document.elementFromPoint(data.left, data.top);
+      if (el) {
+        var evt = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true
+        });
+        el.dispatchEvent(evt);
+      }
+    }
+  }
 }
 
 
@@ -148,6 +162,11 @@ fc.on('scroll.home', () => {
 fc.on('scroll.end', () => {
   log("[add-on] Received 'scroll.end' message");
   page.scrollEnd();
+});
+
+fc.on('mouse.click', data => {
+  log("[add-on] Received 'mouse.click' message");
+  page.mouseClick(data);
 });
 
 

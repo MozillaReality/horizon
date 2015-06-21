@@ -43,6 +43,7 @@
     "webvr-demos": "mozvr/webvr-demos#242c6123471"
   },
   "dependencies": {
+    "gl-vec4": "^1.0.1",
     "neat-audio": "^0.2.1"
   }
 }

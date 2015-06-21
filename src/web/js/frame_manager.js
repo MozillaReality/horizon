@@ -1,5 +1,10 @@
-import Frame from './frame.js';
 import neatAudio from '../../../node_modules/neat-audio/neat-audio.js';
+import vec4 from '../../../node_modules/gl-vec4';
+
+import Frame from './frame.js';
+import Matrix from './lib/matrix.js';
+
+var matrix = new Matrix();
 
 const scrollConfig = {
   step: 50,
@@ -64,14 +69,17 @@ export default class FrameManager {
 
 
   /**
-   * Manages events for the active frame.
+   * Manages events for the active frame (called from `Frame.handleEvent` method).
+   *
+   * @param {Event} e A `mozbrowser*` event.
+   * @param {Object} frame A `Frame` instance (should be the active frame's).
    */
   browserEvent(e, frame) {
     if (frame.id !== this.activeFrame.id) {
       return;
     }
 
-    switch(e.type) {
+    switch (e.type) {
       case 'mozbrowserlocationchange':
         this.updateHUDForNavButtons();
         /* falls through */
@@ -100,13 +108,15 @@ export default class FrameManager {
 
 
   /**
-   * Manages events for native controls.
+   * Manages events for native controls (for clicking on HUD elements).
+   *
+   * @param {Event} e A `click` event.
    */
   handleEvent(e) {
     var action = e.target.dataset && e.target.dataset.action;
     if (!action) { return; }
 
-    switch(action) {
+    switch (action) {
       case 'new':
         this.newFrame();
         return;
@@ -127,7 +137,9 @@ export default class FrameManager {
 
 
   /**
-   * Shows a modal dialog.
+   * Shows a modal dialog (called from `browserEvent` method).
+   *
+   * @param {Event} e A `mozbrowsershowmodalprompt` event.
    */
   showModal(e) {
     e.preventDefault();
@@ -163,6 +175,8 @@ export default class FrameManager {
 
   /**
    * Handles when a native control is clicked.
+   *
+   * @param {Event} e The custom event triggered from the window controls.
    */
   nativeControl(e) {
     var type = e.target.dataset.message;
@@ -192,6 +206,8 @@ export default class FrameManager {
 
   /**
    * Gets the activeFrame.
+   *
+   * @returns {Object} The active `Frame` instance.
    */
   get activeFrame() {
     return this.frames[this.activeFrameIndex];
@@ -199,6 +215,8 @@ export default class FrameManager {
 
   /**
    * Returns the next ID.
+   *
+   * @returns {Number} The next frame (tab) number.
    */
   nextId() {
     return ++this.currentId;
@@ -314,6 +332,8 @@ export default class FrameManager {
 
   /**
    * Updates title text.
+   *
+   * @param {String} text Title of page loaded in the active frame.
    */
   updateTitle(text) {
     this.titleText.textContent = text;
@@ -384,7 +404,8 @@ export default class FrameManager {
     this.backfwd.style.animation = 'show 0.1s ease forwards';
     this.showStopreload();
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
-    this.hudBackground.style.animation = 'background-fadeIn 0.3s ease forwards';
+    this.hudBackground.style.animation = 'show 0.3s ease forwards';
+    this.showCursor();
   }
 
   hideHud(firstLoad) {
@@ -402,7 +423,7 @@ export default class FrameManager {
     this.backfwd.style.animation = 'hide 0.1s ease forwards';
     this.hideStopreload();
     this.closehudButton.style.animation = 'hide 0.1s ease forwards';
-    this.hudBackground.style.animation = 'background-fadeOut 0.3s ease forwards';
+    this.hudBackground.style.animation = 'hide 0.3s ease forwards';
   }
 
   toggleHud() {
@@ -423,6 +444,8 @@ export default class FrameManager {
    * Returns a promise if the HUD is open.
    *
    * (Useful for conditionally calling functions based on HUD visibility.)
+   *
+   * @returns {Promise} Resolved if HUD is opened; rejected if HUD is closed.
    */
   requireHudOpen() {
     if (this.hudVisible) {
@@ -434,6 +457,8 @@ export default class FrameManager {
 
   /**
    * Returns a promise if the active frame is mono.
+   *
+   * @returns {Promise} Resolved if frame is mono; rejected if HUD is stereo.
    */
   requireMonoFrameOpen() {
     if (!this.activeFrame.isStereo) {
@@ -445,6 +470,8 @@ export default class FrameManager {
 
   /**
    * Returns a promise if the active frame is stereo.
+   *
+   * @returns {Promise} Resolved if frame is stereo; rejected if HUD is mono.
    */
   requireStereoFrameOpen() {
     if (this.activeFrame.isStereo) {
@@ -453,6 +480,21 @@ export default class FrameManager {
       return Promise.reject();
     }
   }
+
+
+  /**
+   * Allow cursor to be active only when HUD is visible or displaying mono content.
+   *
+   * @returns {Promise} Resolve if cursor can be active.
+   */
+  allowCursor() {
+    if (this.hudVisible || !this.activeFrame.isStereo) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  }
+
 
   /**
    * Show/Hide the stop-reload buttons.
@@ -494,6 +536,8 @@ export default class FrameManager {
 
   /**
    * Populate the directory using the loaded JSON.
+   *
+   * @param {Object} data An object containing an array of sites in the directory.
    */
   buildDirectory(data) {
     this.directorySites = data.sites;
@@ -609,10 +653,55 @@ export default class FrameManager {
     return Promise.resolve();
   }
 
+  intersectIframe() {
+    var el = this.cursorElement;
+    if (el !== this.viewportManager.monoContainer) {
+      return false;
+    }
+
+    // Retrieve offsets from element transform matrix.
+    var transform = window.getComputedStyle(el).transform;
+    if (transform === 'none') {
+      return false;
+    }
+    var cssMatrix = matrix.matrixFromCss(transform);
+    var offsetX = -cssMatrix[12], offsetY = cssMatrix[13], offsetZ = -cssMatrix[14];
+
+    // Transform the HMD quaternion by direction vector.
+    var hmd = this.viewportManager;
+    var direction = vec4.transformQuat([], [0, 0, -1, 0],
+      [hmd.orientation.x, hmd.orientation.y, hmd.orientation.z, hmd.orientation.w]);
+    var dx = direction[0], dy = direction[1], dz = direction[2];
+
+    // Scale HMD position to match CSS values.
+    var cmToPixel = 96 / 2.54;
+    var pixelPerMeters = -100 * cmToPixel;
+
+    // Apply HMD position.
+    var translateX = 0, translateY = 0, translateZ = 0;
+    if (hmd.position !== null) {
+      translateX = -hmd.position.x * pixelPerMeters;
+      translateY = -hmd.position.y * pixelPerMeters;
+      translateZ = -hmd.position.z * pixelPerMeters;
+    }
+
+    // Solve intersection.
+    var distance = offsetZ + translateZ;
+    var intersectionX = distance / dz * -dx + translateX + offsetX;
+    var intersectionY = distance / dz * -dy + translateY + offsetY;
+    intersectionY *= -1;
+
+    this.frameCommunicator.send('mouse.click', {
+      top: intersectionY,
+      left: intersectionX
+    });
+  }
+
   cursorMouseUp() {
     let el = this.cursorElement;
 
     if (el) {
+      this.intersectIframe();
       this.cursorDownElement = null;
 
       this.utils.emitMouseEvent('mouseup', el);
@@ -655,6 +744,7 @@ export default class FrameManager {
   init(runtime) {
     this.utils = runtime.utils;
     this.viewportManager = runtime.viewportManager;
+    this.frameCommunicator = runtime.frameCommunicator;
 
     // Preload the sound effects so we can play them later.
     Promise.all([
@@ -732,8 +822,8 @@ export default class FrameManager {
             ),
 
             // Use the "A" button to click on elements (and hold to submit forms).
-            'b11.down': () => this.requireHudOpen().then(this.cursorMouseDown.bind(this)),
-            'b11.up': () => this.requireHudOpen().then(this.cursorMouseUp.bind(this)),
+            'b11.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+            'b11.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
           },
           '54c-268-PLAYSTATION(R)3 Controller': {
             'b16': () => this.toggleHud(),
@@ -744,8 +834,8 @@ export default class FrameManager {
             'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
               runtime.gamepadInput.scroll.scrollY(axis, value)
             ),
-            'b14.down': () => this.requireHudOpen().then(this.cursorMouseDown.bind(this)),
-            'b14.up': () => this.requireHudOpen().then(this.cursorMouseUp.bind(this)),
+            'b14.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+            'b14.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
           },
           // XBOX Wired controller (Windows)
           'xinput': {
@@ -756,8 +846,8 @@ export default class FrameManager {
             'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
               runtime.gamepadInput.scroll.scrollY(axis, value)
             ),
-            'b0.down': () => this.requireHudOpen().then(this.cursorMouseDown.bind(this)),
-            'b0.up': () => this.requireHudOpen().then(this.cursorMouseUp.bind(this)),
+            'b0.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+            'b0.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
           }
         },
       },
@@ -787,34 +877,34 @@ export default class FrameManager {
       'ctrl shift tab': () => this.prevFrame(),
       'backspace': () => this.backspace(),
       ' ': () => this.toggleHud(),
-      'c.down': () => this.requireHudOpen().then(() => this.cursorMouseDown()),
-      'c.up': () => this.requireHudOpen().then(() => this.cursorMouseUp()),
+      'c.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+      'c.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
       'alt arrowup': () => {
-        runtime.frameCommunicator.send('scroll.step', {
+        this.frameCommunicator.send('scroll.step', {
           scrollTop: -scrollConfig.step
         });
       },
       'alt arrowdown': () => {
-        runtime.frameCommunicator.send('scroll.step', {
+        this.frameCommunicator.send('scroll.step', {
           scrollTop: scrollConfig.step
         });
       },
       'alt arrowleft': () => {
-        runtime.frameCommunicator.send('scroll.step', {
+        this.frameCommunicator.send('scroll.step', {
           scrollLeft: -scrollConfig.step
         });
       },
       'alt arrowright': () => {
-        runtime.frameCommunicator.send('scroll.step', {
+        this.frameCommunicator.send('scroll.step', {
           scrollLeft: scrollConfig.step
         });
       },
       'ctrl arrowup': () => {
-        runtime.frameCommunicator.send('scroll.home');
+        this.frameCommunicator.send('scroll.home');
       },
       'ctrl arrowdown': () => {
-        runtime.frameCommunicator.send('scroll.end');
-      },
+        this.frameCommunicator.send('scroll.end');
+      }
     });
 
     if (runtime.settings.play_audio_on_browser_start) {

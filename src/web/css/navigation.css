@@ -60,7 +60,7 @@ body {
   width: 100%;
 }
 
-input, button {
+input, button, iframe {
   border: 0;
 }
 
@@ -162,7 +162,6 @@ button {
 /* iframe */
 .frame--mono {
   background: white;
-  border: 0;
   top: 18cm;
   left: 18cm;
   width: 100%;
@@ -193,22 +192,19 @@ button {
 /**
  * Cursor
  */
-.cursor {
-  width: 2cm;
-  height: 2cm;
-  background: var(--color-blue-vibrant-faded);
-  border-radius: 50%;
-  opacity: 0;
-  transform: translate3d(-50%, -50%, var(--hud-depth));
-  /* NOTE: For perf reasons, do not transition on opacity. */
-  transition: .1s width, .1s height, .1s left, .1s top, .1s visibility, .1s transform;
-  visibility: hidden;
-  pointer-events: none;
+[data-hud="open"] .cursor,
+[data-projection="mono"] .cursor {
+  visibility: visible;
 }
 
-[data-hud="open"] .cursor {
-  opacity: 1;
-  visibility: visible;
+.cursor {
+  width: 1cm;
+  height: 1cm;
+  background: var(--color-blue-vibrant-faded);
+  border-radius: 50%;
+  transform: translate3d(-50%, -50%, var(--hud-depth));
+  pointer-events: none;
+  visibility: hidden;
 }
 
 
@@ -478,17 +474,6 @@ button {
   transform: translate(-50%, -50%) translate3d(0, 0, -4cm);
   width: var(--content-width);
 }
-
-@keyframes background-fadeIn {
-  from { background-color: hsla(228, 20%, 13%, 0); }
-  to { background-color: hsla(228, 20%, 13%, 0.95); }
-}
-
-@keyframes background-fadeOut {
-  from { background-color: hsla(228, 20%, 13%, 0.95); }
-  to { background-color: hsla(228, 20%, 13%, 0); }
-}
-
 
 
 /**

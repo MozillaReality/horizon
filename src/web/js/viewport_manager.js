@@ -8,6 +8,7 @@ var matrix = new Matrix();
 
 export default class ViewportManager {
   constructor() {
+    this.body = document.body;
     this.container = $('#fs-container');
     this.monoContainer = $('#container--mono');
     this.stereoContainer = $('#container--stereo');
@@ -25,7 +26,7 @@ export default class ViewportManager {
 
 
   /**
-   * Handles view mode changes for content iframes.
+   * Handles view-mode change, attaching iframe to stereo container.
    *
    * We use appendChild to move the app.element iframe into the
    * appropriate place within the DOM for each type of projection.
@@ -34,14 +35,24 @@ export default class ViewportManager {
    * an additional set of browser events!
    *
    * See issue: https://github.com/MozVR/horizon/issues/118
+   *
+   * @param {Object} app Details object of the 'stereo-viewmode' event fired.
    */
-
   toStereo(app) {
+    this.body.dataset.projection = 'stereo';
     app.element.className = 'frame--stereo';
     this.stereoContainer.appendChild(app.element);
   }
 
+  /**
+   * Handles view-mode change, attaching iframe to mono container.
+   *
+   * Attaches iframe to mono container in DOM.
+   *
+   * @param {Object} app Details object of the 'mono-viewmode' event fired.
+   */
   toMono(app) {
+    this.body.dataset.projection = 'mono';
     app.element.className = 'frame--mono threed';
     this.monoContainer.appendChild(app.element);
   }
@@ -129,12 +140,15 @@ export default class ViewportManager {
     let position = state.position || this.lastPosition;
     let cssPosition = '';
 
+    this.orientation = orientation;
+    this.position = position;
+
     if (position !== null) {
       // The scaled position to use.
       let val = {};
 
       for (let p in position) {
-        val[p] = position[p] * -50; /* scale position from HMD to match CSS values */
+        val[p] = position[p] * -100; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
       val.y *= -1;
