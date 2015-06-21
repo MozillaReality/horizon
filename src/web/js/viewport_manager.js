@@ -132,6 +132,7 @@ export default class ViewportManager {
 
   onFrame() {
     if (!this.vrDevices) {
+      console.warn('No VR devices detected.');
       return false;
     }
 
@@ -140,8 +141,7 @@ export default class ViewportManager {
     let position = state.position || this.lastPosition;
     let cssPosition = '';
 
-    this.orientation = orientation;
-    this.position = position;
+    this.hmdState = state;
 
     if (position !== null) {
       // The scaled position to use.

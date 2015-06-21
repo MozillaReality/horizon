@@ -68,6 +68,10 @@ button {
   cursor: pointer;
 }
 
+.pointer-events-none {
+  pointer-events: none;
+}
+
 
 /**
  * VR classes
@@ -192,8 +196,8 @@ button {
 /**
  * Cursor
  */
-[data-hud="open"] .cursor,
-[data-projection="mono"] .cursor {
+[data-hud="open"] .cursor[data-visibility="visible"],
+[data-projection="mono"] .cursor[data-visibility="visible"] {
   visibility: visible;
 }
 
