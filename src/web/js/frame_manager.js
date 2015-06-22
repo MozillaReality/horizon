@@ -793,6 +793,9 @@ export default class FrameManager {
             // Use the "A" button to click on elements (and hold to submit forms).
             'b11.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
             'b11.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
+
+            //  Use the "X" button to navigate back.
+            'b13': () => this.activeFrame.on_back(),
           },
           '54c-268-PLAYSTATION(R)3 Controller': {
             'b16': () => this.toggleHud(),
@@ -817,6 +820,7 @@ export default class FrameManager {
             ),
             'b0.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
             'b0.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
+            'b2': () => this.activeFrame.on_back(),
           }
         },
       },
