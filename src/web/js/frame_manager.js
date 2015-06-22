@@ -49,6 +49,7 @@ export default class FrameManager {
     this.loading = $('#loading');
     this.closehudButton = $('#closehud');
     this.hudBackground = $('#background');
+    this.cursor = $('#cursor');
 
     // Element at cursor.
     this.cursorElement = null;
@@ -405,7 +406,6 @@ export default class FrameManager {
     this.showStopreload();
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
     this.hudBackground.style.animation = 'show 0.3s ease forwards';
-    this.showCursor();
   }
 
   hideHud(firstLoad) {
@@ -653,47 +653,113 @@ export default class FrameManager {
     return Promise.resolve();
   }
 
-  intersectIframe() {
-    var el = this.cursorElement;
-    if (el !== this.viewportManager.monoContainer) {
+  getNearest3dTransform(el) {
+    if (!el) {
+      return null;
+    }
+    var transform = window.getComputedStyle(el).transform;
+    if (transform === 'none' || transform.indexOf('matrix3d') === -1) {
+      return this.getNearest3dTransform.call(this, el.parentElement);
+    } else {
+      return transform;
+    }
+  }
+
+  getElementTranslation(el) {
+    if (!el) {
       return false;
     }
 
-    // Retrieve offsets from element transform matrix.
-    var transform = window.getComputedStyle(el).transform;
-    if (transform === 'none') {
+    var transform = this.getNearest3dTransform(el);
+    if (!transform) {
       return false;
     }
+
     var cssMatrix = matrix.matrixFromCss(transform);
-    var offsetX = -cssMatrix[12], offsetY = cssMatrix[13], offsetZ = -cssMatrix[14];
+    return {
+      x: -cssMatrix[12],
+      y: cssMatrix[13],
+      z: -cssMatrix[14]
+    }
+  }
+
+  getDirection() {
+    var hmd = this.viewportManager.hmdState;
+    if (!hmd || hmd.orientation === null) {
+      return false;
+    }
 
     // Transform the HMD quaternion by direction vector.
-    var hmd = this.viewportManager;
     var direction = vec4.transformQuat([], [0, 0, -1, 0],
       [hmd.orientation.x, hmd.orientation.y, hmd.orientation.z, hmd.orientation.w]);
-    var dx = direction[0], dy = direction[1], dz = direction[2];
+
+    return {
+      x: -direction[0],
+      y: -direction[1],
+      z: direction[2]
+    }
+  }
+
+  getPosition() {
+    var hmd = this.viewportManager.hmdState;
+    if (!hmd) {
+      return false;
+    }
 
     // Scale HMD position to match CSS values.
     var cmToPixel = 96 / 2.54;
     var pixelPerMeters = -100 * cmToPixel;
 
     // Apply HMD position.
-    var translateX = 0, translateY = 0, translateZ = 0;
+    var positionX = 0, positionY = 0, positionZ = 0;
     if (hmd.position !== null) {
-      translateX = -hmd.position.x * pixelPerMeters;
-      translateY = -hmd.position.y * pixelPerMeters;
-      translateZ = -hmd.position.z * pixelPerMeters;
+      positionX = -hmd.position.x * pixelPerMeters;
+      positionY = -hmd.position.y * pixelPerMeters;
+      positionZ = -hmd.position.z * pixelPerMeters;
+    }
+    return {
+      x: positionX,
+      y: positionY,
+      z: positionZ
+    }
+  }
+
+  /**
+   * Position the cursor at the same depth as the mono iframe container.
+   * Otherwise, use the depth set on cursor element.
+   */
+  positionCursor() {
+    var el = this.cursorElement;
+    var translation = this.getElementTranslation(el);
+    var direction = this.getDirection();
+    var position = this.getPosition();
+
+    if (translation && direction && position) {
+      // Solve intersection.
+      var distance = translation.z + position.z;
+      var intersectionX = distance / direction.z * direction.x + position.x + translation.x;
+      var intersectionY = distance / direction.z * direction.y + position.y + translation.y;
+      var intersectionZ = Math.sqrt(Math.pow(distance / direction.z * direction.x, 2) + Math.pow(distance, 2));
+      intersectionY *= -1;
+      this.intersectionX = intersectionX;
+      this.intersectionY = intersectionY;
+
+      this.cursor.dataset.visibility = 'visible';
+      this.cursor.style.transform = `translate3d(-50%, -50%, -${intersectionZ}px)`;
+    } else {
+      delete this.cursor.dataset.visibility;
     }
 
-    // Solve intersection.
-    var distance = offsetZ + translateZ;
-    var intersectionX = distance / dz * -dx + translateX + offsetX;
-    var intersectionY = distance / dz * -dy + translateY + offsetY;
-    intersectionY *= -1;
+    window.requestAnimationFrame(this.positionCursor.bind(this));
+  }
 
+  clickIntoIframe() {
+    if (this.cursorElement !== this.viewportManager.monoContainer) {
+      return false;
+    }
     this.frameCommunicator.send('mouse.click', {
-      top: intersectionY,
-      left: intersectionX
+      top: this.intersectionY,
+      left: this.intersectionX
     });
   }
 
@@ -701,7 +767,7 @@ export default class FrameManager {
     let el = this.cursorElement;
 
     if (el) {
-      this.intersectIframe();
+      this.clickIntoIframe();
       this.cursorDownElement = null;
 
       this.utils.emitMouseEvent('mouseup', el);
@@ -858,7 +924,9 @@ export default class FrameManager {
       }
     });
 
-    setInterval(this.intersectCursor.bind(this), 100);
+    window.setInterval(this.intersectCursor.bind(this), 100);
+
+    window.requestAnimationFrame(this.positionCursor.bind(this));
 
     runtime.keyboardInput.assign({
       'ctrl =': () => this.activeFrame.zoomIn(),
