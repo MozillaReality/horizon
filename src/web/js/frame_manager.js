@@ -926,8 +926,14 @@ export default class FrameManager {
             'b11.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
             'b11.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
 
-            //  Use the "X" button to navigate back.
+            // Use the "X" button to navigate back.
             'b13': () => this.activeFrame.on_back(),
+
+            // Use the "B" button to navigate forward.
+            'b12': () => this.activeFrame.on_forward(),
+
+            // Use the "back" button to zero HMD sensor.
+            'b5': () => this.viewportManager.resetSensor(),
           },
           '54c-268-PLAYSTATION(R)3 Controller': {
             'b16': () => this.toggleHud(),
