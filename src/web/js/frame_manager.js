@@ -678,7 +678,7 @@ export default class FrameManager {
     var cssMatrix = matrix.matrixFromCss(transform);
     return {
       x: -(cssMatrix[12] * 1.5), // multiply by mono container scale
-      y: (cssMatrix[13] * 1.5),
+      y: cssMatrix[13] * 1.5,
       z: -cssMatrix[14]
     }
   }
