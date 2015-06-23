@@ -136,7 +136,7 @@ button {
 
 @keyframes container-pushBack {
   from {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
+    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1.5, 1.5);
   }
   to {
     transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
@@ -148,7 +148,7 @@ button {
     transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
   }
   to {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
+    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1.5, 1.5);
   }
 }
 

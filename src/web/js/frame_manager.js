@@ -677,8 +677,8 @@ export default class FrameManager {
 
     var cssMatrix = matrix.matrixFromCss(transform);
     return {
-      x: -cssMatrix[12],
-      y: cssMatrix[13],
+      x: -(cssMatrix[12] * 1.5), // multiply by mono container scale
+      y: (cssMatrix[13] * 1.5),
       z: -cssMatrix[14]
     }
   }
@@ -757,9 +757,13 @@ export default class FrameManager {
     if (this.cursorElement !== this.viewportManager.monoContainer) {
       return false;
     }
+    var x = this.intersectionX;
+    var y = this.intersectionY;
+    x /= 1.5; // divide by mono container scale
+    y /= 1.5;
     this.frameCommunicator.send('mouse.click', {
-      top: this.intersectionY,
-      left: this.intersectionX
+      top: y,
+      left: x
     });
   }
 
