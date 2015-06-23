@@ -653,6 +653,12 @@ export default class FrameManager {
     return Promise.resolve();
   }
 
+  /**
+   * Traverse up tree to find containing element with matrix3d transform.
+   *
+   * @param  {Element} el Element
+   * @returns {Array}    Array of matrix3d values.
+   */
   getNearest3dTransform(el) {
     if (!el) {
       return null;
@@ -665,6 +671,15 @@ export default class FrameManager {
     }
   }
 
+  /**
+   * Return 3d translation of element.
+   *
+   * @param  {Element} el Element
+   * @returns {Object} Translation
+   * @returns {Number} x X translation px
+   * @returns {Number} y Y translation px
+   * @returns {Number} z Z translation px
+   */
   getElementTranslation(el) {
     if (!el) {
       return false;
@@ -683,6 +698,14 @@ export default class FrameManager {
     }
   }
 
+  /**
+   * Return direction from VR headset quaternion.   Use -Z as forward.
+   *
+   * @returns {Object} Direction
+   * @returns {Number} x X Component
+   * @returns {Number} y Y Component
+   * @returns {Number} z Z Component
+   */
   getDirection() {
     var hmd = this.viewportManager.hmdState;
     if (!hmd || hmd.orientation === null) {
@@ -700,6 +723,14 @@ export default class FrameManager {
     }
   }
 
+  /**
+   * Return position offset from VR headset.
+   *
+   * @returns {Object} Position
+   * @returns {Number} x X Component
+   * @returns {Number} y Y Component
+   * @returns {Number} z Z Component
+   */
   getPosition() {
     var hmd = this.viewportManager.hmdState;
     if (!hmd) {
