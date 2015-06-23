@@ -282,43 +282,42 @@ button {
  */
 
 .directory {
-  text-align: center;
-  transform: translate(-50%, -100%) translate3d(0, 9cm, 0);
-  width: 40cm;
+  transform: translate(-50%, -100%) translate3d(0, 8cm, 0);
+  width: 36.7cm;
+  font-size: 0;
 }
 
 .directory__tile {
-  background: white;
-  border: 0.25cm solid black;
+  background: #efefef;
   color: black;
   display: inline-block;
   font: 500 1.1rem/1em sans-serif;
   height: 7cm;
-  margin: 0.25cm;
+  margin: 0.15cm;
   overflow: hidden;
   padding: 0.5cm;
   position: relative;
   text-align: left;
   width: 7cm;
   text-decoration: none;
+  transition: 0.2s background, 0.2s color;
 }
 
 .directory__tile:hover,
 .directory__tile.hover {
-  background-color: black;
+  background-color: var(--color-blue-vibrant);
   color: white;
 }
 
 .directory__tile:active,
- .directory__tile.active {
-  background: var(--color-blue-vibrant);
-  border: 0.25cm solid var(--color-blue-vibrant);
+.directory__tile.active {
 }
 
 .directory__tile .type {
-  color: gray;
+  color: #333;
   display: inline-block;
-  font: 400 0.75em/1em sans-serif;
+  font: 400 0.65em/1em sans-serif;
+  margin-top: 0.5cm;
   pointer-events: none;
 }
 
@@ -328,8 +327,6 @@ button {
  */
 
 .urlbar {
-  background-color: hsla(228, 15%, 6%, 0.75);
-  padding: 0.25rem;
   text-align: left;
   transform: translate(-50%, 0) translate3d(0, 10cm, 0);
   width: var(--hud-width);
@@ -342,24 +339,22 @@ button {
   text-align: center;
   text-transform: uppercase;
   transition: .25s width ease;
+  background: #efefef;
   width: 100%;
 }
 
 .urlbar__input:hover,
 .urlbar__input.hover {
-  background: black;
+  background: var(--color-blue-vibrant);
   color: white;
 }
 
 .urlbar__input:focus {
   background: var(--color-blue-vibrant);
+  border-bottom: 0.25em solid white;
   color: white;
 }
 
-.urlbar__input {
-  background: white;
-  color: hsl(0, 0%, 20%);
-}
 
 /* NOTE: These selectors cannot be combined: https://developer.mozilla.org/en-US/docs/Web/CSS/::selection#Examples */
 .urlbar__input::selection {
@@ -377,7 +372,7 @@ button {
  */
 
 .backfwd {
-  transform: translate(-50%, 0) translate3d(-12cm, 14cm, 0);
+  transform: translate(-50%, 0) translate3d(-9cm, 13cm, 0);
 }
 
 .back {
@@ -392,9 +387,8 @@ button {
   top: 0;
 }
 
-
 .stopreload {
-  transform: translate(-50%, 0) translate3d(3cm, 14cm, 0);
+  transform: translate(-50%, 0) translate3d(3cm, 13cm, 0);
 }
 
 .stop,
@@ -409,17 +403,18 @@ button {
 .fa.nav {
   -moz-user-select: none; /* Disable selection of navigation controls. */
   background: white;
-  border: 0.25cm solid black;
   color: black;
+  font-size: 1.2cm;
   line-height: 1em;
   margin: 0;
   padding: 0.5em;
+  border-radius: 1em;
   transition: .1s opacity;
 }
 
 .nav:not([disabled]):hover,
 .nav:not([disabled]).hover {
-  background: black;
+  background: var(--color-blue-vibrant);
   color: white;
   opacity: 1;
 }
@@ -431,8 +426,7 @@ button {
 
 .nav:not([disabled]):active,
 .nav:not([disabled]).active {
-  background: var(--color-blue-vibrant);
-  border: 0.25cm solid var(--color-blue-vibrant);;
+  color: #fff;
 }
 
 
@@ -441,12 +435,13 @@ button {
  */
 
 .closehud {
-  font: 600 0.75rem/1em sans-serif;
+  font: 600 0.75rem/1.2em sans-serif;
   padding: 0.6em;
   text-align: center;
   text-transform: uppercase;
   transform: translate(-50%, 0) translate3d(0, 17cm, 0);
   width: 7cm;
+  display: none;
 }
 
 .closehud:hover,
