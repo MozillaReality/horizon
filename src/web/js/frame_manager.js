@@ -394,7 +394,6 @@ export default class FrameManager {
     this.showStopreload();
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
     this.hudBackground.style.animation = 'show 0.3s ease forwards';
-    this.showCursor();
   }
 
   hideHud(firstLoad) {
