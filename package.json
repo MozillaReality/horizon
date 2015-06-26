@@ -39,7 +39,8 @@
     "gulp-zip": "^3.0.2",
     "mold-source-map": "^0.4.0",
     "node-firefox-connect": "^1.2.0",
-    "run-sequence": "^1.0.2"
+    "run-sequence": "^1.0.2",
+    "webvr-demos": "mozvr/webvr-demos#38eaace9ad89"
   },
   "dependencies": {
     "gl-vec4": "^1.0.1",

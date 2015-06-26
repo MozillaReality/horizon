@@ -129,6 +129,20 @@ class Page {
     if ('top' in data && 'left' in data) {
       var el = document.elementFromPoint(data.left, data.top);
       if (el) {
+        var rect = el.getBoundingClientRect();
+        if (!this.hightlighter) {
+          var div = document.createElement('div');
+          document.body.appendChild(div);
+          this.hightlighter = div;  
+        }
+        this.hightlighter.style.position = 'absolute';
+        this.hightlighter.style.top = rect.top + 'px';
+        this.hightlighter.style.left = rect.left + 'px';
+        this.hightlighter.style.width = el.offsetWidth + 'px';
+        this.hightlighter.style.height = el.offsetHeight + 'px';
+        this.hightlighter.style.pointerEvents = 'none';
+        this.hightlighter.style.border = "5px solid red";
+        this.hightlighter.style.zIndex = '1000000';
         var evt = new MouseEvent('click', {
           view: window,
           bubbles: true,

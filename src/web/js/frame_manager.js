@@ -35,6 +35,9 @@ export default class FrameManager {
     this.titleText = $('#title__text');
     this.titleIcon = $('#title__icon');
     this.directory = $('#directory');
+    this.directoryUrls = {
+      '/demos/mozvr-site/posts/quick-vr-prototypes/': 'http://mozvr.com/posts/quick-vr-prototypes/'
+    };
     this.urlbar = $('#urlbar');
     this.urlInput = this.urlbar.querySelector('#urlbar__input');
     this.backfwd = $('#backfwd');
@@ -46,6 +49,7 @@ export default class FrameManager {
     this.loading = $('#loading');
     this.closehudButton = $('#closehud');
     this.hudBackground = $('#background');
+    this.cursor = $('#cursor');
 
     // Element at cursor.
     this.cursorElement = null;
@@ -184,7 +188,7 @@ export default class FrameManager {
   /**
    * Creates a new browsing frame.
    */
-  newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
+  newFrame(location = 'http://localhost:8000/demos/mozvr-site/posts/quick-vr-prototypes/', openInForeground = true) {
     var app = new Frame({
       id: this.nextId(),
       url: location,
@@ -264,7 +268,15 @@ export default class FrameManager {
   updateHUDForActiveFrame() {
     if (this.activeFrame) {
       var url = new URL(this.activeFrame.location);
-      this.urlInput.value = url.hostname;
+      if (url.pathname.startsWith('/demos/') && url.origin === window.location.origin) {
+        // Fake the URL so it looks like it's not being served from http://localhost:8000
+        let demosPath = url.pathname + url.search + url.hash;
+        let fakePath = this.directoryUrls[demosPath] || url.hostname;
+        this.urlInput.value = fakePath;
+        console.log('Masquerading %s as %s', demosPath, fakePath);
+      } else {
+        this.urlInput.value = url.hostname;
+      }
       this.updateTitle(this.activeFrame.title);
       this.titleIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
@@ -528,10 +540,21 @@ export default class FrameManager {
    * @param {Object} data An object containing an array of sites in the directory.
    */
   buildDirectory(data) {
+    this.directorySites = data.sites;
+    this.directoryUrls = {};
+
     data.sites.forEach(site => {
       var tile = document.createElement('a');
       tile.className = 'directory__tile';
-      tile.setAttribute('href', site.url);
+
+      if (site.path) {
+        let path = '/demos' + site.path;
+        tile.setAttribute('href', path);
+        this.directoryUrls[path] = site.url;
+      } else {
+        tile.setAttribute('href', site.url);
+      }
+
       tile.innerHTML = site.name;
 
       var type = document.createElement('span');
@@ -630,47 +653,148 @@ export default class FrameManager {
     return Promise.resolve();
   }
 
-  intersectIframe() {
-    var el = this.cursorElement;
-    if (el !== this.viewportManager.monoContainer) {
+  /**
+   * Traverse up tree to find containing element with matrix3d transform.
+   *
+   * @param  {Element} el Element
+   * @returns {Array}    Array of matrix3d values.
+   */
+  getNearest3dTransform(el) {
+    if (!el) {
+      return null;
+    }
+    var transform = window.getComputedStyle(el).transform;
+    if (transform === 'none' || transform.indexOf('matrix3d') === -1) {
+      return this.getNearest3dTransform.call(this, el.parentElement);
+    } else {
+      return transform;
+    }
+  }
+
+  /**
+   * Return 3d translation of element.
+   *
+   * @param  {Element} el Element
+   * @returns {Object} Translation
+   * @returns {Number} x X translation px
+   * @returns {Number} y Y translation px
+   * @returns {Number} z Z translation px
+   */
+  getElementTranslation(el) {
+    if (!el) {
       return false;
     }
 
-    // Retrieve offsets from element transform matrix.
-    var transform = window.getComputedStyle(el).transform;
-    if (transform === 'none') {
+    var transform = this.getNearest3dTransform(el);
+    if (!transform) {
       return false;
     }
+
     var cssMatrix = matrix.matrixFromCss(transform);
-    var offsetX = -cssMatrix[12], offsetY = cssMatrix[13], offsetZ = -cssMatrix[14];
+    return {
+      x: -(cssMatrix[12] * 1.5), // multiply by mono container scale
+      y: cssMatrix[13] * 1.5,
+      z: -cssMatrix[14]
+    }
+  }
+
+  /**
+   * Return direction from VR headset quaternion.   Use -Z as forward.
+   *
+   * @returns {Object} Direction
+   * @returns {Number} x X Component
+   * @returns {Number} y Y Component
+   * @returns {Number} z Z Component
+   */
+  getDirection() {
+    var hmd = this.viewportManager.hmdState;
+    if (!hmd || hmd.orientation === null) {
+      return false;
+    }
 
     // Transform the HMD quaternion by direction vector.
-    var hmd = this.viewportManager;
     var direction = vec4.transformQuat([], [0, 0, -1, 0],
       [hmd.orientation.x, hmd.orientation.y, hmd.orientation.z, hmd.orientation.w]);
-    var dx = direction[0], dy = direction[1], dz = direction[2];
+
+    return {
+      x: -direction[0],
+      y: -direction[1],
+      z: direction[2]
+    }
+  }
+
+  /**
+   * Return position offset from VR headset.
+   *
+   * @returns {Object} Position
+   * @returns {Number} x X Component
+   * @returns {Number} y Y Component
+   * @returns {Number} z Z Component
+   */
+  getPosition() {
+    var hmd = this.viewportManager.hmdState;
+    if (!hmd) {
+      return false;
+    }
 
     // Scale HMD position to match CSS values.
     var cmToPixel = 96 / 2.54;
     var pixelPerMeters = -100 * cmToPixel;
 
     // Apply HMD position.
-    var translateX = 0, translateY = 0, translateZ = 0;
+    var positionX = 0, positionY = 0, positionZ = 0;
     if (hmd.position !== null) {
-      translateX = -hmd.position.x * pixelPerMeters;
-      translateY = -hmd.position.y * pixelPerMeters;
-      translateZ = -hmd.position.z * pixelPerMeters;
+      positionX = -hmd.position.x * pixelPerMeters;
+      positionY = -hmd.position.y * pixelPerMeters;
+      positionZ = -hmd.position.z * pixelPerMeters;
+    }
+    return {
+      x: positionX,
+      y: positionY,
+      z: positionZ
+    }
+  }
+
+  /**
+   * Position the cursor at the same depth as the mono iframe container.
+   * Otherwise, use the depth set on cursor element.
+   */
+  positionCursor() {
+    var el = this.cursorElement;
+    var translation = this.getElementTranslation(el);
+    var direction = this.getDirection();
+    var position = this.getPosition();
+
+    if (translation && direction && position) {
+      // Solve intersection.
+      var distance = translation.z + position.z;
+      var intersectionX = distance / direction.z * direction.x + position.x + translation.x;
+      var intersectionY = distance / direction.z * direction.y + position.y + translation.y;
+      var intersectionZ = Math.sqrt(Math.pow(distance / direction.z * direction.x, 2) + Math.pow(distance, 2));
+      intersectionY *= -1;
+      this.intersectionX = intersectionX;
+      this.intersectionY = intersectionY;
+
+      this.cursor.dataset.visibility = 'visible';
+      this.cursor.style.transform = `translate3d(-50%, -50%, -${intersectionZ}px)`;
+    } else {
+      delete this.cursor.dataset.visibility;
     }
 
-    // Solve intersection.
-    var distance = offsetZ + translateZ;
-    var intersectionX = distance / dz * -dx + translateX + offsetX;
-    var intersectionY = distance / dz * -dy + translateY + offsetY;
-    intersectionY *= -1;
+    window.requestAnimationFrame(this.positionCursor.bind(this));
+  }
 
+  clickIntoIframe() {
+    if (this.cursorElement !== this.viewportManager.monoContainer) {
+      return false;
+    }
+    var x = this.intersectionX;
+    var y = this.intersectionY;
+    x /= 1.5; // divide by mono container scale
+    y /= 1.5;
     this.frameCommunicator.send('mouse.click', {
-      top: intersectionY,
-      left: intersectionX
+      top: y,
+      left: x
     });
   }
 
@@ -678,7 +802,7 @@ export default class FrameManager {
     let el = this.cursorElement;
 
     if (el) {
-      this.intersectIframe();
+      this.clickIntoIframe();
       this.cursorDownElement = null;
 
       this.utils.emitMouseEvent('mouseup', el);
@@ -765,6 +889,15 @@ export default class FrameManager {
     })
     .then(data => {
       this.buildDirectory(data);
+    }).catch(err => {
+      console.warn('Could not fetch directory:', runtime.settings.www_directory_src, err);
+      console.log('Attempting to load fallback JSON file…');
+      fetch('/directory.json')
+      .then(response => {
+        return response.json();
+      }).then(data => {
+        this.buildDirectory(data);
+      });
     });
 
     runtime.gamepadInput.assign({
@@ -793,8 +926,14 @@ export default class FrameManager {
             'b11.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
             'b11.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
 
-            //  Use the "X" button to navigate back.
+            // Use the "X" button to navigate back.
             'b13': () => this.activeFrame.on_back(),
+
+            // Use the "B" button to navigate forward.
+            'b12': () => this.activeFrame.on_forward(),
+
+            // Use the "back" button to zero HMD sensor.
+            'b5': () => this.viewportManager.resetSensor(),
           },
           '54c-268-PLAYSTATION(R)3 Controller': {
             'b16': () => this.toggleHud(),
@@ -830,7 +969,9 @@ export default class FrameManager {
       }
     });
 
-    setInterval(this.intersectCursor.bind(this), 100);
+    window.setInterval(this.intersectCursor.bind(this), 100);
+
+    window.requestAnimationFrame(this.positionCursor.bind(this));
 
     runtime.keyboardInput.assign({
       'ctrl =': () => this.activeFrame.zoomIn(),
