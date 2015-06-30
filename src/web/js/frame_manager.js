@@ -556,13 +556,6 @@ export default class FrameManager {
     }
   }
 
-  cursorClick() {
-    // Delays added to simulate a browser's mousedown/mouseup events on a mouse click.
-    return this.cursorMouseDown()
-    .then(() => this.utils.sleep(150))
-    .then(() => this.cursorMouseUp());
-  }
-
   cursorMouseLeave(newEl) {
     let prevEl = this.cursorElement;
 
