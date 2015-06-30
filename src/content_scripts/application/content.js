@@ -54,6 +54,14 @@ class FrameCommunicator extends EventEmitter {
     window.addEventListener('message', e => {
       // TODO: Check `e.origin` to make sure it matches the Horizon origin.
       if (e.data && typeof e.data === 'object') {
+        // Mark the current location.
+        page.location = e.data.location;
+
+        if (page.location && page.location !== window.location.href) {
+          // This prevents us from capturing events from iframes of the page.
+          return;
+        }
+
         this.emit(e.data.type, e.data.data);
       }
     });
@@ -70,6 +78,7 @@ class FrameCommunicator extends EventEmitter {
 
 class Page {
   constructor() {
+    this.location = null;
     window.$ = this.$;
     window.$$ = this.$$;
   }
@@ -197,7 +206,7 @@ class Page {
       this.emitMouseEvent('mousedown', clickableEl);
     }
 
-    this.cursorElement = elAtPoint;    
+    this.cursorElement = elAtPoint;
   }
 
   clearHighlight() {
@@ -231,6 +240,22 @@ class Page {
         z-index: 2147483647;
       `;
     }
+  }
+
+  viewmodeChange(detail) {
+    if (detail && detail.projection) {
+      document.mozViewModeProjection = detail.projection;
+      return window.dispatchEvent(new CustomEvent('mozviewmodechange',
+        {bubbles: true, cancelable: false, detail: detail}));
+    }
+  }
+
+  viewmodeReset() {
+    this.viewmodeChange({detail: 'mono'});  // The default viewmode before viewmode is known.
+  }
+
+  viewmodeRemove() {
+    delete document.mozViewModeProjection;
   }
 }
 
@@ -268,18 +293,31 @@ fc.on('mouse.mousedown', data => {
   page.mouseDown(data);
 });
 
+fc.on('viewmode.change', data => {
+  log("[add-on] Received 'viewmode.change' message", data);
+  page.viewmodeChange(data);
+})
+
 
 window.addEventListener('load', () => {
-  log('Loaded content script', window.location.href);
+  log('[add-on] Loaded content script', window.location.href);
 });
 
-// Remove all `<meta>` tags so `mozbrowsermetachange` events get called.
+window.addEventListener('mozviewmodechange', e => {
+  log("[add-on] Event fired for viewmode change to '%s'", e.detail.projection);
+});
+
 window.addEventListener('beforeunload', () => {
-  $$('meta', document.head).forEach(el => {
-    el.parentNode.removeChild(el);
-  });
+  if (page.location === window.location.href) {
+    // Remove all `<meta>` tags so `mozbrowsermetachange` events get called
+    // for the parent window (e.g., not the Sechelt `<iframe>` on MozVR.com).
+    $$('meta', document.head).forEach(el => {
+      el.parentNode.removeChild(el);
+    });
+  }
 });
 
 
 // Simple wrapper to easily toggle logging.
-var log = false ? () => console.log.apply(console, arguments) : () => {};
+// TODO: Disable after PR is fully reviewed.
+var log = true ? console.log.bind(console) : () => {};

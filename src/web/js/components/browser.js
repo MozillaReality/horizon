@@ -24,13 +24,15 @@ export default class Browser extends React.Component {
     runtime.contentScripts = new ContentScripts();
     runtime.debugging = new Debugging();
     runtime.frameCommunicator = new FrameCommunicator('browser', {
+      getActiveFrame: () => this.activeFrame,
       getActiveFrameElement: () => this.activeFrameRef.iframe
     });
     runtime.gamepadInput = new GamepadInput();
     runtime.keyboardInput = new KeyboardInput();
     runtime.viewportManager = new ViewportManager({
       onHmdFrame: this.onHmdFrame.bind(this),
-      enterBrowserVR: this.enterVR.bind(this)
+      enterBrowserVR: this.enterVR.bind(this),
+      inBrowserVR: this.inBrowserVR.bind(this)
     });
     runtime.settings = Settings;
 
@@ -57,7 +59,13 @@ export default class Browser extends React.Component {
         }
       ]
     };
+
     this.activeFrameIndex = 0;
+  }
+
+  componentDidMount() {
+    // Once the iframe has been rendered, mark it as mono.
+    this.onMono();
   }
 
   get activeFrame() {
@@ -83,6 +91,9 @@ export default class Browser extends React.Component {
     this.setState({
       frames: frames
     });
+    this.runtime.frameCommunicator.send('viewmode.change', {
+      projection: 'stereo'
+    });
   }
 
   /**
@@ -95,6 +106,9 @@ export default class Browser extends React.Component {
     frames[this.activeFrameIndex].viewmode = 'mono';
     this.setState({
       frames: frames
+    });
+    this.runtime.frameCommunicator.send('viewmode.change', {
+      projection: 'mono'
     });
   }
 
@@ -128,8 +142,17 @@ export default class Browser extends React.Component {
   }
 
   /**
+   * Returns boolean of whether we are in VR mode.
+   * VR mode is determined to be when Horizon's fullscreen container is in fullscreen.
+   * @returns {Boolean} A boolean of whether we are in VR mode.
+   */
+  inBrowserVR() {
+    return this.runtime.viewportManager.inVr(React.findDOMNode(this.refs.fullscreenContainer));
+  }
+
+  /**
    * Sets camera transform and hmdState.
-   * These values get updated frequenetly, so for now avoid setting them in this.state.
+   * These values get updated frequently, so for now avoid setting them in this.state.
    * @param {CSSString} transform The camera transform.
    * @param {Object} hmdState The hmd state.
    */
@@ -180,6 +203,7 @@ export default class Browser extends React.Component {
       frames: frames
     });
     this.updateNavigationState();
+    this.runtime.frameCommunicator.send('location.change');
   }
 
   onIconChange(frameProps, {detail}) {
