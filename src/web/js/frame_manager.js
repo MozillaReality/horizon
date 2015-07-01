@@ -535,7 +535,7 @@ export default class FrameManager {
   }
 
   toggleMenu() {
-    if(this.hudVisible) {
+    if (this.hudVisible) {
       return;
     } else if (this.menuVisible) {
       this.hideMenu();
