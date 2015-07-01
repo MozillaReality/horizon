@@ -187,7 +187,7 @@ export default class FrameManager {
   /**
    * Creates a new browsing frame.
    */
-  newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
+  newFrame(location = this.runtime.settings.www_start_page, openInForeground = true) {
     var app = new Frame({
       id: this.nextId(),
       url: location,
@@ -758,6 +758,7 @@ export default class FrameManager {
   init(runtime) {
     this.runtime = runtime;
     this.utils = runtime.utils;
+    this.runtime = runtime;
     this.viewportManager = runtime.viewportManager;
     this.frameCommunicator = runtime.frameCommunicator;
 
