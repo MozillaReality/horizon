@@ -18,7 +18,8 @@ export default class Frame {
     this.browserEvents = ['mozbrowserclose', 'mozbrowsererror', 'mozbrowservisibilitychange',
       'mozbrowserloadend', 'mozbrowserloadstart', 'mozbrowsertitlechange',
       'mozbrowserlocationchange', 'mozbrowsermetachange', 'mozbrowsericonchange',
-      'mozbrowserasyncscroll', 'mozbrowseropentab', 'mozbrowseropenwindow', 'mozbrowsersecuritychange'];
+      'mozbrowserasyncscroll', 'mozbrowseropentab', 'mozbrowseropenwindow', 'mozbrowsersecuritychange',
+      'mozbrowsershowmodalprompt'];
 
     this.title = '';
     this.location = config.url;
@@ -74,16 +75,20 @@ export default class Frame {
 
     var {projection} = values;
 
-    // If the meta-tag is removed, we revert to the default mono viewmode.
+    // If the meta tag is removed, we revert to the default mono viewmode.
     if (detail.type === 'removed') {
       projection = 'mono';
     }
 
     if (projection === 'stereo' && !this.isStereo) {
+      this.isStereo = true;
       window.dispatchEvent(new CustomEvent('stereo-viewmode', {
         detail: this
       }));
-    } else if (!projection || projection === 'mono') {
+    }
+
+    if (projection === 'mono' && this.isStereo) {
+      this.isStereo = false;
       window.dispatchEvent(new CustomEvent('mono-viewmode', {
         detail: this
       }));
@@ -104,8 +109,9 @@ export default class Frame {
 
   /**
    * Reloads the current page.
-   * @param e The mozbrowser event.
-   * @param hardReload Whether or not to perform a hard reload.
+   *
+   * @param {(Event|null)} e The mozbrowser event.
+   * @param {Boolean} hardReload Whether or not to perform a hard reload.
    */
   on_reload(e, hardReload = false) {
     this.element.reload(hardReload);

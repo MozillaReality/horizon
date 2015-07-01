@@ -32,7 +32,7 @@
     "del": "^1.1.1",
     "eslint": "^0.21.0",
     "eslint-plugin-random": "0.0.1",
-    "gamepad-plus": "^1.0.9",
+    "gamepad-plus": "^1.0.12",
     "gulp": "3.8.x",
     "gulp-eslint": "^0.12.0",
     "gulp-webserver": "^0.9.0",
@@ -40,5 +40,9 @@
     "mold-source-map": "^0.4.0",
     "node-firefox-connect": "^1.2.0",
     "run-sequence": "^1.0.2"
+  },
+  "dependencies": {
+    "gl-vec4": "^1.0.1",
+    "neat-audio": "^0.2.1"
   }
 }

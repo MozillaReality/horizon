@@ -53,6 +53,20 @@ class FrameCommunicator extends EventEmitter {
 
 
 class Page {
+  constructor() {
+    window.$ = this.$;
+    window.$$ = this.$$;
+  }
+
+  $(sel) {
+    return document.querySelector(sel);
+  }
+
+  $$(sel, el) {
+    el = el || document;
+    return Array.prototype.slice.call(el.querySelectorAll(sel));
+  }
+
   get activeScrollElement() {
     // This is the element that currently has focus.
     var el = document.activeElement;
@@ -110,6 +124,20 @@ class Page {
   scrollEnd() {
     this.scrollTo({scrollTop: Infinity});
   }
+
+  mouseClick(data) {
+    if ('top' in data && 'left' in data) {
+      var el = document.elementFromPoint(data.left, data.top);
+      if (el) {
+        var evt = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true
+        });
+        el.dispatchEvent(evt);
+      }
+    }
+  }
 }
 
 
@@ -136,9 +164,21 @@ fc.on('scroll.end', () => {
   page.scrollEnd();
 });
 
+fc.on('mouse.click', data => {
+  log("[add-on] Received 'mouse.click' message");
+  page.mouseClick(data);
+});
+
 
 window.addEventListener('load', () => {
   log('Loaded content script', window.location.href);
+});
+
+// Remove all `<meta>` tags so `mozbrowsermetachange` events get called.
+window.addEventListener('beforeunload', () => {
+  $$('meta', document.head).forEach(el => {
+    el.parentNode.removeChild(el);
+  });
 });
 
 

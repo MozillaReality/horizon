@@ -12,7 +12,7 @@
   --content-depth-hud--open: calc(var(--hud-depth) - 8cm);
 
   /* default content dimensions */
-  --content-width: 32cm; 
+  --content-width: 32cm;
   --content-height: 26cm;
 
   /* icons size */
@@ -20,6 +20,7 @@
 
   /* colors */
   --color-blue-vibrant: hsl(200, 89%, 50%);
+  --color-blue-vibrant-faded: hsla(200, 89%, 70%, .75);
 }
 
 
@@ -59,8 +60,12 @@ body {
   width: 100%;
 }
 
-input {
+input, button, iframe {
   border: 0;
+}
+
+button {
+  cursor: pointer;
 }
 
 
@@ -98,6 +103,10 @@ input {
   background-color: hsl(228, 15%, 19%);
 }
 
+#fs-container:-moz-full-screen * {
+  cursor: none;
+}
+
 @keyframes fs-container-lighten {
   from { background-color: hsl(228, 20%, 13%); }
   to { background-color: hsl(228, 15%, 19%); }
@@ -107,7 +116,7 @@ input {
   from { background-color: hsl(228, 15%, 19%); }
   to { background-color: hsl(228, 20%, 13%); }
 }
- 
+
 
 /* 2D content container */
 
@@ -125,17 +134,17 @@ input {
   from {
     transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
   }
-  to { 
+  to {
     transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
   }
 }
 
 @keyframes container-pullForward {
-  from { 
+  from {
     transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
   }
-  to { 
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1); 
+  to {
+    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
   }
 }
 
@@ -152,28 +161,22 @@ input {
 
 /* iframe */
 .frame--mono {
-  border: 0;
-  width: var(--content-width);
-  height: var(--content-height);
+  background: white;
   top: 18cm;
   left: 18cm;
+  width: 100%;
+  height: 100%;
   transition: transform 0.5s ease;
-  background: white;
+  /* Prevent iframe's pointer events from stealing focus away from the app.
+     Uncomment this if you want the user to be able to click on any scrollable
+     element and scroll within that element using a gamepad. */
+  pointer-events: none;
 }
 
 *:-moz-full-screen .frame--mono {
   top: 0;
   left: 0;
   transform: translate3d(0, 0, var(--hud-depth));
-}
-
-[data-frame-pointer-events="none"] /* iframe */.frame--mono {
-  /* Prevent iframe's pointer events from stealing focus away from the app.
-     Uncomment this if you want the user to be able to click on any scrollable
-     element and scroll within that element using a gamepad. */
-  pointer-events: none;
-  transition: transform 0.5s ease;
-  width: 100%;
 }
 
 /* iframe */
@@ -186,12 +189,30 @@ input {
 }
 
 
+/**
+ * Cursor
+ */
+[data-hud="open"] .cursor,
+[data-projection="mono"] .cursor {
+  visibility: visible;
+}
+
+.cursor {
+  width: 1cm;
+  height: 1cm;
+  background: var(--color-blue-vibrant-faded);
+  border-radius: 50%;
+  transform: translate3d(-50%, -50%, var(--hud-depth));
+  pointer-events: none;
+  visibility: hidden;
+}
+
 
 /**
  * HUD
  */
 
-.hud {  
+.hud {
   --hud-width: 28cm;
   top: 18cm;
   left: 18cm;
@@ -201,7 +222,6 @@ input {
 *:-moz-full-screen .hud {
   left: 0;
   top: 0;
-  transform: translate3d(0, 0, var(--hud-depth));
 }
 
 
@@ -257,44 +277,45 @@ input {
  * Directory
  */
 
-.directory { 
-  text-align: center;
-  transform: translate(-50%, -100%) translate3d(0, 9cm, 0);
-  width: 40cm;
+.directory {
+  transform: translate(-50%, -100%) translate3d(0, 8cm, 0);
+  width: 36.7cm;
+  font-size: 0;
 }
 
 .directory__tile {
-  background: white;
-  border: 0.25cm solid black;
+  background: #efefef;
   color: black;
   display: inline-block;
   font: 500 1.1rem/1em sans-serif;
   height: 7cm;
-  margin: 0.25cm;
+  margin: 0.15cm;
   overflow: hidden;
   padding: 0.5cm;
   position: relative;
   text-align: left;
   width: 7cm;
   text-decoration: none;
+  transition: 0.2s background, 0.2s color;
 }
 
-.directory__tile:hover {
-  background-color: black;
+.directory__tile:hover,
+.directory__tile.hover {
+  background-color: var(--color-blue-vibrant);
   color: white;
 }
 
-.directory__tile:active {
-  background: var(--color-blue-vibrant);
-  border: 0.25cm solid var(--color-blue-vibrant);
+.directory__tile:active,
+.directory__tile.active {
 }
 
 .directory__tile .type {
-  color: gray;
+  color: #333;
   display: inline-block;
-  font: 400 0.75em/1em sans-serif;
+  font: 400 0.65em/1em sans-serif;
+  margin-top: 0.5cm;
+  pointer-events: none;
 }
-
 
 
 /**
@@ -302,8 +323,6 @@ input {
  */
 
 .urlbar {
-  background-color: hsla(228, 15%, 6%, 0.75);
-  padding: 0.25rem;
   text-align: left;
   transform: translate(-50%, 0) translate3d(0, 10cm, 0);
   width: var(--hud-width);
@@ -316,25 +335,29 @@ input {
   text-align: center;
   text-transform: uppercase;
   transition: .25s width ease;
+  background: #efefef;
   width: 100%;
 }
 
-.urlbar__input:hover {
-  background: black;
-  color: white;
-}
-
-.urlbar__input, .urlbar__input::-moz-selection {
-  background: white;
-  color: hsl(0, 0%, 20%);
-}
-
-.urlbar__input:focus {
+.urlbar__input:hover,
+.urlbar__input.hover {
   background: var(--color-blue-vibrant);
   color: white;
 }
 
-.urlbar__input:focus::-moz-selection  {
+.urlbar__input:focus {
+  background: var(--color-blue-vibrant);
+  border-bottom: 0.25em solid white;
+  color: white;
+}
+
+
+/* NOTE: These selectors cannot be combined: https://developer.mozilla.org/en-US/docs/Web/CSS/::selection#Examples */
+.urlbar__input::selection {
+  background: hsla(0, 0%, 0%, 0.2);
+  color: white;
+}
+.urlbar__input::-moz-selection {
   background: hsla(0, 0%, 0%, 0.2);
   color: white;
 }
@@ -345,49 +368,50 @@ input {
  */
 
 .backfwd {
-  transform: translate(-50%, 0) translate3d(-12cm, 14cm, 0);
+  transform: translate(-50%, 0) translate3d(-9cm, 13cm, 0);
 }
 
-.backfwd__back {
+.back {
   left: 0;
   position: absolute;
   top: 0;
 }
 
-.backfwd__forward {
+.forward {
   left: 3cm;
   position: absolute;
   top: 0;
 }
 
-
 .stopreload {
-  transform: translate(-50%, 0) translate3d(3cm, 14cm, 0);
+  transform: translate(-50%, 0) translate3d(3cm, 13cm, 0);
 }
 
-.stopreload--stop, .stopreload--reload {
+.stop,
+.reload {
   left: 0;
   position: absolute;
-  top: 0;  
+  top: 0;
 }
 
 
-.nav,
+/* button */.nav,
 .fa.nav {
   -moz-user-select: none; /* Disable selection of navigation controls. */
   background: white;
-  border: 0.25cm solid black;
   color: black;
+  font-size: 1.2cm;
   line-height: 1em;
   margin: 0;
   padding: 0.5em;
+  border-radius: 1em;
   transition: .1s opacity;
 }
 
-.nav:not([disabled]):hover {
-  background: black;
+.nav:not([disabled]):hover,
+.nav:not([disabled]).hover {
+  background: var(--color-blue-vibrant);
   color: white;
-  cursor: pointer;
   opacity: 1;
 }
 
@@ -396,47 +420,38 @@ input {
   pointer-events: none;
 }
 
-.nav:not([disabled]):active {
-  background: var(--color-blue-vibrant);
-  border: 0.25cm solid var(--color-blue-vibrant);;
+.nav:not([disabled]):active,
+.nav:not([disabled]).active {
+  color: #fff;
 }
 
 
 /**
- * Close HUD, Reset Sensor
+ * Close HUD
  */
 
-.closehud, .resetsensor {
-  background: white;
-  border: 0.25cm solid black;
-  color: black;
-  cursor: pointer;
-  font: 600 0.75rem/1em sans-serif;
+.closehud {
+  font: 600 0.75rem/1.2em sans-serif;
   padding: 0.6em;
   text-align: center;
   text-transform: uppercase;
-  width: 7cm;
-}
-
-.closehud {
   transform: translate(-50%, 0) translate3d(0, 17cm, 0);
+  width: 7cm;
+  display: none;
 }
 
-.resetsensor {
-  transform: translate(-50%, 0) translate3d(0, 20cm, 0);
-}
-
-.resetsensor:hover, .closehud:hover {
+.closehud:hover,
+.closehud.hover {
   background: black;
   color: white;
 }
 
-.resetsensor:active, .closehud:active {
+.closehud:active,
+.closehud.active {
   background: var(--color-blue-vibrant);
   border: 0.25cm solid var(--color-blue-vibrant);
   color: white;
 }
-
 
 
 /**
@@ -460,9 +475,12 @@ input {
 
 /**
  * Background
+ *
+ * NOTE: We obscure the active site while the HUD is open, for the sake of
+ * legibility. An alternative would be to reduce opacity on the container,
+ * but that creates glitches on/vanishes 3D transformed elements.
+ *
  */
-/* The goal here is the obscured the active site while the HUD is open, for the sake of legibility. */
-/* Alternative would be to reduce opacity on the container, but this creates glitches on 3D transformed elements (they disappear) */
 
 .background {
   background: hsla(228, 20%, 13%, 0.9);
@@ -470,17 +488,6 @@ input {
   transform: translate(-50%, -50%) translate3d(0, 0, -4cm);
   width: var(--content-width);
 }
-
-@keyframes background-fadeIn {
-  from { background-color: hsla(228, 20%, 13%, 0); }
-  to { background-color: hsla(228, 20%, 13%, 0.95); }
-}
-
-@keyframes background-fadeOut {
-  from { background-color: hsla(228, 20%, 13%, 0.95); }
-  to { background-color: hsla(228, 20%, 13%, 0); }
-}
-
 
 
 /**
@@ -500,7 +507,16 @@ input {
   top: 2em;
 }
 
-.btn--entervr:hover {
+.btn--entervr:hover,
+.btn--entervr.hover {
   background: hsl(0, 0%, 45%);
   cursor: pointer;
+}
+
+.btn--entervr:active,
+.btn--entervr.active,
+.btn--entervr:focus,
+.btn--entervr.focus {
+  background-color: var(--color-blue-vibrant);
+  color: #fff;
 }

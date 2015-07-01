@@ -8,10 +8,12 @@ var matrix = new Matrix();
 
 export default class ViewportManager {
   constructor() {
+    this.body = document.body;
+    this.container = $('#fs-container');
+    this.monoContainer = $('#container--mono');
+    this.stereoContainer = $('#container--stereo');
     this.vrDevices = null;
     this.lastPosition = null;
-
-    this.container = $('#fs-container');
     this.camera = $('#camera');
     this.enter = $('#entervr');
 
@@ -20,6 +22,39 @@ export default class ViewportManager {
     }).catch(function(err) {
       console.warn(err);
     });
+  }
+
+
+  /**
+   * Handles view-mode change, attaching iframe to stereo container.
+   *
+   * We use appendChild to move the app.element iframe into the
+   * appropriate place within the DOM for each type of projection.
+   *
+   * Be warned that this causes the iframe to refresh and fire
+   * an additional set of browser events!
+   *
+   * See issue: https://github.com/MozVR/horizon/issues/118
+   *
+   * @param {Object} app Details object of the 'stereo-viewmode' event fired.
+   */
+  toStereo(app) {
+    this.body.dataset.projection = 'stereo';
+    app.element.className = 'frame--stereo';
+    this.stereoContainer.appendChild(app.element);
+  }
+
+  /**
+   * Handles view-mode change, attaching iframe to mono container.
+   *
+   * Attaches iframe to mono container in DOM.
+   *
+   * @param {Object} app Details object of the 'mono-viewmode' event fired.
+   */
+  toMono(app) {
+    this.body.dataset.projection = 'mono';
+    app.element.className = 'frame--mono threed';
+    this.monoContainer.appendChild(app.element);
   }
 
   filterInvalidDevices(devices) {
@@ -106,12 +141,15 @@ export default class ViewportManager {
     let position = state.position || this.lastPosition;
     let cssPosition = '';
 
+    this.orientation = orientation;
+    this.position = position;
+
     if (position !== null) {
       // The scaled position to use.
       let val = {};
 
       for (let p in position) {
-        val[p] = position[p] * -50; /* scale position from HMD to match CSS values */
+        val[p] = position[p] * -100; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
       val.y *= -1;
@@ -128,6 +166,14 @@ export default class ViewportManager {
   init(runtime) {
     this.runtime = runtime;
     this.enter.addEventListener('click', this.enterVr.bind(this));
+
+    // Handles moving between stereo and mono view modes.
+    window.addEventListener('stereo-viewmode', e => {
+      this.toStereo(e.detail);
+    });
+    window.addEventListener('mono-viewmode', e => {
+      this.toMono(e.detail);
+    });
 
     runtime.keyboardInput.assign({
       'ctrl z': () => this.resetSensor(),
