@@ -48,7 +48,6 @@ export default class FrameManager {
     this.closehudButton = $('#closehud');
     this.resetsensorButton = $('#resetsensor');
     this.menuBox = $('#menu__box');
-    this.hudBackground = $('#background');
 
     // Element at cursor.
     this.cursorElement = null;
@@ -396,7 +395,6 @@ export default class FrameManager {
     this.backfwd.style.animation = 'show 0.1s ease forwards';
     this.showStopreload();
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
-    this.hudBackground.style.animation = 'show 0.3s ease forwards';
   }
 
   hideHud(firstLoad) {
@@ -414,7 +412,6 @@ export default class FrameManager {
     this.backfwd.style.animation = 'hide 0.1s ease forwards';
     this.hideStopreload();
     this.closehudButton.style.animation = 'hide 0.1s ease forwards';
-    this.hudBackground.style.animation = 'hide 0.3s ease forwards';
   }
 
   toggleHud() {

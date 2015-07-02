@@ -15,6 +15,10 @@
   --content-width: 32cm;
   --content-height: 26cm;
 
+  /* typography */
+
+  --sans-serif: 'Montserrat';
+
   /* icons size */
   --icon-size: 25px;
 
@@ -232,7 +236,7 @@ button {
 .loading {
   background: hsla(197, 97%, 59%, 0.76);
   color: white;
-  font: 600 0.75rem/1em sans-serif;
+  font: 600 0.75rem/1em var(--sans-serif);
   padding: 0.6em;
   text-align: center;
   text-transform: uppercase;
@@ -248,7 +252,7 @@ button {
 .title {
   background-color: black;
   color: white;
-  font: 400 1.1rem/1 sans-serif;
+  font: 400 1.1rem/1 var(--sans-serif);
   letter-spacing: 0.06em;
   line-height: 1em;
   overflow: hidden;
@@ -287,7 +291,7 @@ button {
   background: #efefef;
   color: black;
   display: inline-block;
-  font: 500 1.1rem/1em sans-serif;
+  font: 500 1.1rem/1em var(--sans-serif);
   height: 7cm;
   margin: 0.15cm;
   overflow: hidden;
@@ -295,6 +299,7 @@ button {
   position: relative;
   text-align: left;
   width: 7cm;
+  text-transform: uppercase;
   text-decoration: none;
   transition: 0.2s background, 0.2s color;
 }
@@ -310,10 +315,10 @@ button {
 }
 
 .directory__tile .type {
-  color: #333;
-  display: inline-block;
-  font: 400 0.65em/1em sans-serif;
-  margin-top: 0.5cm;
+  color: #666;
+  display: block;
+  font: 400 0.65em/1em var(--sans-serif);
+  margin-top: 0.2cm;
   pointer-events: none;
 }
 
@@ -329,7 +334,7 @@ button {
 }
 
 .urlbar__input {
-  font: 500 1.2rem/1 sans-serif;
+  font: 500 1.2rem/1 var(--sans-serif);
   letter-spacing: 0.05em;
   padding: 0.5em 1em;
   text-align: center;
@@ -431,7 +436,7 @@ button {
  */
 
 .closehud {
-  font: 600 0.75rem/1.2em sans-serif;
+  font: 600 0.75rem/1.2em var(--sans-serif);
   padding: 0.6em;
   text-align: center;
   text-transform: uppercase;

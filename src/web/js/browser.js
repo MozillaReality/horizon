@@ -22,7 +22,7 @@ runtime.settings = {
   www_browser_start_src: '/media/browser_start.wav',
   www_hud_hide_src: '/media/hud_hide.wav',
   www_hud_show_src: '/media/hud_show.wav',
-  www_start_page: 'http://mozvr.com/posts/quick-vr-prototypes/',
+  www_start_page: 'http://mozvr.github.io/horizon-landing/',
   play_audio_on_browser_start: false,
 };
 
