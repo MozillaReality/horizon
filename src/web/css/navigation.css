@@ -101,6 +101,11 @@ button {
 /* fullscreen container */
 #fs-container {
   background-color: hsl(228, 15%, 19%);
+  -moz-window-dragging: drag;
+}
+
+#fs-container:-moz-full-screen {
+  -moz-window-dragging: no-drag;
 }
 
 #fs-container:-moz-full-screen * {
