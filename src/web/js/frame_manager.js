@@ -772,6 +772,9 @@ export default class FrameManager {
             // See http://bugzil.la/1167457.
             'b4': () => this.toggleHud(),
 
+            //  Use the "back" button to reset sensor.
+            'b5': () => this.viewportManager.resetSensor(),
+
             // Horizontal scrolling.
             'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
               runtime.gamepadInput.scroll.scrollX(axis, value)
@@ -788,6 +791,9 @@ export default class FrameManager {
 
             //  Use the "X" button to navigate back.
             'b13': () => this.activeFrame.on_back(),
+
+            //  Use the "B" button to navigate forward.
+            'b12': () => this.activeFrame.on_forward(),
           },
           '54c-268-PLAYSTATION(R)3 Controller': {
             'b16': () => this.toggleHud(),
@@ -804,6 +810,7 @@ export default class FrameManager {
           // XBOX Wired controller (Windows)
           'xinput': {
             'b9': () => this.toggleHud(),
+            'b8': () => this.viewportManager.resetSensor(),
             'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
               runtime.gamepadInput.scroll.scrollX(axis, value)
             ),
@@ -813,6 +820,7 @@ export default class FrameManager {
             'b0.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
             'b0.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
             'b2': () => this.activeFrame.on_back(),
+            'b1': () => this.activeFrame.on_forward(),
           }
         },
       },
