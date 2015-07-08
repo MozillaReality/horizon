@@ -101,11 +101,6 @@ button {
 /* fullscreen container */
 #fs-container {
   background-color: hsl(228, 15%, 19%);
-  -moz-window-dragging: drag;
-}
-
-#fs-container:-moz-full-screen {
-  -moz-window-dragging: no-drag;
 }
 
 #fs-container:-moz-full-screen * {
@@ -122,75 +117,35 @@ button {
   to { background-color: hsl(228, 20%, 13%); }
 }
 
-
-/* 2D content container */
-
-.container--mono {
-  height: var(--content-height);
-  width: var(--content-width);
-}
-
-*:-moz-full-screen .container--mono {
-  /* translate top left so that mono content is centered in viewport, then position in 3D space */
-  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth));
-}
-
-@keyframes container-pushBack {
-  from {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
-  }
-  to {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
-  }
-}
-
-@keyframes container-pullForward {
-  from {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
-  }
-  to {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
-  }
-}
-
-
-/* stereo content container */
-.container--stereo {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-
-/* iframe */
+/* content projection */
 .frame--mono {
   background: white;
-  top: 18cm;
-  left: 18cm;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.5s ease;
-  /* Prevent iframe's pointer events from stealing focus away from the app.
-     Uncomment this if you want the user to be able to click on any scrollable
-     element and scroll within that element using a gamepad. */
-  pointer-events: none;
+  height: var(--content-height);
+  width: var(--content-width);
+  transition: 0.3s transform ease;
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
 }
 
-*:-moz-full-screen .frame--mono {
-  top: 0;
-  left: 0;
-  transform: translate3d(0, 0, var(--hud-depth));
+.frame--mono.pushBack {
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
 }
 
-/* iframe */
 .frame--stereo {
   height: 100%;
   left: 0;
   position: absolute;
   top: 0;
   width: 100%;
+}
+
+/* content iframe */
+#content-container iframe {
+  width: 100%;
+  height: 100%;
+  /* Prevent iframe's pointer events from stealing focus away from the app.
+     Uncomment this if you want the user to be able to click on any scrollable
+     element and scroll within that element using a gamepad. */
+  pointer-events: none;
 }
 
 

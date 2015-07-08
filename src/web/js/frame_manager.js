@@ -183,12 +183,14 @@ export default class FrameManager {
 
   /**
    * Creates a new browsing frame.
+   *
+   * @returns {Object} App
    */
   newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
     var app = new Frame({
       id: this.nextId(),
       url: location,
-      container: this.viewportManager.monoContainer,
+      container: this.viewportManager.contentContainer,
       browserEvent: this.browserEvent.bind(this)
     });
 
@@ -199,6 +201,8 @@ export default class FrameManager {
     this.frames.push(app);
 
     this.positionFrames();
+
+    return app;
   }
 
   /**
@@ -386,7 +390,7 @@ export default class FrameManager {
     this.body.dataset.hud = 'open';
     this.sfx.play('hudShow');
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
-    this.viewportManager.monoContainer.style.animation = 'container-pushBack 0.3s ease forwards';
+    this.viewportManager.contentContainer.classList.add('pushBack');
     this.title.style.animation = 'show 0.1s ease forwards';
     this.directory.style.animation = 'show 0.1s ease forwards';
     this.urlbar.style.animation = 'show 0.1s ease forwards';
@@ -404,7 +408,7 @@ export default class FrameManager {
     }
     this.urlInput.blur();
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
-    this.viewportManager.monoContainer.style.animation = 'container-pullForward 0.3s ease forwards';
+    this.viewportManager.contentContainer.classList.remove('pushBack');
     this.title.style.animation = 'hide 0.1s ease forwards';
     this.directory.style.animation = 'hide 0.1s ease forwards';
     this.urlbar.style.animation = 'hide 0.1s ease forwards';
@@ -625,14 +629,14 @@ export default class FrameManager {
 
   intersectIframe() {
     var el = this.cursorElement;
-    if (el !== this.viewportManager.monoContainer) {
-      return false;
+    if (el !== this.viewportManager.contentContainer) {
+      return;
     }
 
     // Retrieve offsets from element transform matrix.
     var transform = window.getComputedStyle(el).transform;
     if (transform === 'none') {
-      return false;
+      return;
     }
     var cssMatrix = matrix.matrixFromCss(transform);
     var offsetX = -cssMatrix[12], offsetY = cssMatrix[13], offsetZ = -cssMatrix[14];
@@ -742,8 +746,9 @@ export default class FrameManager {
     window.addEventListener('mousedown', this.handleMouseDown.bind(this));
     window.addEventListener('mouseup', this.handleMouseUp.bind(this));
 
-    // Creates initial frame.
-    this.newFrame();
+    // Creates initial iframe and start in mono mode.
+    var app = this.newFrame();
+    this.viewportManager.toMono(app);
 
     // Hides the HUD and loading indicators on first load.
     this.hideHud(true);

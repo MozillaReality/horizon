@@ -40,7 +40,6 @@ You should build with the gecko branch mirrored here: https://github.com/mozilla
 Once you have a clone of the project you need to add the following line to a .mozconfig file:
 ```
 MOZ_HORIZON=1
-mk_add_options MOZ_OBJDIR=./obj-horizon
 ac_add_options --enable-application=b2g/graphene
 ac_add_options --with-branding=b2g/branding/horizon
 ```
@@ -53,7 +52,7 @@ Build the gecko project with:
 You can run the built binary like so:
 
 ```
-/path/to/gecko-projects/obj-horizon/dist/Horizon.app/Contents/MacOS/horizon --start-manifest http://localhost:8000/manifest.webapp
+/path/to/gecko-projects/obj-graphene/dist/Horizon.app/Contents/MacOS/graphene --start-manifest http://localhost:8000/manifest.webapp
 ```
 
 ### Running as an add-on

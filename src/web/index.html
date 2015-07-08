@@ -7,25 +7,20 @@
   <link rel="stylesheet" href="css/font-awesome.css">
   <script defer src="js/main.js"></script>
 </head>
-<body data-hud="closed" data-projection="mono">
+<body data-hud="closed">
 
   <!-- fullscreen container which VR fullscreen is applied to -->
   <div id="fs-container">
-    <div id="container--stereo" class="container--stereo">
-      <!-- Full VR content iframes -->
+    <div id="content-camera">
+      <div id="content-container" class="content-container">
+        <!-- Content iframes -->
+      </div>
     </div>
 
     <!-- container acting as camera -->
-    <div id="camera" class="camera threed">
-
-      <!-- <div class="container__cover threed"></div> -->
-      <div id="container--mono" class="container--mono threed">
-        <!-- browser content iframes -->
-      </div>
-
+    <div class="camera threed">
       <!-- HUD -->
       <div id="hud" class="hud threed">
-
         <div id="background" class="background threed"></div>
 
         <div id="title" class="title threed">
