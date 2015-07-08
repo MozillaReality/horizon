@@ -14,9 +14,11 @@ export default class ViewportManager {
     this.contentContainer = $('#content-container');
     this.enter = $('#entervr');
 
+    // use CSS variable for mono content scale value.
+    this.monoScale = window.getComputedStyle(document.documentElement).getPropertyValue('--content-scale');
+
     this.vrDevices = null;
     this.lastPosition = null;
-
     this.getVrDevices().then(devices => {
       this.vrDevices = devices;
     }).catch(function(err) {
@@ -135,6 +137,7 @@ export default class ViewportManager {
 
   onFrame() {
     if (!this.vrDevices) {
+      console.warn('No VR devices detected.');
       return false;
     }
 
@@ -143,15 +146,12 @@ export default class ViewportManager {
     let position = state.position || this.lastPosition;
     let cssPosition = '';
 
-    this.orientation = orientation;
-    this.position = position;
-
     if (position !== null) {
       // The scaled position to use.
       let val = {};
 
       for (let p in position) {
-        val[p] = position[p] * -100; /* scale position from HMD to match CSS values */
+        val[p] = position[p] * this.settings.hmd_scale; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
       val.y *= -1;
@@ -160,6 +160,11 @@ export default class ViewportManager {
       // Store the last position to smooth movement if we don't get a position next time.
       this.lastPosition = position;
     }
+
+    this.hmdState = {
+      position: position,
+      orientation: orientation
+    };
 
     let transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
 
@@ -171,6 +176,7 @@ export default class ViewportManager {
   }
 
   init(runtime) {
+    this.settings = runtime.settings;
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
     // Handles moving between stereo and mono view modes.
