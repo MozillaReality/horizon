@@ -119,7 +119,6 @@ button {
 
 /* content projection */
 .frame--mono {
-  background: white;
   height: var(--content-height);
   width: var(--content-width);
   transition: 0.3s transform ease;
@@ -140,6 +139,7 @@ button {
 
 /* content iframe */
 #content-container iframe {
+  background: white;
   position: absolute;
   left: 0;
   top: 0;
