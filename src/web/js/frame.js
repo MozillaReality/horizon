@@ -82,16 +82,12 @@ export default class Frame {
 
     if (projection === 'stereo' && !this.isStereo) {
       this.isStereo = true;
-      window.dispatchEvent(new CustomEvent('stereo-viewmode', {
-        detail: this
-      }));
+      window.dispatchEvent(new CustomEvent('stereo-viewmode'));
     }
 
     if (projection === 'mono' && this.isStereo) {
       this.isStereo = false;
-      window.dispatchEvent(new CustomEvent('mono-viewmode', {
-        detail: this
-      }));
+      window.dispatchEvent(new CustomEvent('mono-viewmode'));
     }
   }
 
@@ -122,7 +118,6 @@ export default class Frame {
     element.setAttribute('src', this.config.url);
     element.setAttribute('mozbrowser', 'true');
     element.setAttribute('remote', 'true');
-    element.className = 'frame--mono threed';
     this.config.container.appendChild(element);
 
     this.element = element;
