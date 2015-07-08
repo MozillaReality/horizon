@@ -17,6 +17,11 @@ const mouseConfig = {
   formSubmitThreshold: 1500,  // Time to wait for mousedown (buttondown) before triggering a form submit.
 };
 
+const transitionConfig = {
+  pageStartDelay: 500,  // Time to wait (in milliseconds) after navigation to a new page has started but before the LOADING text is displayed.
+  pageEndDelay: 1250,  // Time to wait (in milliseconds) after a new page has finished loaded before hiding transitions layer.
+};
+
 export default class FrameManager {
   constructor() {
 
@@ -79,6 +84,8 @@ export default class FrameManager {
     switch (e.type) {
       case 'mozbrowserlocationchange':
         this.updateHUDForNavButtons();
+        this.isLoading = true;
+        this.showLoadingIndicator();
         /* falls through */
       case 'mozbrowsertitlechange':
         this.updateHUDForActiveFrame();
@@ -97,8 +104,6 @@ export default class FrameManager {
         this.hideLoadingIndicator();
         break;
       case 'mozbrowserloadstart':
-        this.isLoading = true;
-        this.showLoadingIndicator();
         break;
     }
   }
@@ -386,7 +391,6 @@ export default class FrameManager {
     this.body.dataset.hud = 'open';
     this.sfx.play('hudShow');
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
-    this.viewportManager.monoContainer.style.animation = 'container-pushBack 0.3s ease forwards';
     this.title.style.animation = 'show 0.1s ease forwards';
     this.directory.style.animation = 'show 0.1s ease forwards';
     this.urlbar.style.animation = 'show 0.1s ease forwards';
@@ -404,7 +408,6 @@ export default class FrameManager {
     }
     this.urlInput.blur();
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
-    this.viewportManager.monoContainer.style.animation = 'container-pullForward 0.3s ease forwards';
     this.title.style.animation = 'hide 0.1s ease forwards';
     this.directory.style.animation = 'hide 0.1s ease forwards';
     this.urlbar.style.animation = 'hide 0.1s ease forwards';
@@ -486,7 +489,7 @@ export default class FrameManager {
 
   /**
    * Show/Hide the stop-reload buttons.
-   * Called by both loading events (mozbrowserloadstart and mozbrowserloadend) and user action (toggleHud).
+   * Called by both navigating/loading events (mozbrowserlocationchange and mozbrowserloadend) and user action (toggleHud).
    */
   showStopreload() {
     this.stopreload.style.animation = 'show 0.1s ease forwards';
@@ -503,22 +506,37 @@ export default class FrameManager {
 
   /**
    * Show/Hide loading indicators.
-   * Called by mozbrowserloadstart and mozbrowserloadend events.
+   * Called by mozbrowserlocationchange and mozbrowserloadend events.
    */
   showLoadingIndicator() {
-    this.showStopreload();
-    this.loading.style.animation = 'show 0.1s ease forwards';
+    this.body.dataset.navigating = true;
 
-    // When loading starts, show the stop button.
-    this.stopButton.style.display = 'inline';
+    setTimeout(() => {
+      this.body.dataset.loading = true;
+
+      this.showStopreload();
+      this.loading.style.animation = 'show 0.1s ease forwards';
+
+      // When loading starts, show the stop button.
+      this.stopButton.style.display = 'inline';
+    }, transitionConfig.pageStartDelay);
   }
 
   hideLoadingIndicator() {
-    this.hideStopreload();
-    this.loading.style.animation = 'hide 0.1s ease forwards';
+    setTimeout(() => {
+      this.hideStopreload();
+      this.loading.style.animation = 'hide 0.1s ease forwards';
 
-    // When loading ends, hide the stop button to reveal the underlying reload button.
-    this.stopButton.style.display = 'none';
+      // When loading ends, hide the stop button to reveal the underlying reload button.
+      this.stopButton.style.display = 'none';
+
+      // We wait for the LOADING text to disappear before we change state to finished.
+      this.loading.addEventListener('animationend', e => {
+        e.stopPropagation();
+        delete this.body.dataset.loading;
+        delete this.body.dataset.navigating;
+      });
+    }, transitionConfig.pageEndDelay);
   }
 
 
