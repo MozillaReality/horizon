@@ -1,4 +1,4 @@
-const directorySrc = '/directory.json'
+import Settings from '../settings.js';
 
 export default class Directory extends React.Component {
   constructor(props) {
@@ -9,7 +9,7 @@ export default class Directory extends React.Component {
     };
 
     // Loads JSON for Directory.
-    fetch(directorySrc)
+    fetch(Settings.json_directory_url)
     .then(response => {
       return response.json();
     })
