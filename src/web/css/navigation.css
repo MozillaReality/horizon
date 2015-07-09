@@ -11,6 +11,9 @@
   --content-depth: calc(var(--hud-depth) - 4cm);
   --content-depth-hud--open: calc(var(--hud-depth) - 8cm);
 
+  /* default zoom value for mono iframe content */
+  --content-scale: 1.5;
+
   /* default content dimensions */
   --content-width: 32cm;
   --content-height: 26cm;
@@ -72,6 +75,10 @@ button {
   cursor: pointer;
 }
 
+.pointer-none {
+  pointer-events: none;
+}
+
 
 /**
  * VR classes
@@ -121,69 +128,18 @@ button {
   to { background-color: hsl(228, 20%, 13%); }
 }
 
-
-/* 2D content container */
-
-.container--mono {
+/* content projection */
+.frame--mono {
   height: var(--content-height);
   width: var(--content-width);
+  transition: 0.3s transform ease;
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(var(--content-scale), var(--content-scale));
 }
 
-*:-moz-full-screen .container--mono {
-  /* translate top left so that mono content is centered in viewport, then position in 3D space */
-  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth));
+.frame--mono.pushBack {
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
 }
 
-@keyframes container-pushBack {
-  from {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
-  }
-  to {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
-  }
-}
-
-@keyframes container-pullForward {
-  from {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
-  }
-  to {
-    transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(1, 1);
-  }
-}
-
-
-/* stereo content container */
-.container--stereo {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-
-/* iframe */
-.frame--mono {
-  background: white;
-  top: 18cm;
-  left: 18cm;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.5s ease;
-  /* Prevent iframe's pointer events from stealing focus away from the app.
-     Uncomment this if you want the user to be able to click on any scrollable
-     element and scroll within that element using a gamepad. */
-  pointer-events: none;
-}
-
-*:-moz-full-screen .frame--mono {
-  top: 0;
-  left: 0;
-  transform: translate3d(0, 0, var(--hud-depth));
-}
-
-/* iframe */
 .frame--stereo {
   height: 100%;
   left: 0;
@@ -192,23 +148,43 @@ button {
   width: 100%;
 }
 
+/* content iframe */
+#content-container iframe {
+  background: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  /* Prevent iframe's pointer events from stealing focus away from the app.
+     Uncomment this if you want the user to be able to click on any scrollable
+     element and scroll within that element using a gamepad. */
+  pointer-events: none;
+}
+
 
 /**
  * Cursor
  */
 [data-hud="open"] .cursor,
-[data-projection="mono"] .cursor {
+[data-projection="mono"] .cursor.is-visible {
   visibility: visible;
 }
 
 .cursor {
-  width: 1cm;
-  height: 1cm;
-  background: var(--color-blue-vibrant-faded);
-  border-radius: 50%;
-  transform: translate3d(-50%, -50%, var(--hud-depth));
+  width: 0;
+  height: 0;
   pointer-events: none;
+  position: relative;
+  transform: translate3d(0, 0, var(--content-depth));
   visibility: hidden;
+}
+
+.cursor-arrow {
+  border-top: 0.5cm solid transparent;
+  border-right: 1.2cm solid var(--color-blue-vibrant-faded);
+  border-bottom: 0.5cm solid transparent;
+  transform: rotate(55deg) translate(0cm, 0.25cm) rotateY(-35deg);
 }
 
 

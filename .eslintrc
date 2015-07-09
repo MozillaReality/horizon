@@ -5,8 +5,11 @@
     "jasmine": true,
     "node": true,
     "browser": true,
-    "builtin": true,
-    "jquery": true
+    "builtin": true
+  },
+  "globals": {
+    "$": true,
+    "$$": true
   },
   "plugins": [
     "eslint-plugin-random"

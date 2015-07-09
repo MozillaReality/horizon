@@ -10,13 +10,15 @@ export default class ViewportManager {
   constructor() {
     this.body = document.body;
     this.container = $('#fs-container');
-    this.monoContainer = $('#container--mono');
-    this.stereoContainer = $('#container--stereo');
-    this.vrDevices = null;
-    this.lastPosition = null;
-    this.camera = $('#camera');
+    this.contentCamera = $('#content-camera')
+    this.contentContainer = $('#content-container');
     this.enter = $('#entervr');
 
+    // use CSS variable for mono content scale value.
+    this.monoScale = window.getComputedStyle(document.documentElement).getPropertyValue('--content-scale');
+
+    this.vrDevices = null;
+    this.lastPosition = null;
     this.getVrDevices().then(devices => {
       this.vrDevices = devices;
     }).catch(function(err) {
@@ -26,35 +28,38 @@ export default class ViewportManager {
 
 
   /**
-   * Handles view-mode change, attaching iframe to stereo container.
+   * Returns elements which camera transforms should be applied.
    *
-   * We use appendChild to move the app.element iframe into the
-   * appropriate place within the DOM for each type of projection.
-   *
-   * Be warned that this causes the iframe to refresh and fire
-   * an additional set of browser events!
-   *
-   * See issue: https://github.com/MozVR/horizon/issues/118
-   *
-   * @param {Object} app Details object of the 'stereo-viewmode' event fired.
+   * @returns {Array} Array of elements.
    */
-  toStereo(app) {
-    this.body.dataset.projection = 'stereo';
-    app.element.className = 'frame--stereo';
-    this.stereoContainer.appendChild(app.element);
+  getCameras() {
+    return $$('.camera');
   }
 
+
   /**
-   * Handles view-mode change, attaching iframe to mono container.
-   *
-   * Attaches iframe to mono container in DOM.
-   *
-   * @param {Object} app Details object of the 'mono-viewmode' event fired.
+   * Handles switching to stereo view-mode.
    */
-  toMono(app) {
+  toStereo() {
+    // Remove the classNames used to apply camera view transforms.
+    this.contentCamera.className = '';
+    this.cameras = this.getCameras();
+    // Clear any transforms left over from mono-mode.
+    this.contentCamera.style.transform = '';
+    this.contentContainer.className = 'frame--stereo';
+    this.body.dataset.projection = 'stereo';
+  }
+
+
+  /**
+   * Handles switching to mono view-mode.
+   */
+  toMono() {
+    // Add classNames used to apply camera view transforms.
+    this.contentCamera.className = 'camera threed';
+    this.cameras = this.getCameras();
+    this.contentContainer.className = 'frame--mono threed';
     this.body.dataset.projection = 'mono';
-    app.element.className = 'frame--mono threed';
-    this.monoContainer.appendChild(app.element);
   }
 
   filterInvalidDevices(devices) {
@@ -132,6 +137,7 @@ export default class ViewportManager {
 
   onFrame() {
     if (!this.vrDevices) {
+      console.warn('No VR devices detected.');
       return false;
     }
 
@@ -141,15 +147,12 @@ export default class ViewportManager {
     let position = state.position || this.lastPosition;
     let cssPosition = '';
 
-    this.orientation = orientation;
-    this.position = position;
-
     if (position !== null) {
       // The scaled position to use.
       let val = {};
 
       for (let p in position) {
-        val[p] = position[p] * -100; /* scale position from HMD to match CSS values */
+        val[p] = position[p] * this.settings.hmd_scale; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
       val.y *= -1;
@@ -158,22 +161,29 @@ export default class ViewportManager {
       // Store the last position to smooth movement if we don't get a position next time.
       this.lastPosition = position;
     }
-    this.camera.style.transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
+
+    this.hmdState = {
+      position: position,
+      orientation: orientation
+    };
+
+    let transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
+
+    this.cameras.forEach(camera => {
+      camera.style.transform = transform;
+    });
 
     window.requestAnimationFrame(this.onFrame.bind(this));
   }
 
   init(runtime) {
     this.runtime = runtime;
+    this.settings = runtime.settings;
     this.enter.addEventListener('click', this.enterVr.bind(this));
 
     // Handles moving between stereo and mono view modes.
-    window.addEventListener('stereo-viewmode', e => {
-      this.toStereo(e.detail);
-    });
-    window.addEventListener('mono-viewmode', e => {
-      this.toMono(e.detail);
-    });
+    window.addEventListener('stereo-viewmode', this.toStereo.bind(this));
+    window.addEventListener('mono-viewmode', this.toMono.bind(this));
 
     runtime.keyboardInput.assign({
       'ctrl z': () => this.resetSensor(),

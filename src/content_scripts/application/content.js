@@ -30,6 +30,22 @@ window.addEventListener('unload', () => {
 
 */
 
+const CLICKABLE_ELEMENTS = [
+  'a[href]', 'area[href]',
+  'button:not([disabled]):not([readonly])',
+  'input:not([disabled]):not([readonly])',
+  'select:not([disabled]):not([readonly])',
+  'textarea:not([disabled]):not([readonly])',
+  'iframe', 'frame', 'map', 'object', 'embed',
+  '[tabindex]:not([tabindex="-1"])', '[contenteditable]'
+];
+
+const FOCUSABLE_ELEMENTS = [
+  'input:not([disabled]):not([readonly])',
+  'textarea:not([disabled]):not([readonly])',
+  'select:not([disabled]):not([readonly])',
+];
+
 class FrameCommunicator extends EventEmitter {
   constructor(name) {
     super();
@@ -67,6 +83,10 @@ class Page {
     return Array.prototype.slice.call(el.querySelectorAll(sel));
   }
 
+
+  /**
+   * Scrolling
+   */
   get activeScrollElement() {
     // This is the element that currently has focus.
     var el = document.activeElement;
@@ -125,17 +145,91 @@ class Page {
     this.scrollTo({scrollTop: Infinity});
   }
 
-  mouseClick(data) {
-    if ('top' in data && 'left' in data) {
-      var el = document.elementFromPoint(data.left, data.top);
-      if (el) {
-        var evt = new MouseEvent('click', {
-          view: window,
-          bubbles: true,
-          cancelable: true
-        });
-        el.dispatchEvent(evt);
-      }
+
+  /**
+   * Cursor
+   */
+  emitMouseEvent(eventName, el) {
+    let evt = new MouseEvent(eventName, {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    });
+    el.dispatchEvent(evt);
+  }
+
+  mouseUp(data) {
+    if (typeof data.top === 'undefined' || typeof data.left === 'undefined') {
+      return;
+    }
+
+    let el = document.elementFromPoint(data.left, data.top);
+
+    if (el) {
+      this.emitMouseEvent('mouseup', el);
+    }
+
+    if (el === this.cursorElement) {
+      this.emitMouseEvent('click', el);
+    } else {
+      this.clearHighlight();
+    }
+  }
+
+  mouseDown(data) {
+    if (typeof data.top === 'undefined' || typeof data.left === 'undefined') {
+      return;
+    }
+
+    let elAtPoint = document.elementFromPoint(data.left, data.top);
+
+    if (elAtPoint.matches(FOCUSABLE_ELEMENTS)) {
+      elAtPoint.focus();
+      return;
+    }
+
+    let clickableEl = elAtPoint.closest(CLICKABLE_ELEMENTS);
+
+    if (!clickableEl && elAtPoint) {
+      this.emitMouseEvent('mousedown', elAtPoint);
+    } else if (clickableEl) {
+      this.highlight(elAtPoint);
+      this.emitMouseEvent('mousedown', clickableEl);
+    }
+
+    this.cursorElement = elAtPoint;    
+  }
+
+  clearHighlight() {
+    if (this.highlighter) {
+      this.highlighter.parentNode.removeChild(this.highlighter);
+      this.highlighter = null;
+    }
+  }
+
+  highlight(el) {
+    var rect = el.getBoundingClientRect();
+    var top = rect.top + window.scrollY + 'px';
+    var left = rect.left + window.scrollX + 'px';
+    var width = el.offsetWidth + 'px';
+    var height = el.offsetHeight + 'px';
+    var cssText = `top: ${top};
+        left: ${left};
+        width: ${width};
+        height: ${height};`
+
+    if (this.highlighter) {
+      this.highlighter.style.cssText += cssText;
+    } else {
+      this.highlighter = document.createElement('div');
+      document.body.appendChild(this.highlighter);
+      this.highlighter.style.cssText += cssText + `
+        box-sizing: border-box;
+        outline: 5px solid hsl(200, 89%, 50%);
+        position: absolute;
+        pointer-events: none;
+        z-index: 2147483647;
+      `;
     }
   }
 }
@@ -164,9 +258,14 @@ fc.on('scroll.end', () => {
   page.scrollEnd();
 });
 
-fc.on('mouse.click', data => {
-  log("[add-on] Received 'mouse.click' message");
-  page.mouseClick(data);
+fc.on('mouse.mouseup', data => {
+  log("[add-on] Received 'mouse.mouseup' message");
+  page.mouseUp(data);
+});
+
+fc.on('mouse.mousedown', data => {
+  log("[add-on] Received 'mouse.mousedown' message");
+  page.mouseDown(data);
 });
 
 
