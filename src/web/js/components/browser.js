@@ -67,14 +67,14 @@ export default class Browser extends React.Component {
   /**
    * Handles switching to stereo view-mode.
    */
-  toStereo() {
+  onStereo() {
     document.body.dataset.projection = 'stereo';
   }
 
   /**
    * Handles switching to mono view-mode.
    */
-  toMono() {
+  onMono() {
     document.body.dataset.projection = 'mono';
   }
 
@@ -178,7 +178,9 @@ export default class Browser extends React.Component {
                   ref={`frame${idx}`}
                   id={`frame${idx}`}
                   url={frameProps.url}
-                  browserEvent={this.onBrowserEvent.bind(this)} />
+                  browserEvent={this.onBrowserEvent.bind(this)}
+                  onMono={this.onMono.bind(this)}
+                  onStereo={this.onStereo.bind(this)} />
               })
             }
             </div>

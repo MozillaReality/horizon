@@ -8,10 +8,6 @@ var matrix = new Matrix();
 
 export default class ViewportManager {
   constructor(handlers) {
-    this.body = document.body;
-    this.contentCamera = $('#content-camera')
-    this.contentContainer = $('#content-container');
-
     // use CSS variable for mono content scale value.
     this.monoScale = window.getComputedStyle(document.documentElement).getPropertyValue('--content-scale');
 
@@ -139,11 +135,6 @@ export default class ViewportManager {
 
   init(runtime) {
     this.settings = runtime.settings;
-
-    // Handles moving between stereo and mono view modes.
-    // window.addEventListener('stereo-viewmode', this.toStereo.bind(this));
-    // window.addEventListener('mono-viewmode', this.toMono.bind(this));
-
     runtime.keyboardInput.assign({
       'ctrl z': () => this.resetSensor(),
       'ctrl f': () => this.enterVr()

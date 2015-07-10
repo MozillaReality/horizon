@@ -86,12 +86,12 @@ export default class Frame extends React.Component {
 
     if (projection === 'stereo' && !this.isStereo) {
       this.isStereo = true;
-      window.dispatchEvent(new CustomEvent('stereo-viewmode'));
+      this.props.onStereo();
     }
 
     if (projection === 'mono' && this.isStereo) {
       this.isStereo = false;
-      window.dispatchEvent(new CustomEvent('mono-viewmode'));
+      this.props.onMono();
     }
   }
 
