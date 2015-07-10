@@ -29,7 +29,6 @@ export default class Browser extends React.Component {
       onCameraTransform: this.onCameraTransform.bind(this)
     });
     runtime.settings = {
-      www_directory_src: '/directory.json',
       www_browser_start_src: '/media/browser_start.wav',
       play_audio_on_browser_start: false,
       hmd_scale: -100,
@@ -173,21 +172,21 @@ export default class Browser extends React.Component {
               })}
               ref="frameWrapper">
             {
-              this.state.frames.map((frameProps, idx) => {
-                 return <Frame
+              this.state.frames.map((frameProps, idx) =>
+                 <Frame
                   ref={`frame${idx}`}
                   id={`frame${idx}`}
                   url={frameProps.url}
                   browserEvent={this.onBrowserEvent.bind(this)}
                   onMono={this.onMono.bind(this)}
-                  onStereo={this.onStereo.bind(this)} />
-              })
+                  onStereo={this.onStereo.bind(this)} />)
             }
             </div>
           </div>
 
           <div className='camera threed' ref='camera'>
             <Hud
+              runtime={this.runtime}
               hudVisible={this.state.hudVisible}
               onUrlEntry={this.onUrlEntry.bind(this)}/>
           </div>

@@ -28,7 +28,6 @@ export default class FrameManager {
     this.title = $('#title');
     this.titleText = $('#title__text');
     this.titleIcon = $('#title__icon');
-    this.directory = $('#directory');
     this.urlInput = $('#urlbar__input');
     this.backfwd = $('#backfwd');
     this.backButton = $('#back');
@@ -450,28 +449,6 @@ export default class FrameManager {
     this.stopButton.style.display = 'none';
   }
 
-
-  /**
-   * Populate the directory using the loaded JSON.
-   *
-   * @param {Object} data An object containing an array of sites in the directory.
-   */
-  buildDirectory(data) {
-    data.sites.forEach(site => {
-      var tile = document.createElement('a');
-      tile.className = 'directory__tile';
-      tile.setAttribute('href', site.url);
-      tile.textContent = site.name;
-
-      var type = document.createElement('span');
-      type.className = 'type';
-      type.textContent = site.type;
-      tile.appendChild(type);
-      this.directory.appendChild(tile);
-    });
-  }
-
-
   /**
    * Cursor
    */
@@ -780,17 +757,6 @@ export default class FrameManager {
     // Hides the HUD and loading indicators on first load.
     this.hideHud(true);
     this.hideLoadingIndicator();
-
-    /**
-     * Loads JSON for Directory.
-     */
-    fetch(runtime.settings.www_directory_src)
-    .then(response => {
-      return response.json();
-    })
-    .then(data => {
-      this.buildDirectory(data);
-    });
 
     runtime.gamepadInput.assign({
       input: {

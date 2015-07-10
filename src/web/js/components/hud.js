@@ -1,5 +1,6 @@
 import neatAudio from '../../../../node_modules/neat-audio/neat-audio.js';
 import React from '../../../../node_modules/react';
+import Tiles from './tiles.js';
 import cx from './../lib/class_set.js';
 
 const hudHideSound = '/media/hud_hide.wav';
@@ -57,7 +58,8 @@ export default class Hud extends React.Component {
         <span id='title__text' className='title__text'></span>
       </div>
 
-      <div id='directory' className='directory threed'></div>
+      <Tiles
+        runtime={this.props.runtime} />
 
       <form id='urlbar' className='urlbar threed' action='#' onSubmit={this.props.onUrlEntry}>
         <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' />
