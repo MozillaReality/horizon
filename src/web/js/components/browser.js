@@ -1,5 +1,6 @@
 import React from '../../../../node_modules/react';
 import Frame from './frame.js';
+import Hud from './hud.js';
 import cx from './../lib/class_set.js';
 
 import ContentScripts from './../content_scripts.js';
@@ -30,8 +31,6 @@ export default class Browser extends React.Component {
     runtime.settings = {
       www_directory_src: '/directory.json',
       www_browser_start_src: '/media/browser_start.wav',
-      www_hud_hide_src: '/media/hud_hide.wav',
-      www_hud_show_src: '/media/hud_show.wav',
       play_audio_on_browser_start: false,
       hmd_scale: -100,
       pixels_per_meter: 96 / 2.54,
@@ -44,6 +43,10 @@ export default class Browser extends React.Component {
     runtime.keyboardInput.init(runtime);
     runtime.viewportManager.init(runtime);
     this.runtime = runtime;
+
+    runtime.keyboardInput.assign({
+      ' ': () => this.toggleHud()
+    });
 
     this.state = {
       hudVisible: false,
@@ -68,12 +71,23 @@ export default class Browser extends React.Component {
     document.body.dataset.projection = 'stereo';
   }
 
-
   /**
    * Handles switching to mono view-mode.
    */
   toMono() {
     document.body.dataset.projection = 'mono';
+  }
+
+  toggleHud() {
+    // Steal focus from whichever element is currently focussed.
+    var el = document.activeElement;
+    if (el) {
+      el.blur();
+    }
+
+    this.setState({
+      hudVisible: !this.state.hudVisible
+    });
   }
 
   newFrame(url) {
@@ -102,7 +116,7 @@ export default class Browser extends React.Component {
     }
   }
 
-  handleUrlEntry(e) {
+  onUrlEntry(e) {
     e.preventDefault();
     var urlInput = React.findDOMNode(this.refs.urlInput);
     this.navigate(urlInput.value);
@@ -121,7 +135,6 @@ export default class Browser extends React.Component {
    * Shows/Hides majority of the HUD elements.
    */
   showHud() {
-    this.sfx.play('hudShow'); // XXX: Move this into a HudComponent::componentWillReceiveProps?
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
     this.viewportManager.contentContainer.classList.add('pushBack');
     this.title.style.animation = 'show 0.1s ease forwards';
@@ -134,7 +147,6 @@ export default class Browser extends React.Component {
   }
 
   hideHud(firstLoad) {
-    this.sfx.play('hudHide'); // XXX: Move this into a HudComponent::componentWillReceiveProps?
     this.urlInput.blur();
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
     this.viewportManager.contentContainer.classList.remove('pushBack');
@@ -173,40 +185,9 @@ export default class Browser extends React.Component {
           </div>
 
           <div className='camera threed' ref='camera'>
-            <div id='hud'
-              className={cx({
-                hud: true,
-                threed: true,
-                open: this.state.hudVisible,
-                closed: !this.state.hudVisible
-              })}>
-              <div id='background' className='background threed pointer-none'></div>
-
-              <div id='title' className='title threed pointer-none'>
-                <span id='title__icon' className='title__icon'></span>
-                <span id='title__text' className='title__text'></span>
-              </div>
-
-              <div id='directory' className='directory threed'></div>
-
-              <form id='urlbar' className='urlbar threed' action='#' onSubmit={this.handleUrlEntry.bind(this)}>
-                <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' />
-              </form>
-
-              <div id='backfwd' className='backfwd threed'>
-                <button className='fa fa-arrow-left nav back' data-action='back' id='back'></button>
-                <button className='fa fa-arrow-right nav forward' data-action='forward' id='forward'></button>
-              </div>
-
-              <div id='stopreload' className='stopreload threed'>
-                <button className='fa fa-repeat nav reload' data-action='reload' id='reload'></button>
-                <button className='fa fa-times nav stop' data-action='stop' id='stop'></button>
-              </div>
-
-              <button id='closehud' className='nav closehud threed'>Close HUD</button>
-
-              <div id='loading' className='loading threed'>LOADING</div>
-            </div>
+            <Hud
+              hudVisible={this.state.hudVisible}
+              onUrlEntry={this.onUrlEntry.bind(this)}/>
           </div>
           <div id='cursor' className='cursor threed'>
             <div className='cursor-arrow threed'></div>
