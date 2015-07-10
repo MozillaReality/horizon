@@ -120,7 +120,7 @@ gulp.task('generate-content-scripts', function(cb) {
 gulp.task('babelify', function() {
   return browserify({
     entries: [
-      WEB_ROOT + 'js/browser.js',
+      WEB_ROOT + 'js/app.js',
       './node_modules/gamepad-plus/src/index.js'
     ],
     debug: !!!process.env.PRODUCTION

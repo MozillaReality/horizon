@@ -1,4 +1,5 @@
-import Url from './lib/url.js';
+import React from '../../../../node_modules/react';
+import Url from './../lib/url.js';
 
 var url = new Url();
 
@@ -9,10 +10,10 @@ const zoomConfig = {
   defaultValue: 1
 };
 
-export default class Frame {
-  constructor(config) {
-    this.id = config.id;
-    this.config = config;
+export default class Frame extends React.Component {
+
+  constructor(props) {
+    super(props);
 
     // Mozbrowser events that we are interested in listening to.
     this.browserEvents = ['mozbrowserclose', 'mozbrowsererror', 'mozbrowservisibilitychange',
@@ -22,12 +23,15 @@ export default class Frame {
       'mozbrowsershowmodalprompt'];
 
     this.title = '';
-    this.location = config.url;
+    this.location = props.url;
     this.isStereo = false;
     this.icons = [];
 
     this.zoomValue = zoomConfig.defaultValue;
-    this.createFrame();
+  }
+
+  get iframe() {
+    return React.findDOMNode(this.refs.iframe);
   }
 
   handleEvent(e) {
@@ -36,7 +40,7 @@ export default class Frame {
       this[listener](e);
     }
 
-    this.config.browserEvent(e, this);
+    this.props.browserEvent(e, this);
   }
 
   get icon() {
@@ -113,20 +117,6 @@ export default class Frame {
     this.element.reload(hardReload);
   }
 
-  createFrame() {
-    var element = document.createElement('iframe');
-    element.setAttribute('src', this.config.url);
-    element.setAttribute('mozbrowser', 'true');
-    element.setAttribute('remote', 'true');
-    this.config.container.appendChild(element);
-
-    this.element = element;
-
-    this.browserEvents.forEach(event => {
-      element.addEventListener(event, this);
-    });
-  }
-
   close() {
     this.element.parentNode.removeChild(this.element);
   }
@@ -146,18 +136,36 @@ export default class Frame {
     this.element.zoom(this.zoomValue);
   }
 
-  navigate(value) {
-    var location = url.getUrlFromInput(value);
-    this.location = location;
-    this.title = '';
-    this.icons = [];
+  /**
+   * Swaps out the mozbrowser iframe after mounting.
+   * Needed due to custom attributes, and potentially using frames from mozbrowser events.
+   */
+  componentDidMount() {
+    var frame = this.iframe;
+    var reactid = frame.dataset.reactid;
+    if (frame.tagName.toLowerCase() !== 'iframe') {
+      frame = document.createElement('iframe');
+      frame.setAttribute('remote', 'true');
+    }
+    frame.className = 'frame';
+    frame.dataset.reactid = reactid;
 
-    // Reset local values and update the hud when we navigate..
-    window.dispatchEvent(new CustomEvent('frame_mozbrowserlocationchange', {
-      bubbles: true,
-      detail: location
-    }));
+    frame.setAttribute('mozbrowser', 'true');
+    frame.setAttribute('allowfullscreen', 'true');
+    frame.setAttribute('src', this.props.url);
 
-    this.element.setAttribute('src', location);
+    if (!frame.hasAttribute('data-listeners-added')) {
+      frame.setAttribute('data-listeners-added', true);
+      this.browserEvents.forEach(event =>
+        frame.addEventListener(event, this));
+    }
+
+    this.iframe.parentNode.replaceChild(frame, this.iframe);
+  }
+
+  render() {
+    return <div className='frameWrapper'>
+        <div ref='iframe' />
+      </div>;
   }
 }

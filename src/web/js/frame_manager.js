@@ -1,7 +1,6 @@
 import neatAudio from '../../../node_modules/neat-audio/neat-audio.js';
 import vec4 from '../../../node_modules/gl-vec4';
 
-import Frame from './frame.js';
 import Matrix from './lib/matrix.js';
 
 var matrix = new Matrix();
@@ -19,24 +18,19 @@ const mouseConfig = {
 
 export default class FrameManager {
   constructor() {
-
-    // Variables for managing frames.
-    this.frames = [];
     this.activeFrameIndex = null;
     this.currentId = 0;
 
     // Variables for frame and HUD elements.
     this.hudVisible = false;
     this.isLoading = false;
-    this.body = document.body;
+    /*
     this.container = $('#fs-container');
-    this.hud = $('#hud');
     this.title = $('#title');
     this.titleText = $('#title__text');
     this.titleIcon = $('#title__icon');
     this.directory = $('#directory');
-    this.urlbar = $('#urlbar');
-    this.urlInput = this.urlbar.querySelector('#urlbar__input');
+    this.urlInput = $('#urlbar__input');
     this.backfwd = $('#backfwd');
     this.backButton = $('#back');
     this.forwardButton = $('#forward');
@@ -47,6 +41,7 @@ export default class FrameManager {
     this.closehudButton = $('#closehud');
     this.hudBackground = $('#background');
     this.cursor = $('#cursor');
+    */
 
     // Element at cursor.
     this.cursorElement = null;
@@ -188,7 +183,7 @@ export default class FrameManager {
    * @returns {Object} App
    */
   newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
-    var app = new Frame({
+    var app = new window.Frame({
       id: this.nextId(),
       url: location,
       container: this.viewportManager.contentContainer,
@@ -368,55 +363,11 @@ export default class FrameManager {
     }
   }
 
-  handleUrlEntry(e) {
-    e.preventDefault();
-    this.navigate(this.urlInput.value);
-    this.urlInput.blur();
-    this.hideHud();
-  }
-
   navigate(url) {
     if (!this.activeFrame) {
       this.newFrame();
     }
     this.activeFrame.navigate(url);
-  }
-
-
-  /**
-   * Shows/Hides majority of the HUD elements.
-   */
-  showHud() {
-    this.hudVisible = true;
-    this.body.dataset.hud = 'open';
-    this.sfx.play('hudShow');
-    this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
-    this.viewportManager.contentContainer.classList.add('pushBack');
-    this.title.style.animation = 'show 0.1s ease forwards';
-    this.directory.style.animation = 'show 0.1s ease forwards';
-    this.urlbar.style.animation = 'show 0.1s ease forwards';
-    this.backfwd.style.animation = 'show 0.1s ease forwards';
-    this.showStopreload();
-    this.closehudButton.style.animation = 'show 0.1s ease forwards';
-    this.hudBackground.style.animation = 'show 0.3s ease forwards';
-  }
-
-  hideHud(firstLoad) {
-    this.hudVisible = false;
-    this.body.dataset.hud = 'closed';
-    if (!firstLoad) {
-      this.sfx.play('hudHide');
-    }
-    this.urlInput.blur();
-    this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
-    this.viewportManager.contentContainer.classList.remove('pushBack');
-    this.title.style.animation = 'hide 0.1s ease forwards';
-    this.directory.style.animation = 'hide 0.1s ease forwards';
-    this.urlbar.style.animation = 'hide 0.1s ease forwards';
-    this.backfwd.style.animation = 'hide 0.1s ease forwards';
-    this.hideStopreload();
-    this.closehudButton.style.animation = 'hide 0.1s ease forwards';
-    this.hudBackground.style.animation = 'hide 0.3s ease forwards';
   }
 
   toggleHud() {
@@ -828,6 +779,7 @@ export default class FrameManager {
   }
 
   init(runtime) {
+    console.log('Initializing frame manager.');
     this.frameCommunicator = runtime.frameCommunicator;
     this.settings = runtime.settings;
     this.utils = runtime.utils;
@@ -846,12 +798,12 @@ export default class FrameManager {
 
     // Creates listeners for HUD element states and positions.
     window.addEventListener('resize', this.positionFrames.bind(this));
-    this.hud.addEventListener('click', this);
     document.addEventListener('click', this.handleLinkClick.bind(this));
-    this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
+    /*
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.closehudButton.addEventListener('click', this.hideHud.bind(this));
+    */
 
     // Listeners for mimicked mouse events from gaze-based cursor.
     window.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
