@@ -39,6 +39,8 @@ export default class Frame extends React.Component {
     }
   }
 
+  // TODO: Implement in react.
+  // Move to browser component.
   on_mozbrowsermetachange({detail}) {
     if (detail.name !== 'viewmode') {
       return;
@@ -68,14 +70,17 @@ export default class Frame extends React.Component {
     }
   }
 
+  // TODO: Implement in react.
   on_back() {
     this.element.goBack();
   }
 
+  // TODO: Implement in react.
   on_forward() {
     this.element.goForward();
   }
 
+  // TODO: Implement in react.
   on_stop() {
     this.element.stop();
   }
@@ -86,24 +91,29 @@ export default class Frame extends React.Component {
    * @param {(Event|null)} e The mozbrowser event.
    * @param {Boolean} hardReload Whether or not to perform a hard reload.
    */
+   // TODO: Implement in react.
   on_reload(e, hardReload = false) {
     this.element.reload(hardReload);
   }
 
+  // TODO: Implement in react.
   close() {
     this.element.parentNode.removeChild(this.element);
   }
 
+  // TODO: Implement in react.
   zoomIn() {
     this.zoomValue = Math.min(this.zoomValue + zoomConfig.step, zoomConfig.max);
     this.element.zoom(this.zoomValue);
   }
 
+  // TODO: Implement in react.
   zoomOut() {
     this.zoomValue = Math.max(this.zoomValue - zoomConfig.step, zoomConfig.min);
     this.element.zoom(this.zoomValue);
   }
 
+  // TODO: Implement in react.
   resetZoom() {
     this.zoomValue = zoomConfig.defaultValue;
     this.element.zoom(this.zoomValue);

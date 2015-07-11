@@ -86,7 +86,7 @@ export default class Hud extends React.Component {
         runtime={this.props.runtime} />
 
       <form id='urlbar' className='urlbar threed' action='#' onSubmit={this.props.onUrlEntry}>
-        <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' />
+        <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' value={this.props.activeFrameProps.location} />
       </form>
 
       <div id='backfwd' className='backfwd threed'>
