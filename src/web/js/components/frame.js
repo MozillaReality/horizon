@@ -37,37 +37,6 @@ export default class Frame extends React.Component {
   }
 
   // TODO: Implement in react.
-  // Move to browser component.
-  on_mozbrowsermetachange({detail}) {
-    if (detail.name !== 'viewmode') {
-      return;
-    }
-
-    var values = {};
-    detail.content.split(',').forEach(def => {
-      var [key, val] = def.split('=');
-      values[String(key).trim()] = String(val).trim();
-    });
-
-    var {projection} = values;
-
-    // If the meta tag is removed, we revert to the default mono viewmode.
-    if (detail.type === 'removed') {
-      projection = 'mono';
-    }
-
-    if (projection === 'stereo' && !this.isStereo) {
-      this.isStereo = true;
-      this.props.onStereo();
-    }
-
-    if (projection === 'mono' && this.isStereo) {
-      this.isStereo = false;
-      this.props.onMono();
-    }
-  }
-
-  // TODO: Implement in react.
   on_back() {
     this.element.goBack();
   }

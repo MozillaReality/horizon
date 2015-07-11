@@ -67,14 +67,30 @@ export default class Browser extends React.Component {
    * Handles switching to stereo view-mode.
    */
   onStereo() {
+    console.log('Entering stereo.');
+
+    // Manually clear transform.
+    React.findDOMNode(this.refs.contentCamera).style.transform = '';
+
     document.body.dataset.projection = 'stereo';
+    var frames = this.state.frames;
+    frames[this.activeFrameIndex].viewmode = 'stereo';
+    this.setState({
+      frames: frames
+    });
   }
 
   /**
    * Handles switching to mono view-mode.
    */
   onMono() {
+    console.log('Entering mono.');
     document.body.dataset.projection = 'mono';
+    var frames = this.state.frames;
+    frames[this.activeFrameIndex].viewmode = 'mono';
+    this.setState({
+      frames: frames
+    });
   }
 
   toggleHud() {
@@ -176,6 +192,33 @@ export default class Browser extends React.Component {
     });
   }
 
+  onMetaChange(frameProps, {detail}) {
+    if (detail.name !== 'viewmode') {
+      return;
+    }
+
+    var values = {};
+    detail.content.split(',').forEach(def => {
+      var [key, val] = def.split('=');
+      values[String(key).trim()] = String(val).trim();
+    });
+
+    var {projection} = values;
+
+    // If the meta tag is removed, we revert to the default mono viewmode.
+    if (detail.type === 'removed') {
+      projection = 'mono';
+    }
+
+    if (projection === 'stereo') {
+      this.onStereo();
+    }
+
+    if (projection === 'mono') {
+      this.onMono();
+    }
+  }
+
   render() {
     return <div>
         <div id='fs-container' ref='fullscreenContainer'
@@ -204,8 +247,7 @@ export default class Browser extends React.Component {
                   mozbrowsertitlechange={this.onTitleChange.bind(this)}
                   mozbrowserloadstart={this.onLoadStart.bind(this)}
                   mozbrowserloadend={this.onLoadEnd.bind(this)}
-                  onMono={this.onMono.bind(this)}
-                  onStereo={this.onStereo.bind(this)} />)
+                  mozbrowsermetachange={this.onMetaChange.bind(this)} />)
             }
             </div>
           </div>
