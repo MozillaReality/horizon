@@ -1,7 +1,4 @@
 import React from '../../../../node_modules/react';
-import Url from './../lib/url.js';
-
-var url = new Url();
 
 const zoomConfig = {
   min: 0.2,

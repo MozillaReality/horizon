@@ -1,4 +1,5 @@
 import React from '../../../../node_modules/react';
+import Cursor from './cursor.js';
 import Frame from './frame.js';
 import Hud from './hud.js';
 import cx from './../lib/class_set.js';
@@ -26,13 +27,11 @@ export default class Browser extends React.Component {
     runtime.gamepadInput = new GamepadInput();
     runtime.keyboardInput = new KeyboardInput();
     runtime.viewportManager = new ViewportManager({
-      onCameraTransform: this.onCameraTransform.bind(this)
+      onHmdFrame: this.onHmdFrame.bind(this)
     });
     runtime.settings = {
       www_browser_start_src: '/media/browser_start.wav',
-      play_audio_on_browser_start: false,
-      hmd_scale: -100,
-      pixels_per_meter: 96 / 2.54,
+      play_audio_on_browser_start: false
     };
 
     runtime.contentScripts.init(runtime);
@@ -108,13 +107,17 @@ export default class Browser extends React.Component {
   }
 
   /**
-   * Sets camera transform.
+   * Sets camera transform and hmdState.
+   * These values get updated frequenetly, so for now avoid setting them in this.state.
+   * @param {CSSString} transform The camera transform.
+   * @param {Object} hmdState The hmd state.
    */
-  onCameraTransform(transform) {
+  onHmdFrame(transform, hmdState) {
     React.findDOMNode(this.refs.camera).style.transform = transform;
     if (this.activeFrame.viewmode === 'mono') {
       React.findDOMNode(this.refs.contentCamera).style.transform = transform;
     }
+    this.runtime.hmdState = hmdState;
   }
 
   onUrlEntry(e) {
@@ -206,9 +209,10 @@ export default class Browser extends React.Component {
               hudVisible={this.state.hudVisible}
               onUrlEntry={this.onUrlEntry.bind(this)}/>
           </div>
-          <div id='cursor' className='cursor threed'>
-            <div className='cursor-arrow threed'></div>
-          </div>
+          <Cursor
+            runtime={this.runtime}
+            hudVisible={this.state.hudVisible}
+            activeFrameProps={this.activeFrame} />
         </div>
         <button
           id='entervr'

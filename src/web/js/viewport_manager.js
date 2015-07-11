@@ -8,9 +8,6 @@ var matrix = new Matrix();
 
 export default class ViewportManager {
   constructor(handlers) {
-    // use CSS variable for mono content scale value.
-    this.monoScale = window.getComputedStyle(document.documentElement).getPropertyValue('--content-scale');
-
     this.vrDevices = null;
     this.lastPosition = null;
     this.getVrDevices().then(devices => {
@@ -19,7 +16,7 @@ export default class ViewportManager {
       console.warn(err);
     });
 
-    this.onCameraTransform = handlers.onCameraTransform;
+    this.onHmdFrame = handlers.onHmdFrame;
   }
 
   filterInvalidDevices(devices) {
@@ -128,7 +125,7 @@ export default class ViewportManager {
 
     let transform = matrix.cssMatrixFromOrientation(orientation) + ' ' + cssPosition;
 
-    this.onCameraTransform(transform);
+    this.onHmdFrame(transform, this.hmdState);
 
     window.requestAnimationFrame(this.onFrame.bind(this));
   }
