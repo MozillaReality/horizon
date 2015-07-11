@@ -132,7 +132,7 @@ button {
   transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(var(--content-scale), var(--content-scale));
 }
 
-.frame--mono.pushBack {
+.hudVisible .frame--mono {
   transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
 }
 
@@ -162,7 +162,7 @@ button {
 /**
  * Cursor
  */
-[data-hud="open"] .cursor,
+.hudVisible .cursor,
 [data-projection="mono"] .cursor.is-visible {
   visibility: visible;
 }
@@ -433,6 +433,40 @@ button {
   color: white;
 }
 
+/**
+ * HUD Animations
+ */
+.hudVisible#fs-container {
+  animation: fs-container-darken 0.5s ease forwards;
+}
+
+.hudVisible #backfwd,
+.hudVisible #closehud,
+.hudVisible #directory,
+.hudVisible #title,
+.hudVisible #urlbar {
+  animation: show 0.1s ease forwards;
+}
+
+.hudVisible #background {
+  animation: show 0.3s ease forwards;
+}
+
+#fs-container {
+  animation: fs-container-lighten 0.5s ease forwards;
+}
+
+#backfwd,
+#closehud,
+#directory,
+#title,
+#urlbar {
+  animation: hide 0.1s ease forwards;
+}
+
+#background {
+  animation: hide 0.3s ease forwards;
+}
 
 /**
  * Background

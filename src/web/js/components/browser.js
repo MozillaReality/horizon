@@ -130,37 +130,12 @@ export default class Browser extends React.Component {
     console.log('Received', event);
   }
 
-  /**
-   * Shows/Hides majority of the HUD elements.
-   */
-  showHud() {
-    this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
-    this.viewportManager.contentContainer.classList.add('pushBack');
-    this.title.style.animation = 'show 0.1s ease forwards';
-    this.directory.style.animation = 'show 0.1s ease forwards';
-    this.urlbar.style.animation = 'show 0.1s ease forwards';
-    this.backfwd.style.animation = 'show 0.1s ease forwards';
-    this.showStopreload();
-    this.closehudButton.style.animation = 'show 0.1s ease forwards';
-    this.hudBackground.style.animation = 'show 0.3s ease forwards';
-  }
-
-  hideHud(firstLoad) {
-    this.urlInput.blur();
-    this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
-    this.viewportManager.contentContainer.classList.remove('pushBack');
-    this.title.style.animation = 'hide 0.1s ease forwards';
-    this.directory.style.animation = 'hide 0.1s ease forwards';
-    this.urlbar.style.animation = 'hide 0.1s ease forwards';
-    this.backfwd.style.animation = 'hide 0.1s ease forwards';
-    this.hideStopreload();
-    this.closehudButton.style.animation = 'hide 0.1s ease forwards';
-    this.hudBackground.style.animation = 'hide 0.3s ease forwards';
-  }
-
   render() {
     return <div>
-        <div id='fs-container' ref='fullscreenContainer'>
+        <div id='fs-container' ref='fullscreenContainer'
+          className={cx({
+            hudVisible: this.state.hudVisible
+          })}>
           <div id='content-camera'
             className={this.activeFrame.viewmode === 'mono' ? 'camera threed' : ''}
             ref='contentCamera'>
