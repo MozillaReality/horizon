@@ -537,11 +537,11 @@ export default class FrameManager {
       var tile = document.createElement('a');
       tile.className = 'directory__tile';
       tile.setAttribute('href', site.url);
-      tile.innerHTML = site.name;
+      tile.textContent = site.name;
 
       var type = document.createElement('span');
       type.className = 'type';
-      type.innerHTML = site.type;
+      type.textContent = site.type;
       tile.appendChild(type);
       this.directory.appendChild(tile);
     });
