@@ -23,23 +23,6 @@ export default class FrameManager {
     // Variables for frame and HUD elements.
     this.hudVisible = false;
     this.isLoading = false;
-    /*
-    this.container = $('#fs-container');
-    this.title = $('#title');
-    this.titleText = $('#title__text');
-    this.titleIcon = $('#title__icon');
-    this.urlInput = $('#urlbar__input');
-    this.backfwd = $('#backfwd');
-    this.backButton = $('#back');
-    this.forwardButton = $('#forward');
-    this.stopreload = $('#stopreload');
-    this.reloadButton = $('#reload');
-    this.stopButton = $('#stop');
-    this.loading = $('#loading');
-    this.closehudButton = $('#closehud');
-    this.hudBackground = $('#background');
-    this.cursor = $('#cursor');
-    */
 
     // Element at cursor.
     this.cursorElement = null;

@@ -35,12 +35,9 @@ export default class Frame extends React.Component {
   }
 
   handleEvent(e) {
-    var listener = 'on_' + e.type;
-    if (this[listener]) {
-      this[listener](e);
+    if (this.props[e.type]) {
+      this.props[e.type](this.props.frameProps, e);
     }
-
-    this.props.browserEvent(e, this);
   }
 
   get icon() {
@@ -51,19 +48,6 @@ export default class Frame extends React.Component {
       return baseUrl.toString();
     }
     return this.icons[0].href;
-  }
-
-  on_mozbrowserlocationchange(e) {
-    this.location = e.detail;
-    this.icons = [];
-  }
-
-  on_mozbrowsertitlechange(e) {
-    this.title = e.detail;
-  }
-
-  on_mozbrowsericonchange({detail}) {
-    this.icons.push(detail);
   }
 
   on_mozbrowsermetachange({detail}) {

@@ -55,7 +55,7 @@ export default class Hud extends React.Component {
 
       <div id='title' className='title threed pointer-none'>
         <span id='title__icon' className='title__icon'></span>
-        <span id='title__text' className='title__text'></span>
+        <span id='title__text' className='title__text'>{this.props.activeFrameProps.title}</span>
       </div>
 
       <Tiles

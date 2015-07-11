@@ -52,7 +52,8 @@ export default class Browser extends React.Component {
       frames: [
         {
           viewmode: 'mono',
-          url: DEFAULT_URL
+          url: DEFAULT_URL,
+          icons: []
         }
       ]
     };
@@ -93,7 +94,8 @@ export default class Browser extends React.Component {
     var frames = this.state.frames;
     this.activeFrameIndex = frames.length;
     frames.push({
-      url: url || DEFAULT_URL
+      url: url || DEFAULT_URL,
+      icons: []
     });
     this.setState({frames: frames});
   }
@@ -123,11 +125,28 @@ export default class Browser extends React.Component {
     this.hideHud();
   }
 
-  /**
-   * Handles mozbrowser events
-   */
-  onBrowserEvent(event) {
-    console.log('Received', event);
+  onTitleChange(frameProps, e) {
+    var frames = this.state.frames;
+    frames[this.activeFrameIndex].title = e.detail;
+    this.setState({
+      frames: frames
+    });
+  }
+
+  onLocationChange(frameProps, e) {
+    var frames = this.state.frames;
+    frames[this.activeFrameIndex].location = e.detail;
+    this.setState({
+      frames: frames
+    });
+  }
+
+  onIconChange(frameProps, {detail}) {
+    var frames = this.state.frames;
+    frames.icons.push(detail);
+    this.setState({
+      frames: frames
+    });
   }
 
   render() {
@@ -151,8 +170,11 @@ export default class Browser extends React.Component {
                  <Frame
                   ref={`frame${idx}`}
                   id={`frame${idx}`}
+                  frameProps={frameProps}
                   url={frameProps.url}
-                  browserEvent={this.onBrowserEvent.bind(this)}
+                  mozbrowsericonchange={this.onIconChange.bind(this)}
+                  mozbrowserlocationchange={this.onLocationChange.bind(this)}
+                  mozbrowsertitlechange={this.onTitleChange.bind(this)}
                   onMono={this.onMono.bind(this)}
                   onStereo={this.onStereo.bind(this)} />)
             }
@@ -162,6 +184,7 @@ export default class Browser extends React.Component {
           <div className='camera threed' ref='camera'>
             <Hud
               runtime={this.runtime}
+              activeFrameProps={this.activeFrame}
               hudVisible={this.state.hudVisible}
               onUrlEntry={this.onUrlEntry.bind(this)}/>
           </div>
