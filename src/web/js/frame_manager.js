@@ -1,5 +1,10 @@
-import Frame from './frame.js';
 import neatAudio from '../../../node_modules/neat-audio/neat-audio.js';
+import vec4 from '../../../node_modules/gl-vec4';
+
+import Frame from './frame.js';
+import Matrix from './lib/matrix.js';
+
+var matrix = new Matrix();
 
 const scrollConfig = {
   step: 50,
@@ -22,6 +27,7 @@ export default class FrameManager {
 
     // Variables for frame and HUD elements.
     this.hudVisible = false;
+    this.menuVisible = false;
     this.isLoading = false;
     this.body = document.body;
     this.container = $('#fs-container');
@@ -40,7 +46,9 @@ export default class FrameManager {
     this.stopButton = $('#stop');
     this.loading = $('#loading');
     this.closehudButton = $('#closehud');
-    this.hudBackground = $('#background');
+    this.resetsensorButton = $('#resetsensor');
+    this.menuBox = $('#menu__box');
+    this.cursor = $('#cursor');
 
     // Element at cursor.
     this.cursorElement = null;
@@ -61,14 +69,17 @@ export default class FrameManager {
 
 
   /**
-   * Manages events for the active frame.
+   * Manages events for the active frame (called from `Frame.handleEvent` method).
+   *
+   * @param {Event} e A `mozbrowser*` event.
+   * @param {Object} frame A `Frame` instance (should be the active frame's).
    */
   browserEvent(e, frame) {
     if (frame.id !== this.activeFrame.id) {
       return;
     }
 
-    switch(e.type) {
+    switch (e.type) {
       case 'mozbrowserlocationchange':
         this.updateHUDForNavButtons();
         /* falls through */
@@ -97,13 +108,15 @@ export default class FrameManager {
 
 
   /**
-   * Manages events for native controls.
+   * Manages events for native controls (for clicking on HUD elements).
+   *
+   * @param {Event} e A `click` event.
    */
   handleEvent(e) {
     var action = e.target.dataset && e.target.dataset.action;
     if (!action) { return; }
 
-    switch(action) {
+    switch (action) {
       case 'new':
         this.newFrame();
         return;
@@ -124,7 +137,9 @@ export default class FrameManager {
 
 
   /**
-   * Shows a modal dialog.
+   * Shows a modal dialog (called from `browserEvent` method).
+   *
+   * @param {Event} e A `mozbrowsershowmodalprompt` event.
    */
   showModal(e) {
     e.preventDefault();
@@ -160,6 +175,8 @@ export default class FrameManager {
 
   /**
    * Handles when a native control is clicked.
+   *
+   * @param {Event} e The custom event triggered from the window controls.
    */
   nativeControl(e) {
     var type = e.target.dataset.message;
@@ -169,12 +186,14 @@ export default class FrameManager {
 
   /**
    * Creates a new browsing frame.
+   *
+   * @returns {Object} App
    */
-  newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
+  newFrame(location = this.runtime.settings.www_start_page, openInForeground = true) {
     var app = new Frame({
       id: this.nextId(),
       url: location,
-      container: this.viewportManager.monoContainer,
+      container: this.viewportManager.contentContainer,
       browserEvent: this.browserEvent.bind(this)
     });
 
@@ -185,10 +204,14 @@ export default class FrameManager {
     this.frames.push(app);
 
     this.positionFrames();
+
+    return app;
   }
 
   /**
    * Gets the activeFrame.
+   *
+   * @returns {Object} The active `Frame` instance.
    */
   get activeFrame() {
     return this.frames[this.activeFrameIndex];
@@ -196,6 +219,8 @@ export default class FrameManager {
 
   /**
    * Returns the next ID.
+   *
+   * @returns {Number} The next frame (tab) number.
    */
   nextId() {
     return ++this.currentId;
@@ -303,6 +328,8 @@ export default class FrameManager {
 
   /**
    * Updates title text.
+   *
+   * @param {String} text Title of page loaded in the active frame.
    */
   updateTitle(text) {
     this.titleText.textContent = text;
@@ -366,14 +393,13 @@ export default class FrameManager {
     this.body.dataset.hud = 'open';
     this.sfx.play('hudShow');
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
-    this.viewportManager.monoContainer.style.animation = 'container-pushBack 0.3s ease forwards';
+    this.viewportManager.contentContainer.classList.add('pushBack');
     this.title.style.animation = 'show 0.1s ease forwards';
     this.directory.style.animation = 'show 0.1s ease forwards';
     this.urlbar.style.animation = 'show 0.1s ease forwards';
     this.backfwd.style.animation = 'show 0.1s ease forwards';
     this.showStopreload();
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
-    this.hudBackground.style.animation = 'background-fadeIn 0.3s ease forwards';
   }
 
   hideHud(firstLoad) {
@@ -384,14 +410,13 @@ export default class FrameManager {
     }
     this.urlInput.blur();
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
-    this.viewportManager.monoContainer.style.animation = 'container-pullForward 0.3s ease forwards';
+    this.viewportManager.contentContainer.classList.remove('pushBack');
     this.title.style.animation = 'hide 0.1s ease forwards';
     this.directory.style.animation = 'hide 0.1s ease forwards';
     this.urlbar.style.animation = 'hide 0.1s ease forwards';
     this.backfwd.style.animation = 'hide 0.1s ease forwards';
     this.hideStopreload();
     this.closehudButton.style.animation = 'hide 0.1s ease forwards';
-    this.hudBackground.style.animation = 'background-fadeOut 0.3s ease forwards';
   }
 
   toggleHud() {
@@ -412,6 +437,8 @@ export default class FrameManager {
    * Returns a promise if the HUD is open.
    *
    * (Useful for conditionally calling functions based on HUD visibility.)
+   *
+   * @returns {Promise} Resolved if HUD is opened; rejected if HUD is closed.
    */
   requireHudOpen() {
     if (this.hudVisible) {
@@ -420,6 +447,47 @@ export default class FrameManager {
       return Promise.reject();
     }
   }
+
+  /**
+   * Returns a promise if the active frame is mono.
+   *
+   * @returns {Promise} Resolved if frame is mono; rejected if HUD is stereo.
+   */
+  requireMonoFrameOpen() {
+    if (!this.activeFrame.isStereo) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  }
+
+  /**
+   * Returns a promise if the active frame is stereo.
+   *
+   * @returns {Promise} Resolved if frame is stereo; rejected if HUD is mono.
+   */
+  requireStereoFrameOpen() {
+    if (this.activeFrame.isStereo) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  }
+
+
+  /**
+   * Allow cursor to be active only when HUD is visible or displaying mono content.
+   *
+   * @returns {Promise} Resolve if cursor can be active.
+   */
+  allowCursor() {
+    if (this.hudVisible || !this.activeFrame.isStereo) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  }
+
 
   /**
    * Show/Hide the stop-reload buttons.
@@ -434,6 +502,47 @@ export default class FrameManager {
     // This ensures the stop button stays visible during loading.
     if (!this.isLoading) {
       this.stopreload.style.animation = 'hide 0.1s ease forwards';
+    }
+  }
+
+
+  /*
+   * Show/Hides contextual menu.
+   * We appy cssMatrix to parent `menu` element. We show/hide the child `menu__box`, which is set out in z-space.
+   */
+  positionMenu() {
+
+    let menu = $('#menu');
+    let orientation = this.runtime.hmdState.orientation;
+
+    // invert orientation
+    orientation.y *= -1;
+    orientation.x *= -1;
+    orientation.z = 0;
+
+    // apply matrix to dialogue
+    let cssMatrix = matrix.cssMatrixFromOrientation(orientation);
+    menu.style.transform = cssMatrix;
+  }
+
+  showMenu() {
+    this.menuVisible = true;
+    this.positionMenu();
+    this.menuBox.style.animation = 'show 0.1s ease forwards';
+  }
+
+  hideMenu() {
+    this.menuVisible = false;
+    this.menuBox.style.animation = 'hide 0.1s ease forwards';
+  }
+
+  toggleMenu() {
+    if (this.hudVisible) {
+      return;
+    } else if (this.menuVisible) {
+      this.hideMenu();
+    } else {
+      this.showMenu();
     }
   }
 
@@ -461,6 +570,8 @@ export default class FrameManager {
 
   /**
    * Populate the directory using the loaded JSON.
+   *
+   * @param {Object} data An object containing an array of sites in the directory.
    */
   buildDirectory(data) {
     data.sites.forEach(site => {
@@ -481,21 +592,33 @@ export default class FrameManager {
   /**
    * Cursor
    */
-  intersectCursor() {
-    var el = document.elementFromPoint(0, 0);
-
-    if (el !== this.cursorElement) {
-      this.cursorMouseLeave(el);
-      this.cursorElement = el;
-      this.cursorMouseEnter();
-    }
+  handleCursorTransition() {
+    this.cursorElement.transitioned = true;
   }
 
-  cursorClick() {
-    // Delays added to simulate a browser's mousedown/mouseup events on a mouse click.
-    return this.cursorMouseDown()
-    .then(() => this.utils.sleep(150))
-    .then(() => this.cursorMouseUp());
+  intersectCursor() {
+    setTimeout(() => {
+      var el = document.elementFromPoint(0, 0);
+      if (el !== this.cursorElement || this.cursorElement.transitioned) {
+        this.cursorMouseLeave(el);
+        this.cursorElement = el;
+
+        // flag elements to have translations re-computed on animation and transition events.
+        if (!this.cursorElement.transitioned) {
+          this.cursorElement.addEventListener('transitionend', this.handleCursorTransition.bind(this));
+          this.cursorElement.addEventListener('animationend', this.handleCursorTransition.bind(this));
+        } else {
+          this.cursorElement.removeEventListener('transitionend', this.handleCursorTransition.bind(this));
+          this.cursorElement.removeEventListener('animationend', this.handleCursorTransition.bind(this));
+          delete this.cursorElement.transitioned;
+        }
+
+        this.cursorElementTranslation = this.getElementTranslation(el);
+        this.cursorMouseEnter();
+      }
+
+      requestAnimationFrame(this.intersectCursor.bind(this));
+    }, 100); // Checking for element at every RAF is unecessary, so we set a interval at a much lower frequency.
   }
 
   cursorMouseLeave(newEl) {
@@ -548,6 +671,8 @@ export default class FrameManager {
       }
       el.focus();
 
+      this.mouseIntoIframe('mousedown');
+
       this.utils.sleep(mouseConfig.formSubmitThreshold).then(() => {
         // If the click button has been depressed for a long time, assume a form submission.
         if (el === this.cursorDownElement) {
@@ -565,6 +690,139 @@ export default class FrameManager {
     return Promise.resolve();
   }
 
+
+  /**
+   * Traverse up tree to find containing element with matrix3d transform.
+   *
+   * @param {Element} el Element
+   * @returns {Array} Array of matrix3d values.
+   */
+  getNearest3dTransform(el) {
+    if (!el) {
+      return false;
+    }
+    let transform = window.getComputedStyle(el).transform;
+    if (transform.indexOf('matrix3d') === -1) {
+      return this.getNearest3dTransform(el.parentElement);
+    } else {
+      return transform;
+    }
+  }
+
+
+  /**
+   * Return 3d translation of element.
+   *
+   * @param {Element} el Element
+   * @returns { {x:Number, y:Number, z:Number} } Translation
+   */
+  getElementTranslation(el) {
+    if (!el) {
+      return false;
+    }
+
+    let transform = this.getNearest3dTransform(el);
+    if (!transform) {
+      return false;
+    }
+
+    let cssMatrix = matrix.matrixFromCss(transform);
+    return {
+      x: -(cssMatrix[12] * this.viewportManager.monoScale), // multiply by mono container scale
+      y: cssMatrix[13] * this.viewportManager.monoScale,
+      z: -cssMatrix[14]
+    };
+  }
+
+
+  /**
+   * Return direction from VR headset quaternion.   Use -Z as forward.
+   *
+   * @returns {Object} Direction
+   * @returns { {x:Number, y:Number, z:Number} } Direction
+   */
+  getDirection() {
+    let hmd = this.viewportManager.hmdState;
+    if (!hmd || !hmd.orientation) {
+      return false;
+    }
+
+    // Transform the HMD quaternion by direction vector.
+    let direction = vec4.transformQuat([], [0, 0, -1, 0],
+      [hmd.orientation.x, hmd.orientation.y, hmd.orientation.z, hmd.orientation.w]);
+
+    return {
+      x: -direction[0],
+      y: -direction[1],
+      z: direction[2]
+    };
+  }
+
+  /**
+   * Return position offset from VR headset.
+   *
+   * @returns {Object} Position
+   * @returns { {x:Number, y:Number, z:Number} } Position
+   */
+  getPosition() {
+    let hmd = this.viewportManager.hmdState;
+    if (!hmd) {
+      return false;
+    }
+
+    let scale = this.settings.pixels_per_meter * this.settings.hmd_scale;
+    if (hmd.position) {
+      return {
+        x: -hmd.position.x * scale,
+        y: -hmd.position.y * scale,
+        z: -hmd.position.z * scale
+      };
+    } else {
+      return {x: 0, y: 0, z: 0};
+    }
+  }
+
+  /**
+   * Position the cursor at the same depth as the mono iframe container.
+   * Otherwise, use the depth set on cursor element.
+   */
+  positionCursor() {
+    let translation = this.cursorElementTranslation;
+    let direction = this.getDirection();
+    let position = this.getPosition();
+
+    if (translation && direction && position) {
+      // Find intersection on plane.
+      let distance = translation.z + position.z;
+      let intersectionX = distance / direction.z * direction.x + position.x + translation.x;
+      let intersectionY = -(distance / direction.z * direction.y + position.y + translation.y);
+      // Use pythagoras to find depth at intersection.
+      let intersectionZx = Math.sqrt(Math.pow(distance / direction.z * direction.x, 2) + Math.pow(distance, 2));
+      let intersectionZy = Math.sqrt(Math.pow(distance / direction.z * direction.y, 2) + Math.pow(distance, 2));
+      let intersectionZ = Math.max(intersectionZx, intersectionZy) - 10; // bias cursor depth to avoid z-fighting.
+      this.intersectionX = intersectionX;
+      this.intersectionY = intersectionY;
+
+      this.cursor.classList.add('is-visible');
+      this.cursor.style.transform = `translate3d(0, 0, -${intersectionZ}px)`;
+    } else {
+      this.cursor.classList.remove('is-visible');
+      this.cursor.style.transform = '';
+    }
+
+    requestAnimationFrame(this.positionCursor.bind(this));
+  }
+
+  mouseIntoIframe(eventName) {
+    if (this.cursorElement !== this.viewportManager.contentContainer) {
+      return;
+    }
+    this.frameCommunicator.send('mouse.' + eventName, {
+      top: this.intersectionY / this.viewportManager.monoScale,
+      left: this.intersectionX / this.viewportManager.monoScale
+    });
+  }
+
   cursorMouseUp() {
     let el = this.cursorElement;
 
@@ -573,6 +831,8 @@ export default class FrameManager {
 
       this.utils.emitMouseEvent('mouseup', el);
       this.utils.emitMouseEvent('click', el);
+
+      this.mouseIntoIframe('mouseup');
     }
 
     return Promise.resolve();
@@ -609,7 +869,11 @@ export default class FrameManager {
   }
 
   init(runtime) {
+    this.runtime = runtime;
+    this.frameCommunicator = runtime.frameCommunicator;
+    this.settings = runtime.settings;
     this.utils = runtime.utils;
+    this.runtime = runtime;
     this.viewportManager = runtime.viewportManager;
 
     // Preload the sound effects so we can play them later.
@@ -625,6 +889,7 @@ export default class FrameManager {
 
     // Creates listeners for HUD element states and positions.
     window.addEventListener('resize', this.positionFrames.bind(this));
+    window.addEventListener('contextmenu', this.toggleMenu.bind(this));
     this.hud.addEventListener('click', this);
     document.addEventListener('click', this.handleLinkClick.bind(this));
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
@@ -638,8 +903,9 @@ export default class FrameManager {
     window.addEventListener('mousedown', this.handleMouseDown.bind(this));
     window.addEventListener('mouseup', this.handleMouseUp.bind(this));
 
-    // Creates initial frame.
-    this.newFrame();
+    // Creates initial iframe and start in mono mode.
+    var app = this.newFrame();
+    this.viewportManager.toMono(app);
 
     // Hides the HUD and loading indicators on first load.
     this.hideHud(true);
@@ -668,24 +934,56 @@ export default class FrameManager {
             // See http://bugzil.la/1167457.
             'b4': () => this.toggleHud(),
 
+            //  Use the "back" button to reset sensor.
+            'b5': () => this.viewportManager.resetSensor(),
+
             // Horizontal scrolling.
-            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
+            'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollX(axis, value)
+            ),
 
             // Vertical scrolling.
-            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
+            'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollY(axis, value)
+            ),
 
             // Use the "A" button to click on elements (and hold to submit forms).
-            'b11.down': () => this.cursorMouseDown(),
-            'b11.up': () => this.cursorMouseUp(),
+            'b11.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+            'b11.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
+
+            //  Use the "X" button to navigate back.
+            'b13': () => this.activeFrame.on_back(),
+
+            //  Use the "B" button to navigate forward.
+            'b12': () => this.activeFrame.on_forward(),
           },
           '54c-268-PLAYSTATION(R)3 Controller': {
             'b16': () => this.toggleHud(),
             'b3': () => this.toggleHud(),
-            'a0': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollX(axis, value),
-            'a1': (gamepad, axis, value) => runtime.gamepadInput.scroll.scrollY(axis, value),
-            'b14.down': () => this.cursorMouseDown(),
-            'b14.up': () => this.cursorMouseUp(),
+            'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollX(axis, value)
+            ),
+            'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollY(axis, value)
+            ),
+            'b14.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+            'b14.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
           },
+          // XBOX Wired controller (Windows)
+          'xinput': {
+            'b9': () => this.toggleHud(),
+            'b8': () => this.viewportManager.resetSensor(),
+            'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollX(axis, value)
+            ),
+            'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+              runtime.gamepadInput.scroll.scrollY(axis, value)
+            ),
+            'b0.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+            'b0.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
+            'b2': () => this.activeFrame.on_back(),
+            'b1': () => this.activeFrame.on_forward(),
+          }
         },
       },
       scroll: {
@@ -695,7 +993,8 @@ export default class FrameManager {
       }
     });
 
-    setInterval(this.intersectCursor.bind(this), 100);
+    requestAnimationFrame(this.intersectCursor.bind(this));
+    requestAnimationFrame(this.positionCursor.bind(this));
 
     runtime.keyboardInput.assign({
       'ctrl =': () => this.activeFrame.zoomIn(),
@@ -712,35 +1011,37 @@ export default class FrameManager {
       'ctrl ArrowRight': () => this.activeFrame.on_forward(),
       'ctrl tab': () => this.nextFrame(),
       'ctrl shift tab': () => this.prevFrame(),
+      'enter': () => this.toggleMenu(),
       'backspace': () => this.backspace(),
       ' ': () => this.toggleHud(),
-      'c': () => this.requireHudOpen().then(() => this.cursorClick()),
+      'c.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+      'c.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
       'alt arrowup': () => {
-        runtime.frameCommunicator.send('scroll.step', {
+        this.frameCommunicator.send('scroll.step', {
           scrollTop: -scrollConfig.step
         });
       },
       'alt arrowdown': () => {
-        runtime.frameCommunicator.send('scroll.step', {
+        this.frameCommunicator.send('scroll.step', {
           scrollTop: scrollConfig.step
         });
       },
       'alt arrowleft': () => {
-        runtime.frameCommunicator.send('scroll.step', {
+        this.frameCommunicator.send('scroll.step', {
           scrollLeft: -scrollConfig.step
         });
       },
       'alt arrowright': () => {
-        runtime.frameCommunicator.send('scroll.step', {
+        this.frameCommunicator.send('scroll.step', {
           scrollLeft: scrollConfig.step
         });
       },
       'ctrl arrowup': () => {
-        runtime.frameCommunicator.send('scroll.home');
+        this.frameCommunicator.send('scroll.home');
       },
       'ctrl arrowdown': () => {
-        runtime.frameCommunicator.send('scroll.end');
-      },
+        this.frameCommunicator.send('scroll.end');
+      }
     });
 
     if (runtime.settings.play_audio_on_browser_start) {

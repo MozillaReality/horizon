@@ -42,6 +42,7 @@
     "run-sequence": "^1.0.2"
   },
   "dependencies": {
+    "gl-vec4": "^1.0.1",
     "neat-audio": "^0.2.1"
   }
 }

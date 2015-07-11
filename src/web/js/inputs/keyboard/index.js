@@ -2,10 +2,11 @@
  * A list of selectors for which we ignore keyboard events for.
  */
 const FOCUSABLE_ELEMENTS = [
-  'a[href]', 'area[href]', 'input:not([disabled]):not([readonly])',
-  'select:not([disabled]):not([readonly])', 'textarea:not([disabled]):not([readonly])',
-  'button:not([disabled]):not([readonly])', 'iframe', 'object', 'embed',
-  '[tabindex]:not([tabindex="-1"])', '[contenteditable]'];
+  'input:not([disabled]):not([readonly])',
+  'select:not([disabled]):not([readonly])',
+  'textarea:not([disabled]):not([readonly])',
+  '[contenteditable]'
+];
 
 export default class KeyboardInput {
 
@@ -15,6 +16,7 @@ export default class KeyboardInput {
 
   init() {
     window.addEventListener('keydown', this);
+    window.addEventListener('keyup', this);
   }
 
   getModifiers(e) {
@@ -48,7 +50,7 @@ export default class KeyboardInput {
    * @param {Event}
    */
   handleEvent(e) {
-    if (this.isFieldFocused()) {
+    if (this.isFieldFocused(e)) {
       return;
     }
 
@@ -60,11 +62,19 @@ export default class KeyboardInput {
       sort().
       join(' ');
 
-    if (this.definitions[inputChord]) {
-      e.preventDefault();
-      e.stopPropagation();
-      this.definitions[inputChord]();
+    var inputChordsToTry = [inputChord, inputChord + '.down'];
+
+    if (e.type === 'keyup') {
+      inputChordsToTry = [inputChord + '.up'];
     }
+
+    inputChordsToTry.forEach(chord => {
+      if (this.definitions[chord]) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.definitions[chord]();
+      }
+    });
   }
 
   /**
