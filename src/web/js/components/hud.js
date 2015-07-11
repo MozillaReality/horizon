@@ -72,7 +72,8 @@ export default class Hud extends React.Component {
         hud: true,
         threed: true,
         open: this.props.hudVisible,
-        closed: !this.props.hudVisible
+        closed: !this.props.hudVisible,
+        loading: this.props.activeFrameProps.loading
       })}>
       <div id='background' className='background threed pointer-none'></div>
 
@@ -94,13 +95,28 @@ export default class Hud extends React.Component {
       </div>
 
       <div id='stopreload' className='stopreload threed'>
-        <button className='fa fa-repeat nav reload' data-action='reload' id='reload'></button>
-        <button className='fa fa-times nav stop' data-action='stop' id='stop'></button>
+        <button
+          className={cx({
+            'fa fa-repeat nav reload': true,
+            hidden: this.props.activeFrameProps.loading
+          })}
+          data-action='reload' id='reload'></button>
+        <button
+          className={cx({
+            'fa fa-repeat nav stop': true,
+            hidden: !this.props.activeFrameProps.loading
+          })}
+          data-action='stop' id='stop'></button>
       </div>
 
       <button id='closehud' className='nav closehud threed'>Close HUD</button>
 
-      <div id='loading' className='loading threed'>LOADING</div>
+      <div
+        id='loading'
+        className={cx({
+          visible: this.props.activeFrameProps.loading,
+          'loading threed': true
+        })}>LOADING</div>
     </div>;
   }
 }

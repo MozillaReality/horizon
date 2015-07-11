@@ -22,11 +22,6 @@ export default class FrameManager {
 
     // Variables for frame and HUD elements.
     this.hudVisible = false;
-    this.isLoading = false;
-
-    // Element at cursor.
-    this.cursorElement = null;
-    this.cursorMouseLeaveQueue = [];
   }
 
 
@@ -50,14 +45,6 @@ export default class FrameManager {
         break;
       case 'mozbrowseropentab':
         this.newFrame(e.detail.url, false);
-        break;
-      case 'mozbrowserloadend':
-        this.isLoading = false;
-        this.hideLoadingIndicator();
-        break;
-      case 'mozbrowserloadstart':
-        this.isLoading = true;
-        this.showLoadingIndicator();
         break;
     }
   }
@@ -410,18 +397,10 @@ export default class FrameManager {
    */
   showLoadingIndicator() {
     this.showStopreload();
-    this.loading.style.animation = 'show 0.1s ease forwards';
-
-    // When loading starts, show the stop button.
-    this.stopButton.style.display = 'inline';
   }
 
   hideLoadingIndicator() {
     this.hideStopreload();
-    this.loading.style.animation = 'hide 0.1s ease forwards';
-
-    // When loading ends, hide the stop button to reveal the underlying reload button.
-    this.stopButton.style.display = 'none';
   }
 
   /**
@@ -731,7 +710,6 @@ export default class FrameManager {
 
     // Hides the HUD and loading indicators on first load.
     this.hideHud(true);
-    this.hideLoadingIndicator();
 
     runtime.gamepadInput.assign({
       input: {

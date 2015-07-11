@@ -218,6 +218,11 @@ button {
   text-transform: uppercase;
   transform: translate(-50%, -50%) translate3d(0, 12cm, 4cm);
   width: 6cm;
+  animation: hide 0.1s ease forwards;
+}
+
+.loading.visible {
+  animation: show 0.1s ease forwards;
 }
 
 
@@ -374,6 +379,11 @@ button {
   top: 0;
 }
 
+
+.stop.hidden,
+.reload.hidden {
+  display: none;
+}
 
 /* button */.nav,
 .fa.nav {

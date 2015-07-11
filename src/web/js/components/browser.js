@@ -149,6 +149,22 @@ export default class Browser extends React.Component {
     });
   }
 
+  onLoadStart() {
+    var frames = this.state.frames;
+    frames[this.activeFrameIndex].loading = true;
+    this.setState({
+      frames: frames
+    });
+  }
+
+  onLoadEnd() {
+    var frames = this.state.frames;
+    frames[this.activeFrameIndex].loading = false;
+    this.setState({
+      frames: frames
+    });
+  }
+
   render() {
     return <div>
         <div id='fs-container' ref='fullscreenContainer'
@@ -175,6 +191,8 @@ export default class Browser extends React.Component {
                   mozbrowsericonchange={this.onIconChange.bind(this)}
                   mozbrowserlocationchange={this.onLocationChange.bind(this)}
                   mozbrowsertitlechange={this.onTitleChange.bind(this)}
+                  mozbrowserloadstart={this.onLoadStart.bind(this)}
+                  mozbrowserloadend={this.onLoadEnd.bind(this)}
                   onMono={this.onMono.bind(this)}
                   onStereo={this.onStereo.bind(this)} />)
             }
