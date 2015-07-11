@@ -23,6 +23,8 @@ export default class Cursor extends React.Component {
 
     this.cursorElement = null;
     this.cursorMouseLeaveQueue = [];
+
+    document.addEventListener('click', this.handleLinkClick.bind(this));
   }
 
   get cursor() {
@@ -186,6 +188,21 @@ export default class Cursor extends React.Component {
     }
 
     return Promise.resolve();
+  }
+
+  /**
+   * Handles loading new URLs into active frame.
+   *
+   * @param {Event} e A 'click' event (delegated on document).
+   */
+  handleLinkClick(e) {
+    var a = this.runtime.utils.getHijackableAnchor(e);
+    if (a) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.props.navigate(a.href);
+    }
   }
 
   intersectCursor() {

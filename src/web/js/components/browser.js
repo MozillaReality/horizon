@@ -120,12 +120,20 @@ export default class Browser extends React.Component {
     this.runtime.hmdState = hmdState;
   }
 
+  navigate(url) {
+    var frames = this.state.frames;
+    frames[this.activeFrameIndex].url = url;
+    this.setState({
+      hudVisible: false,
+      frames: frames
+    });
+  }
+
   onUrlEntry(e) {
     e.preventDefault();
     var urlInput = React.findDOMNode(this.refs.urlInput);
     this.navigate(urlInput.value);
     this.urlInput.blur();
-    this.hideHud();
   }
 
   onTitleChange(frameProps, e) {
@@ -212,7 +220,8 @@ export default class Browser extends React.Component {
           <Cursor
             runtime={this.runtime}
             hudVisible={this.state.hudVisible}
-            activeFrameProps={this.activeFrame} />
+            activeFrameProps={this.activeFrame}
+            navigate={this.navigate.bind(this)} />
         </div>
         <button
           id='entervr'

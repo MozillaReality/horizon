@@ -143,6 +143,12 @@ export default class Frame extends React.Component {
     this.iframe.parentNode.replaceChild(frame, this.iframe);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.iframe.getAttribute('src') !== nextProps.frameProps.url) {
+      this.iframe.setAttribute('src', nextProps.frameProps.url);
+    }
+  }
+
   render() {
     return <div className='frameWrapper'>
         <div ref='iframe' />

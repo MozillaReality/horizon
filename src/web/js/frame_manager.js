@@ -287,23 +287,6 @@ export default class FrameManager {
     }
   }
 
-
-  /**
-   * Handles loading new URLs into active frame.
-   *
-   * @param {Event} e A 'click' event (delegated on document).
-   */
-  handleLinkClick(e) {
-    var a = this.utils.getHijackableAnchor(e);
-    if (a) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      this.navigate(a.href);
-      this.hideHud();
-    }
-  }
-
   navigate(url) {
     if (!this.activeFrame) {
       this.newFrame();
@@ -352,35 +335,6 @@ export default class FrameManager {
     }
   }
 
-  /**
-   * Show/Hide the stop-reload buttons.
-   * Called by both loading events (mozbrowserloadstart and mozbrowserloadend) and user action (toggleHud).
-   */
-  showStopreload() {
-    this.stopreload.style.animation = 'show 0.1s ease forwards';
-  }
-
-  hideStopreload() {
-    // Hide stop-reload buttons only if activeFrame is not currently loading.
-    // This ensures the stop button stays visible during loading.
-    if (!this.isLoading) {
-      this.stopreload.style.animation = 'hide 0.1s ease forwards';
-    }
-  }
-
-
-  /**
-   * Show/Hide loading indicators.
-   * Called by mozbrowserloadstart and mozbrowserloadend events.
-   */
-  showLoadingIndicator() {
-    this.showStopreload();
-  }
-
-  hideLoadingIndicator() {
-    this.hideStopreload();
-  }
-
   handleMouseLeave(e) {
     var el = e.target;
     if (el && el.mock) {
@@ -420,7 +374,7 @@ export default class FrameManager {
 
     // Creates listeners for HUD element states and positions.
     window.addEventListener('resize', this.positionFrames.bind(this));
-    document.addEventListener('click', this.handleLinkClick.bind(this));
+
     /*
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
