@@ -42,12 +42,6 @@ export default class FrameManager {
     }
 
     switch (e.type) {
-      case 'mozbrowserlocationchange':
-        this.updateHUDForNavButtons();
-        /* falls through */
-      case 'mozbrowsertitlechange':
-        this.updateHUDForActiveFrame();
-        break;
       case 'mozbrowsershowmodalprompt':
         this.showModal(e);
         break;
@@ -235,9 +229,7 @@ export default class FrameManager {
       var url = new URL(this.activeFrame.location);
       this.urlInput.value = url.hostname;
       this.updateTitle(this.activeFrame.title);
-      this.titleIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
-      this.titleIcon.style.backgroundImage = '';
       this.urlInput.value = '';
     }
   }

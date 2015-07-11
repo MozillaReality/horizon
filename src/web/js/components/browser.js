@@ -143,7 +143,7 @@ export default class Browser extends React.Component {
 
   onIconChange(frameProps, {detail}) {
     var frames = this.state.frames;
-    frames.icons.push(detail);
+    frames[this.activeFrameIndex].icons.push(detail);
     this.setState({
       frames: frames
     });

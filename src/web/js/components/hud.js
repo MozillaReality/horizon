@@ -43,7 +43,30 @@ export default class Hud extends React.Component {
     }
   }
 
+  get iconStyle() {
+    var icons = this.props.activeFrameProps.icons;
+    var location = this.props.activeFrameProps.location;
+    var href;
+    if (!location && !icons.length) {
+      return null;
+    }
+
+    if (!icons.length) {
+      var size = devicePixelRatio * 50;
+      var mozResolution = '#-moz-resolution=' + size + ',' + size;
+      var baseUrl = new URL('/favicon.ico' + mozResolution, location);
+      href = baseUrl.toString();
+    } else {
+      href = icons[0].href;
+    }
+
+    return {
+      backgroundImage: `url(${href})`
+    };
+  }
+
   render() {
+
     return <div id='hud'
       className={cx({
         hud: true,
@@ -54,7 +77,7 @@ export default class Hud extends React.Component {
       <div id='background' className='background threed pointer-none'></div>
 
       <div id='title' className='title threed pointer-none'>
-        <span id='title__icon' className='title__icon'></span>
+        <span id='title__icon' className='title__icon' style={this.iconStyle}></span>
         <span id='title__text' className='title__text'>{this.props.activeFrameProps.title}</span>
       </div>
 

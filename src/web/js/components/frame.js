@@ -25,7 +25,6 @@ export default class Frame extends React.Component {
     this.title = '';
     this.location = props.url;
     this.isStereo = false;
-    this.icons = [];
 
     this.zoomValue = zoomConfig.defaultValue;
   }
@@ -38,16 +37,6 @@ export default class Frame extends React.Component {
     if (this.props[e.type]) {
       this.props[e.type](this.props.frameProps, e);
     }
-  }
-
-  get icon() {
-    if (!this.icons.length) {
-      var size = devicePixelRatio * 50;
-      var mozResolution = '#-moz-resolution=' + size + ',' + size;
-      var baseUrl = new URL('/favicon.ico' + mozResolution, this.location);
-      return baseUrl.toString();
-    }
-    return this.icons[0].href;
   }
 
   on_mozbrowsermetachange({detail}) {
