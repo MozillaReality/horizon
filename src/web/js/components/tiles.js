@@ -1,5 +1,3 @@
-import React from '../../../../node_modules/react';
-
 const directorySrc = '/directory.json'
 
 export default class Directory extends React.Component {

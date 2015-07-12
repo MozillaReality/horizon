@@ -1,4 +1,3 @@
-import React from '../../../../node_modules/react';
 import Matrix from './../lib/matrix.js';
 import vec4 from '../../../../node_modules/gl-vec4';
 

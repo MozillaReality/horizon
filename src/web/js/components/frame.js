@@ -1,5 +1,3 @@
-import React from '../../../../node_modules/react';
-
 const zoomConfig = {
   min: 0.2,
   max: 3,

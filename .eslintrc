@@ -9,7 +9,8 @@
   },
   "globals": {
     "$": true,
-    "$$": true
+    "$$": true,
+    "React": true
   },
   "plugins": [
     "eslint-plugin-react",

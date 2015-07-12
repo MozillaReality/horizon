@@ -1,4 +1,3 @@
-import React from '../../../../node_modules/react';
 import Cursor from './cursor.js';
 import Frame from './frame.js';
 import Hud from './hud.js';

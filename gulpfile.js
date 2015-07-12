@@ -20,6 +20,7 @@ const DIST_ROOT = './dist/';
 const DIST_ADDON_ROOT = './dist/addon/';
 const DIST_CONTENT_SCRIPTS_ROOT = './dist/content_scripts/';
 const DIST_WEB_ROOT = './dist/web/';
+const DIST_WEB_MODULE_ROOT = './dist/web/js/';
 
 
 /**
@@ -61,6 +62,14 @@ gulp.task('copy-web-app', function() {
     ])
     .pipe(gulp.dest(DIST_WEB_ROOT));
 });
+
+gulp.task('copy-web-modules', function() {
+ return gulp.src([
+      './node_modules/react/dist/react.js'
+    ])
+    .pipe(gulp.dest(DIST_WEB_MODULE_ROOT));
+});
+
 
 gulp.task('copy-addon-core', function() {
   return gulp.src([
@@ -169,7 +178,7 @@ gulp.task('travis', ['lint', 'babelify']);
  * Build the app.
  */
 gulp.task('build', function(cb) {
-  runSequence(['clobber'], ['copy-web-app', 'copy-addon-core', 'generate-content-scripts'], ['babelify', 'lint'], cb);
+  runSequence(['clobber'], ['copy-web-app', 'copy-web-modules', 'copy-addon-core', 'generate-content-scripts'], ['babelify', 'lint'], cb);
 });
 
 
