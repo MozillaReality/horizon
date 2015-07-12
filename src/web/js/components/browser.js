@@ -26,7 +26,8 @@ export default class Browser extends React.Component {
     runtime.gamepadInput = new GamepadInput();
     runtime.keyboardInput = new KeyboardInput();
     runtime.viewportManager = new ViewportManager({
-      onHmdFrame: this.onHmdFrame.bind(this)
+      onHmdFrame: this.onHmdFrame.bind(this),
+      enterBrowserVR: this.enterVR.bind(this)
     });
     runtime.settings = {
       www_browser_start_src: '/media/browser_start.wav',

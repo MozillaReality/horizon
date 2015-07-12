@@ -17,6 +17,7 @@ export default class ViewportManager {
     });
 
     this.onHmdFrame = handlers.onHmdFrame;
+    this.enterBrowserVR = handlers.enterBrowserVR;
   }
 
   filterInvalidDevices(devices) {
@@ -134,7 +135,7 @@ export default class ViewportManager {
     this.settings = runtime.settings;
     runtime.keyboardInput.assign({
       'ctrl z': () => this.resetSensor(),
-      'ctrl f': () => this.enterVr()
+      'ctrl f': () => this.enterBrowserVR()
     });
 
     window.requestAnimationFrame(this.onFrame.bind(this));
