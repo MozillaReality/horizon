@@ -29,7 +29,7 @@
       "description": "A motion-controlled VR sensory experience with Leap Motion and WebGL.",
       "icon": "http://mozvr.com/projects/rainbowmembrane/project-thumb.png",
       "name": "Rainbow Membrane",
-      "tagline": "Visualizationss",
+      "tagline": "Visualization",
       "type": "WebGL",
       "url": "http://cabbi.bo/RainbowMembrane/"
     },
@@ -42,13 +42,37 @@
       "url": "http://mozvr.github.io/panorama-viewer/"
     },
     {
-      "description": "Mozilla home page",
-      "icon": "media/thumb-mozilla.jpg",
-      "name": "Mozilla.org",
-      "tagline": "",
-      "type": "Classic",
-      "url": "https://www.mozilla.org/en-US/"
-    }, 
+      "description": "",
+      "icon": "",
+      "name": "Blue Box",
+      "tagline": "Test",
+      "type": "CSS",
+      "url": "http://mozvr.github.io/cssvr-experiments/20150505/bluebox.html"
+    },
+    {
+      "description": "",
+      "icon": "",
+      "name": "'Abandoned' Cube Map",
+      "tagline": "Test",
+      "type": "CSS",
+      "url": "http://mozvr.github.io/cssvr-experiments/20150505-02/cubemap.html"
+    },
+    {
+      "description": "",
+      "icon": "",
+      "name": "WebM Player",
+      "tagline": "Test",
+      "type": "CSS",
+      "url": "http://mozvr.github.io/cssvr-experiments/20150516/webm.html"
+    },
+    {
+      "description": "",
+      "icon": "",
+      "name": "Tridiv NES Model",
+      "tagline": "Test",
+      "type": "CSS",
+      "url": "http://mozvr.github.io/cssvr-experiments/20150520/tridiv.html"
+    },
     {
       "description": "Site of the MozVR team",
       "icon": "",
@@ -56,6 +80,16 @@
       "tagline": "Site",
       "type": "Classic",
       "url": "http://mozvr.com"
+    },
+    {
+      "description": "Heavy site with lots of content",
+      "icon": "",
+      "name": "CNN.com",
+      "tagline": "Site",
+      "type": "Classic",
+      "url": "http://cnn.com"
     }
   ]
 }
+
+

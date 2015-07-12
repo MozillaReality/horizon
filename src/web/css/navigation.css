@@ -62,7 +62,7 @@ html {
 
 html,
 body {
-  background: hsl(228, 15%, 19%);
+  background: hsla(228, 15%, 19%, 0);
   height: 100%;
   width: 100%;
 }
@@ -111,7 +111,7 @@ button {
 
 /* fullscreen container */
 #fs-container {
-  background-color: hsl(228, 15%, 19%);
+  background-color: hsla(228, 15%, 19%);
 }
 
 #fs-container:-moz-full-screen * {
@@ -259,25 +259,22 @@ button {
 
 .directory {
   transform: translate(-50%, -100%) translate3d(0, 8cm, 0);
-  width: 36.7cm;
+  width: 38cm;
   font-size: 0;
 }
 
 .directory__tile {
-  background: #efefef;
-  color: black;
+  background: hsla(0, 0%, 100%, 0.4);
+  background-size: contain;
+  background-position: left bottom;
   display: inline-block;
-  font: 500 1.1rem/1em var(--sans-serif);
-  height: 7cm;
-  margin: 0.15cm;
+  height: 8cm;
+  margin: 0.25cm;
   overflow: hidden;
-  padding: 0.5cm;
   position: relative;
-  text-align: left;
-  width: 7cm;
-  text-transform: uppercase;
   text-decoration: none;
   transition: 0.2s background, 0.2s color;
+  width: 7cm;
 }
 
 .directory__tile:hover,
@@ -290,8 +287,21 @@ button {
 .directory__tile.active {
 }
 
+.directory__tile .name {
+  background: white;
+  color: hsla(0, 0%, 20%, 1);
+  font: 500 0.8rem/1em var(--sans-serif);
+  overflow: hidden;
+  padding: 0.5cm;
+  text-align: left;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  width: 100%;
+  white-space: nowrap;
+}
+
 .directory__tile .type {
-  color: #666;
+  color: hsl(0, 0%, 60%);
   display: block;
   font: 400 0.65em/1em var(--sans-serif);
   margin-top: 0.2cm;
@@ -439,6 +449,7 @@ button {
  * Menu
  */
 
+ /*
 .menu__box {
   background-color: hsla(0, 0%, 0%, 0.4);
   color: white;
@@ -448,10 +459,7 @@ button {
   text-transform: uppercase;
   transform: translate3d(-50%, -50%, var(--hud-depth));
 }
-
-.menu__box span {
-  /*border-bottom: 0.05em solid white;*/
-}
+*/
 
 
 /**
@@ -464,10 +472,10 @@ button {
  */
 
 .background {
-  background: hsla(228, 20%, 13%, 0.9);
+  background: hsla(228, 20%, 13%, 0);
   height: var(--content-height);
   transform: translate(-50%, -50%) translate3d(0, 0, -4cm);
-  width: var(--content-width);
+  width: 60cm;
 }
 
 

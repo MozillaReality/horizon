@@ -21,42 +21,46 @@
     <!-- container acting as camera -->
     <div class="camera threed">
       <!-- HUD -->
-      <div id="hud" class="hud threed">
-        <div id="background" class="background threed pointer-none"></div>
+      <div id="hudHolder" class="hudHolder threed">
+        <div id="hud" class="hud threed">
 
+          <div id="background" class="background threed pointer-none"></div>
 
-        <div id="title" class="title threed pointer-none">
-          <span id="title__icon" class="title__icon"></span>
-          <span id="title__text" class="title__text"></span>
+          <div id="title" class="title threed pointer-none">
+            <span id="title__icon" class="title__icon"></span>
+            <span id="title__text" class="title__text"></span>
+          </div>
+
+          <div id="directory" class="directory threed"></div>
+
+          <form id="urlbar" class="urlbar threed" action="#">
+            <input id="urlbar__input" class="urlbar__input" type="text">
+          </form>
+
+          <div id="backfwd" class="backfwd threed">
+            <button class="fa fa-arrow-left nav back" data-action="back" id="back"></button>
+            <button class="fa fa-arrow-right nav forward" data-action="forward" id="forward"></button>
+          </div>
+
+          <div id="stopreload" class="stopreload threed">
+            <button class="fa fa-repeat nav reload" data-action="reload" id="reload"></button>
+            <button class="fa fa-times nav stop" data-action="stop" id="stop"></button>
+          </div>
+          <!-- <button class="fa fa-plus nav new" data-action="new" id="new"></button> -->
+
+          <button id="closehud" class="nav closehud threed">Close HUD</button>
+
+          <div id="loading" class="loading threed">LOADING</div>
         </div>
-
-        <div id="directory" class="directory threed"></div>
-
-        <form id="urlbar" class="urlbar threed" action="#">
-          <input id="urlbar__input" class="urlbar__input" type="text">
-        </form>
-
-        <div id="backfwd" class="backfwd threed">
-          <button class="fa fa-arrow-left nav back" data-action="back" id="back"></button>
-          <button class="fa fa-arrow-right nav forward" data-action="forward" id="forward"></button>
-        </div>
-
-        <div id="stopreload" class="stopreload threed">
-          <button class="fa fa-repeat nav reload" data-action="reload" id="reload"></button>
-          <button class="fa fa-times nav stop" data-action="stop" id="stop"></button>
-        </div>
-        <!-- <button class="fa fa-plus nav new" data-action="new" id="new"></button> -->
-
-        <button id="closehud" class="nav closehud threed">Close HUD</button>
-
-        <div id="loading" class="loading threed">LOADING</div>
       </div>
 
+      <!--
       <div id="menu" class="menu threed">
         <div id="menu__box" class="menu__box threed"> 
           <span>Menu</span>
         </div>
       </div>
+      -->
 
     </div>
     <div id="cursor" class="cursor threed">

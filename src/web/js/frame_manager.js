@@ -27,7 +27,7 @@ export default class FrameManager {
 
     // Variables for frame and HUD elements.
     this.hudVisible = false;
-    this.menuVisible = false;
+    // this.menuVisible = false;
     this.isLoading = false;
     this.body = document.body;
     this.container = $('#fs-container');
@@ -47,7 +47,7 @@ export default class FrameManager {
     this.loading = $('#loading');
     this.closehudButton = $('#closehud');
     this.resetsensorButton = $('#resetsensor');
-    this.menuBox = $('#menu__box');
+    // this.menuBox = $('#menu__box');
     this.cursor = $('#cursor');
 
     // Element at cursor.
@@ -388,7 +388,24 @@ export default class FrameManager {
   /**
    * Shows/Hides majority of the HUD elements.
    */
+
+  positionHud() {
+
+    let hud = $('#hudHolder');
+    let orientation = this.runtime.hmdState.orientation;
+
+    // invert orientation
+    orientation.y *= -1;
+    orientation.x *= -1;
+    orientation.z = 0;
+
+    // apply matrix to dialogue
+    let cssMatrix = matrix.cssMatrixFromOrientation(orientation);
+    hud.style.transform = cssMatrix;
+  }
+
   showHud() {
+    this.positionHud();
     this.hudVisible = true;
     this.body.dataset.hud = 'open';
     this.sfx.play('hudShow');
@@ -510,6 +527,7 @@ export default class FrameManager {
    * Show/Hides contextual menu.
    * We appy cssMatrix to parent `menu` element. We show/hide the child `menu__box`, which is set out in z-space.
    */
+   /*
   positionMenu() {
 
     let menu = $('#menu');
@@ -545,6 +563,7 @@ export default class FrameManager {
       this.showMenu();
     }
   }
+  */
 
 
   /**
@@ -577,13 +596,19 @@ export default class FrameManager {
     data.sites.forEach(site => {
       var tile = document.createElement('a');
       tile.className = 'directory__tile';
+      tile.style.backgroundImage = `url(${site.icon})`;
       tile.setAttribute('href', site.url);
-      tile.textContent = site.name;
+
+      var name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = site.name;
+      tile.appendChild(name);
 
       var type = document.createElement('span');
       type.className = 'type';
       type.textContent = site.type;
-      tile.appendChild(type);
+      name.appendChild(type);
+
       this.directory.appendChild(tile);
     });
   }
@@ -889,7 +914,7 @@ export default class FrameManager {
 
     // Creates listeners for HUD element states and positions.
     window.addEventListener('resize', this.positionFrames.bind(this));
-    window.addEventListener('contextmenu', this.toggleMenu.bind(this));
+    // window.addEventListener('contextmenu', this.toggleMenu.bind(this));
     this.hud.addEventListener('click', this);
     document.addEventListener('click', this.handleLinkClick.bind(this));
     this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
@@ -1011,7 +1036,7 @@ export default class FrameManager {
       'ctrl ArrowRight': () => this.activeFrame.on_forward(),
       'ctrl tab': () => this.nextFrame(),
       'ctrl shift tab': () => this.prevFrame(),
-      'enter': () => this.toggleMenu(),
+      // 'enter': () => this.toggleMenu(),
       'backspace': () => this.backspace(),
       ' ': () => this.toggleHud(),
       'c.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
