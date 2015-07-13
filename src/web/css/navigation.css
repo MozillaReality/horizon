@@ -5,18 +5,18 @@
 :root {
 
   /* default depth to place interface */
-  --hud-depth: -34cm;
+  --hud-depth: -36cm;
 
   /* default depth to mono iframe content */
-  --content-depth: calc(var(--hud-depth) - 4cm);
-  --content-depth-hud--open: calc(var(--hud-depth) - 8cm);
+  --content-depth: calc(var(--hud-depth) - 8cm);
+  --content-depth-hud--open: calc(var(--hud-depth) - 16cm);
 
   /* default zoom value for mono iframe content */
-  --content-scale: 1.5;
+  --content-scale: 3;
 
   /* default content dimensions */
-  --content-width: 32cm;
-  --content-height: 26cm;
+  --content-width: 22cm;
+  --content-height: 14cm;
 
   /* typography */
 
@@ -137,7 +137,7 @@ button {
 }
 
 .frame--mono.pushBack {
-  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
+  transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(var(--content-scale), var(--content-scale));
 }
 
 .frame--stereo {
@@ -191,6 +191,10 @@ button {
 /**
  * HUD
  */
+
+.hudHolder {
+  transform: translate3d(0, 6cm, 0); 
+}
 
 .hud {
   --hud-width: 28cm;
@@ -258,7 +262,7 @@ button {
  */
 
 .directory {
-  transform: translate(-50%, -100%) translate3d(0, 8cm, 0);
+  transform: translate(-50%, -50%) translate3d(0, 0, 0);
   width: 38cm;
   font-size: 0;
 }
@@ -303,7 +307,7 @@ button {
 .directory__tile .type {
   color: hsl(0, 0%, 60%);
   display: block;
-  font: 400 0.65em/1em var(--sans-serif);
+  font: 400 0.75em/1em var(--sans-serif);
   margin-top: 0.2cm;
   pointer-events: none;
 }
@@ -315,7 +319,7 @@ button {
 
 .urlbar {
   text-align: left;
-  transform: translate(-50%, 0) translate3d(0, 10cm, 0);
+  transform: translate(-50%, 0) translate3d(0, 14cm, 4cm);
   width: var(--hud-width);
 }
 
@@ -395,7 +399,6 @@ button {
   line-height: 1em;
   margin: 0;
   padding: 0.5em;
-  border-radius: 1em;
   transition: .1s opacity;
 }
 
@@ -462,22 +465,111 @@ button {
 */
 
 
+
 /**
- * Background
- *
- * NOTE: We obscure the active site while the HUD is open, for the sake of
- * legibility. An alternative would be to reduce opacity on the container,
- * but that creates glitches on/vanishes 3D transformed elements.
- *
+ * Frame
  */
 
-.background {
-  background: hsla(228, 20%, 13%, 0);
-  height: var(--content-height);
-  transform: translate(-50%, -50%) translate3d(0, 0, -4cm);
-  width: 60cm;
+.frame {
+  --frame-depth: 80cm;
+  --frame-distance: 0;
+  --frame-height: 40cm;
+  --frame-width: 100cm;
+  transform: translate3d(0, 0, var(--frame-distance));
+  display: none;
 }
 
+@keyframes frameHide {
+  from { transform: scaleY(1) translate3d(0, 0, var(--frame-distance)); }
+  to { transform: scaleY(0.2) translate3d(0, 0, calc(var(--frame-distance) + 4cm)); }
+}
+
+@keyframes frameShow {
+  from { transform: scaleY(0.2) translate3d(0, 0, calc(var(--frame-distance) + 4cm)); }
+  to { transform: scaleY(1) translate3d(0, 0, var(--frame-distance)); }
+}
+
+.frame__top, .frame__bottom, .frame__left, .frame__right, .frame__front, .frame__back {
+  border: 0.2cm solid hsla(200, 80%, 47%, 0.5);
+}
+
+.frame__front {
+  border: 0.3cm solid hsl(200, 80%, 47%);
+}
+
+.frame__back {
+  background-color: hsla(200, 80%, 47%, 0.1);
+}
+
+.frame__top {
+  width: var(--frame-width);
+  height: var(--frame-depth);
+  transform: translate(-50%, -50%) rotateX(-90deg) translate3d(0, 0, calc(var(--frame-height) / -2));
+}
+
+.frame__bottom {
+  width: var(--frame-width);
+  height: var(--frame-depth);
+  transform: translate(-50%, -50%) rotateX(90deg) translate3d(0, 0, calc(var(--frame-height) / -2));
+}
+
+.frame__left {
+  width: var(--frame-depth);
+  height: var(--frame-height);
+  transform: translate(-50%, -50%) rotateY(90deg) translate3d(0, 0, calc(var(--frame-width) / -2));
+}
+
+.frame__right {
+  width: var(--frame-depth);
+  height: var(--frame-height);
+  transform: translate(-50%, -50%) rotateY(-90deg) translate3d(0, 0, calc(var(--frame-width) / -2));
+}
+
+.frame__front {
+  width: var(--frame-width);
+  height: var(--frame-height);
+  transform: translate(-50%, -50%) rotateY(180deg) translate3d(0, 0, calc(var(--frame-depth) / -2));
+}
+
+.frame__back {
+  width: var(--frame-width);
+  height: var(--frame-height);
+  transform: translate(-50%, -50%) rotateY(0deg) translate3d(0, 0, calc(var(--frame-depth) / -2));
+}
+
+
+
+/**
+ * Background
+ */
+
+.background, .backgroundLeft, .backgroundRight {
+  background: hsla(228, 20%, 13%, 0.75);
+  height: 22cm;
+  width: 50cm;
+}
+
+.background {
+  transform: translate(-50%, -50%) translate3d(0, 0, calc( var(--hud-depth) - 4cm ));
+}
+
+/*.backgroundLeft {
+  transform: translate(-50%, -50%) translate3d(0, 0, -4cm);
+}
+
+.backgroundRight {
+  transform: translate(-50%, -50%) translate3d(0, 0, -4cm);
+}*/
+
+@keyframes showBackground {
+  from { background: hsla(228, 20%, 13%, 0.0); height: 0cm; }
+  to { background: hsla(228, 20%, 13%, 0.75); height: 22cm; }
+}
+
+@keyframes hideBackground {
+  from { background: hsla(228, 20%, 13%, 0.75); height: 22cm; }
+  to { background: hsla(228, 20%, 13%, 0.0); height: 0cm; }
+}
 
 /**
  * Other interface

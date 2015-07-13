@@ -39,7 +39,7 @@
       "name": "Panoramas",
       "tagline": "Photography",
       "type": "WebGL",
-      "url": "http://mozvr.github.io/panorama-viewer/"
+      "url": "http://mozvr.github.io/panorama-viewer/?mode=vr"
     },
     {
       "description": "Mozilla home page",

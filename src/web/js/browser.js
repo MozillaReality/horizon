@@ -22,7 +22,7 @@ runtime.settings = {
   www_browser_start_src: '/media/browser_start.wav',
   www_hud_hide_src: '/media/hud_hide.wav',
   www_hud_show_src: '/media/hud_show.wav',
-  www_start_page: 'http://0.0.0.0:8080',
+  www_start_page: 'http://mozvr.github.io/panorama-viewer/?mode=vr',
   play_audio_on_browser_start: false,
   hmd_scale: -100,
   pixels_per_meter: 96 / 2.54,

@@ -33,6 +33,8 @@ export default class FrameManager {
     this.container = $('#fs-container');
     this.hud = $('#hud');
     this.title = $('#title');
+    this.hudBackground = $('#background');
+    this.frame = $('#frame');
     this.titleText = $('#title__text');
     this.titleIcon = $('#title__icon');
     this.directory = $('#directory');
@@ -388,7 +390,7 @@ export default class FrameManager {
   /**
    * Shows/Hides majority of the HUD elements.
    */
-
+  /*
   positionHud() {
 
     let hud = $('#hudHolder');
@@ -403,20 +405,23 @@ export default class FrameManager {
     let cssMatrix = matrix.cssMatrixFromOrientation(orientation);
     hud.style.transform = cssMatrix;
   }
+  */
 
   showHud() {
-    this.positionHud();
+    // this.positionHud();
     this.hudVisible = true;
     this.body.dataset.hud = 'open';
     this.sfx.play('hudShow');
     this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
     this.viewportManager.contentContainer.classList.add('pushBack');
     this.title.style.animation = 'show 0.1s ease forwards';
+    this.hudBackground.style.animation = 'showBackground 0.2s ease forwards';
     this.directory.style.animation = 'show 0.1s ease forwards';
     this.urlbar.style.animation = 'show 0.1s ease forwards';
     this.backfwd.style.animation = 'show 0.1s ease forwards';
     this.showStopreload();
     this.closehudButton.style.animation = 'show 0.1s ease forwards';
+    this.frame.style.animation = 'frameShow 0.4s ease forwards';
   }
 
   hideHud(firstLoad) {
@@ -429,11 +434,13 @@ export default class FrameManager {
     this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
     this.viewportManager.contentContainer.classList.remove('pushBack');
     this.title.style.animation = 'hide 0.1s ease forwards';
+    this.hudBackground.style.animation = 'hideBackground 0.2s ease forwards';
     this.directory.style.animation = 'hide 0.1s ease forwards';
     this.urlbar.style.animation = 'hide 0.1s ease forwards';
     this.backfwd.style.animation = 'hide 0.1s ease forwards';
     this.hideStopreload();
     this.closehudButton.style.animation = 'hide 0.1s ease forwards';
+    this.frame.style.animation = 'frameHide 0.4s ease forwards';
   }
 
   toggleHud() {
