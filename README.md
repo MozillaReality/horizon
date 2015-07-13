@@ -80,3 +80,10 @@ The easiest way to use developer tools with this project is to select the "Remot
 * Navigate to Tools -> Web Developer -> WebIDE
 * Click Select Runtime -> Remote Runtime
 * By default you should be able to connect to the running browser at: localhost:6000
+
+
+## Maintainers
+
+Run this command to publish a new tag to GitHub and version to npm:
+
+    npm run release

@@ -4,7 +4,8 @@
   "description": "Horizon browser dependencies.",
   "scripts": {
     "install": "gulp install",
-    "start": "gulp"
+    "start": "gulp",
+    "release": "release-it"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
     "gulp-zip": "^3.0.2",
     "mold-source-map": "^0.4.0",
     "node-firefox-connect": "^1.2.0",
+    "release-it": "0.0.16",
     "run-sequence": "^1.0.2"
   },
   "dependencies": {
