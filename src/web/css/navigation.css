@@ -12,11 +12,11 @@
   --content-depth-hud--open: calc(var(--hud-depth) - 16cm);
 
   /* default zoom value for mono iframe content */
-  --content-scale: 3;
+  --content-scale: 2.5;
 
   /* default content dimensions */
-  --content-width: 22cm;
-  --content-height: 14cm;
+  --content-width: 26cm;
+  --content-height: 22cm;
 
   /* typography */
 

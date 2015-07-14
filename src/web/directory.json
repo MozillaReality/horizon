@@ -15,7 +15,7 @@
       "name": "Polar Sea",
       "tagline": "Video",
       "type": "WebGL",
-      "url": "http://mozvr.com/projects/polarsea/content/"
+      "url": "http://mozvr.github.io/webvr-demos/demos/polarsea/"
     },
     {
       "description": "A weird and wonderful visualization of seamlessly-linked primates.",
@@ -23,7 +23,7 @@
       "name": "Monkeys",
       "tagline": "Visualization",
       "type": "WebGL",
-      "url": "http://monkeys.hypernom.com/"
+      "url": "http://mozvr.github.io/webvr-demos/demos/vihart/monkeys.html"
     },
     {
       "description": "A motion-controlled VR sensory experience with Leap Motion and WebGL.",
@@ -31,7 +31,7 @@
       "name": "Rainbow Membrane",
       "tagline": "Visualizationss",
       "type": "WebGL",
-      "url": "http://cabbi.bo/RainbowMembrane/"
+      "url": "http://mozvr.github.io/webvr-demos/demos/rainbowmembrane/"
     },
     {
       "description": "A panorama viewer made from equirectangular images",
@@ -50,12 +50,28 @@
       "url": "https://www.mozilla.org/en-US/"
     }, 
     {
-      "description": "Site of the MozVR team",
-      "icon": "",
-      "name": "MozVR.com",
-      "tagline": "Site",
+      "description": "",
+      "icon": "media/thumb-mozvr.jpg",
+      "name": "MozVR",
+      "tagline": "Tutorial",
       "type": "Classic",
-      "url": "http://mozvr.com"
+      "url": "http://mozvr.com/posts/quick-vr-prototypes/"
+    },
+    {
+      "description": "",
+      "icon": "media/thumb-nepal.jpg",
+      "name": "Nepal Quake",
+      "tagline": "Documentary",
+      "type": "WebGL",
+      "url": "http://mozvr.github.io/webvr-demos/demos/nepal/"
+    },
+    {
+      "description": "",
+      "icon": "media/thumb-iamink.png",
+      "name": "I Am Ink",
+      "tagline": "Animation",
+      "type": "WebGL",
+      "url": "http://mozvr.github.io/webvr-demos/demos/iamink/play/"
     }
   ]
 }
