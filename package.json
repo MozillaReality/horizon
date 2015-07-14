@@ -44,7 +44,9 @@
     "run-sequence": "^1.0.2"
   },
   "dependencies": {
+    "eslint-plugin-react": "^2.6.4",
     "gl-vec4": "^1.0.1",
-    "neat-audio": "^0.2.1"
+    "neat-audio": "^0.2.1",
+    "react": "^0.13.3"
   }
 }

@@ -132,7 +132,7 @@ button {
   transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth)) scale(var(--content-scale), var(--content-scale));
 }
 
-.frame--mono.pushBack {
+.hudVisible .frame--mono {
   transform: translate(-50%, -50%) translate3d(0, 0, var(--content-depth-hud--open)) scale(0.75, 0.75);
 }
 
@@ -162,7 +162,7 @@ button {
 /**
  * Cursor
  */
-[data-hud="open"] .cursor,
+.hudVisible .cursor,
 [data-projection="mono"] .cursor.is-visible {
   visibility: visible;
 }
@@ -195,6 +195,10 @@ button {
   transform: translate3d(0, 0, var(--hud-depth));
 }
 
+.hud.closed {
+  display: none;
+}
+
 *:-moz-full-screen .hud {
   left: 0;
   top: 0;
@@ -214,6 +218,11 @@ button {
   text-transform: uppercase;
   transform: translate(-50%, -50%) translate3d(0, 12cm, 4cm);
   width: 6cm;
+  animation: hide 0.1s ease forwards;
+}
+
+.loading.visible {
+  animation: show 0.1s ease forwards;
 }
 
 
@@ -371,6 +380,11 @@ button {
 }
 
 
+.stop.hidden,
+.reload.hidden {
+  display: none;
+}
+
 /* button */.nav,
 .fa.nav {
   -moz-user-select: none; /* Disable selection of navigation controls. */
@@ -429,6 +443,40 @@ button {
   color: white;
 }
 
+/**
+ * HUD Animations
+ */
+.hudVisible#fs-container {
+  animation: fs-container-darken 0.5s ease forwards;
+}
+
+.hudVisible #backfwd,
+.hudVisible #closehud,
+.hudVisible #directory,
+.hudVisible #title,
+.hudVisible #urlbar {
+  animation: show 0.1s ease forwards;
+}
+
+.hudVisible #background {
+  animation: show 0.3s ease forwards;
+}
+
+#fs-container {
+  animation: fs-container-lighten 0.5s ease forwards;
+}
+
+#backfwd,
+#closehud,
+#directory,
+#title,
+#urlbar {
+  animation: hide 0.1s ease forwards;
+}
+
+#background {
+  animation: hide 0.3s ease forwards;
+}
 
 /**
  * Background

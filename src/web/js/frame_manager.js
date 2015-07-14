@@ -1,11 +1,3 @@
-import neatAudio from '../../../node_modules/neat-audio/neat-audio.js';
-import vec4 from '../../../node_modules/gl-vec4';
-
-import Frame from './frame.js';
-import Matrix from './lib/matrix.js';
-
-var matrix = new Matrix();
-
 const scrollConfig = {
   step: 50,
 };
@@ -14,55 +6,15 @@ const mouseConfig = {
   activeClassName: 'active',
   hoverClassName: 'hover',
   focusClassName: 'focus',
-  formSubmitThreshold: 1500,  // Time to wait for mousedown (buttondown) before triggering a form submit.
 };
 
 export default class FrameManager {
   constructor() {
-
-    // Variables for managing frames.
-    this.frames = [];
     this.activeFrameIndex = null;
     this.currentId = 0;
 
     // Variables for frame and HUD elements.
     this.hudVisible = false;
-    this.isLoading = false;
-    this.body = document.body;
-    this.container = $('#fs-container');
-    this.hud = $('#hud');
-    this.title = $('#title');
-    this.titleText = $('#title__text');
-    this.titleIcon = $('#title__icon');
-    this.directory = $('#directory');
-    this.urlbar = $('#urlbar');
-    this.urlInput = this.urlbar.querySelector('#urlbar__input');
-    this.backfwd = $('#backfwd');
-    this.backButton = $('#back');
-    this.forwardButton = $('#forward');
-    this.stopreload = $('#stopreload');
-    this.reloadButton = $('#reload');
-    this.stopButton = $('#stop');
-    this.loading = $('#loading');
-    this.closehudButton = $('#closehud');
-    this.hudBackground = $('#background');
-    this.cursor = $('#cursor');
-
-    // Element at cursor.
-    this.cursorElement = null;
-    this.cursorMouseLeaveQueue = [];
-
-    // Helper object for playing sound effects.
-    this.sfx = {
-      init: win => {
-        neatAudio.init(win || window);
-      },
-      play: name => {
-        neatAudio.playSound(this.sfx[name]);
-      }
-    };
-
-    this.sfx.init();
   }
 
 
@@ -78,12 +30,6 @@ export default class FrameManager {
     }
 
     switch (e.type) {
-      case 'mozbrowserlocationchange':
-        this.updateHUDForNavButtons();
-        /* falls through */
-      case 'mozbrowsertitlechange':
-        this.updateHUDForActiveFrame();
-        break;
       case 'mozbrowsershowmodalprompt':
         this.showModal(e);
         break;
@@ -92,14 +38,6 @@ export default class FrameManager {
         break;
       case 'mozbrowseropentab':
         this.newFrame(e.detail.url, false);
-        break;
-      case 'mozbrowserloadend':
-        this.isLoading = false;
-        this.hideLoadingIndicator();
-        break;
-      case 'mozbrowserloadstart':
-        this.isLoading = true;
-        this.showLoadingIndicator();
         break;
     }
   }
@@ -188,7 +126,7 @@ export default class FrameManager {
    * @returns {Object} App
    */
   newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
-    var app = new Frame({
+    var app = new window.Frame({
       id: this.nextId(),
       url: location,
       container: this.viewportManager.contentContainer,
@@ -271,9 +209,7 @@ export default class FrameManager {
       var url = new URL(this.activeFrame.location);
       this.urlInput.value = url.hostname;
       this.updateTitle(this.activeFrame.title);
-      this.titleIcon.style.backgroundImage = `url(${this.activeFrame.icon})`;
     } else {
-      this.titleIcon.style.backgroundImage = '';
       this.urlInput.value = '';
     }
   }
@@ -351,86 +287,11 @@ export default class FrameManager {
     }
   }
 
-
-  /**
-   * Handles loading new URLs into active frame.
-   *
-   * @param {Event} e A 'click' event (delegated on document).
-   */
-  handleLinkClick(e) {
-    var a = this.utils.getHijackableAnchor(e);
-    if (a) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      this.navigate(a.href);
-      this.hideHud();
-    }
-  }
-
-  handleUrlEntry(e) {
-    e.preventDefault();
-    this.navigate(this.urlInput.value);
-    this.urlInput.blur();
-    this.hideHud();
-  }
-
   navigate(url) {
     if (!this.activeFrame) {
       this.newFrame();
     }
     this.activeFrame.navigate(url);
-  }
-
-
-  /**
-   * Shows/Hides majority of the HUD elements.
-   */
-  showHud() {
-    this.hudVisible = true;
-    this.body.dataset.hud = 'open';
-    this.sfx.play('hudShow');
-    this.container.style.animation = 'fs-container-darken 0.5s ease forwards';
-    this.viewportManager.contentContainer.classList.add('pushBack');
-    this.title.style.animation = 'show 0.1s ease forwards';
-    this.directory.style.animation = 'show 0.1s ease forwards';
-    this.urlbar.style.animation = 'show 0.1s ease forwards';
-    this.backfwd.style.animation = 'show 0.1s ease forwards';
-    this.showStopreload();
-    this.closehudButton.style.animation = 'show 0.1s ease forwards';
-    this.hudBackground.style.animation = 'show 0.3s ease forwards';
-  }
-
-  hideHud(firstLoad) {
-    this.hudVisible = false;
-    this.body.dataset.hud = 'closed';
-    if (!firstLoad) {
-      this.sfx.play('hudHide');
-    }
-    this.urlInput.blur();
-    this.container.style.animation = 'fs-container-lighten 0.5s ease forwards';
-    this.viewportManager.contentContainer.classList.remove('pushBack');
-    this.title.style.animation = 'hide 0.1s ease forwards';
-    this.directory.style.animation = 'hide 0.1s ease forwards';
-    this.urlbar.style.animation = 'hide 0.1s ease forwards';
-    this.backfwd.style.animation = 'hide 0.1s ease forwards';
-    this.hideStopreload();
-    this.closehudButton.style.animation = 'hide 0.1s ease forwards';
-    this.hudBackground.style.animation = 'hide 0.3s ease forwards';
-  }
-
-  toggleHud() {
-    // Steal focus from whichever element is currently focussed.
-    var el = document.activeElement;
-    if (el) {
-      el.blur();
-    }
-
-    if (this.hudVisible) {
-      this.hideHud();
-    } else {
-      this.showHud();
-    }
   }
 
   /**
@@ -474,329 +335,6 @@ export default class FrameManager {
     }
   }
 
-
-  /**
-   * Allow cursor to be active only when HUD is visible or displaying mono content.
-   *
-   * @returns {Promise} Resolve if cursor can be active.
-   */
-  allowCursor() {
-    if (this.hudVisible || !this.activeFrame.isStereo) {
-      return Promise.resolve();
-    } else {
-      return Promise.reject();
-    }
-  }
-
-
-  /**
-   * Show/Hide the stop-reload buttons.
-   * Called by both loading events (mozbrowserloadstart and mozbrowserloadend) and user action (toggleHud).
-   */
-  showStopreload() {
-    this.stopreload.style.animation = 'show 0.1s ease forwards';
-  }
-
-  hideStopreload() {
-    // Hide stop-reload buttons only if activeFrame is not currently loading.
-    // This ensures the stop button stays visible during loading.
-    if (!this.isLoading) {
-      this.stopreload.style.animation = 'hide 0.1s ease forwards';
-    }
-  }
-
-
-  /**
-   * Show/Hide loading indicators.
-   * Called by mozbrowserloadstart and mozbrowserloadend events.
-   */
-  showLoadingIndicator() {
-    this.showStopreload();
-    this.loading.style.animation = 'show 0.1s ease forwards';
-
-    // When loading starts, show the stop button.
-    this.stopButton.style.display = 'inline';
-  }
-
-  hideLoadingIndicator() {
-    this.hideStopreload();
-    this.loading.style.animation = 'hide 0.1s ease forwards';
-
-    // When loading ends, hide the stop button to reveal the underlying reload button.
-    this.stopButton.style.display = 'none';
-  }
-
-
-  /**
-   * Populate the directory using the loaded JSON.
-   *
-   * @param {Object} data An object containing an array of sites in the directory.
-   */
-  buildDirectory(data) {
-    data.sites.forEach(site => {
-      var tile = document.createElement('a');
-      tile.className = 'directory__tile';
-      tile.setAttribute('href', site.url);
-      tile.textContent = site.name;
-
-      var type = document.createElement('span');
-      type.className = 'type';
-      type.textContent = site.type;
-      tile.appendChild(type);
-      this.directory.appendChild(tile);
-    });
-  }
-
-
-  /**
-   * Cursor
-   */
-  handleCursorTransition() {
-    this.cursorElement.transitioned = true;
-  }
-
-  intersectCursor() {
-    setTimeout(() => {
-      var el = document.elementFromPoint(0, 0);
-      if (el !== this.cursorElement || this.cursorElement.transitioned) {
-        this.cursorMouseLeave(el);
-        this.cursorElement = el;
-
-        // flag elements to have translations re-computed on animation and transition events.
-        if (!this.cursorElement.transitioned) {
-          this.cursorElement.addEventListener('transitionend', this.handleCursorTransition.bind(this));
-          this.cursorElement.addEventListener('animationend', this.handleCursorTransition.bind(this));
-        } else {
-          this.cursorElement.removeEventListener('transitionend', this.handleCursorTransition.bind(this));
-          this.cursorElement.removeEventListener('animationend', this.handleCursorTransition.bind(this));
-          delete this.cursorElement.transitioned;
-        }
-
-        this.cursorElementTranslation = this.getElementTranslation(el);
-        this.cursorMouseEnter();
-      }
-
-      requestAnimationFrame(this.intersectCursor.bind(this));
-    }, 100); // Checking for element at every RAF is unecessary, so we set a interval at a much lower frequency.
-  }
-
-  cursorMouseLeave(newEl) {
-    let prevEl = this.cursorElement;
-
-    if (prevEl) {
-      prevEl.mock = true;
-
-      this.cursorDownElement = null;
-
-      // Mark a leave only if `previousEl` isn't a child of `el`.
-      if (prevEl.contains(newEl)) {
-        // The new element is still a parent of the new element, so emit the 'mouseleave' event later.
-        this.cursorMouseLeaveQueue.push(prevEl);
-      } else {
-        // Clear the queue of elements we are no longer focussed on.
-        while (this.cursorMouseLeaveQueue.length) {
-          this.utils.emitMouseEvent('mouseleave', this.cursorMouseLeaveQueue.pop());
-        }
-
-        this.utils.emitMouseEvent('mouseleave', prevEl);
-      }
-    }
-
-    return Promise.resolve();
-  }
-
-  cursorMouseEnter() {
-    let el = this.cursorElement;
-
-    if (el) {
-      el.mock = true;
-
-      this.utils.emitMouseEvent('mouseenter', el);
-    }
-
-    return Promise.resolve();
-  }
-
-  cursorMouseDown() {
-    let el = this.cursorElement;
-
-    if (el) {
-      this.cursorDownElement = el;
-
-      el.mock = true;
-      this.utils.emitMouseEvent('mousedown', el);
-      if (document.activeElement) {
-        document.activeElement.blur();
-      }
-      el.focus();
-
-      this.mouseIntoIframe('mousedown');
-
-      this.utils.sleep(mouseConfig.formSubmitThreshold).then(() => {
-        // If the click button has been depressed for a long time, assume a form submission.
-        if (el === this.cursorDownElement) {
-          // Check if the active element is in a form element.
-          let form = this.utils.getFocusedForm(el);
-          if (form) {
-            // If so, submit the form.
-            form.submit();
-            form.dispatchEvent(new Event('submit'));
-          }
-        }
-      });
-    }
-
-    return Promise.resolve();
-  }
-
-
-  /**
-   * Traverse up tree to find containing element with matrix3d transform.
-   *
-   * @param {Element} el Element
-   * @returns {Array} Array of matrix3d values.
-   */
-  getNearest3dTransform(el) {
-    if (!el) {
-      return false;
-    }
-    let transform = window.getComputedStyle(el).transform;
-    if (transform.indexOf('matrix3d') === -1) {
-      return this.getNearest3dTransform(el.parentElement);
-    } else {
-      return transform;
-    }
-  }
-
-
-  /**
-   * Return 3d translation of element.
-   *
-   * @param {Element} el Element
-   * @returns { {x:Number, y:Number, z:Number} } Translation
-   */
-  getElementTranslation(el) {
-    if (!el) {
-      return false;
-    }
-
-    let transform = this.getNearest3dTransform(el);
-    if (!transform) {
-      return false;
-    }
-
-    let cssMatrix = matrix.matrixFromCss(transform);
-    return {
-      x: -(cssMatrix[12] * this.viewportManager.monoScale), // multiply by mono container scale
-      y: cssMatrix[13] * this.viewportManager.monoScale,
-      z: -cssMatrix[14]
-    };
-  }
-
-
-  /**
-   * Return direction from VR headset quaternion.   Use -Z as forward.
-   *
-   * @returns {Object} Direction
-   * @returns { {x:Number, y:Number, z:Number} } Direction
-   */
-  getDirection() {
-    let hmd = this.viewportManager.hmdState;
-    if (!hmd || !hmd.orientation) {
-      return false;
-    }
-
-    // Transform the HMD quaternion by direction vector.
-    let direction = vec4.transformQuat([], [0, 0, -1, 0],
-      [hmd.orientation.x, hmd.orientation.y, hmd.orientation.z, hmd.orientation.w]);
-
-    return {
-      x: -direction[0],
-      y: -direction[1],
-      z: direction[2]
-    };
-  }
-
-  /**
-   * Return position offset from VR headset.
-   *
-   * @returns {Object} Position
-   * @returns { {x:Number, y:Number, z:Number} } Position
-   */
-  getPosition() {
-    let hmd = this.viewportManager.hmdState;
-    if (!hmd) {
-      return false;
-    }
-
-    let scale = this.settings.pixels_per_meter * this.settings.hmd_scale;
-    if (hmd.position) {
-      return {
-        x: -hmd.position.x * scale,
-        y: -hmd.position.y * scale,
-        z: -hmd.position.z * scale
-      };
-    } else {
-      return {x: 0, y: 0, z: 0};
-    }
-  }
-
-  /**
-   * Position the cursor at the same depth as the mono iframe container.
-   * Otherwise, use the depth set on cursor element.
-   */
-  positionCursor() {
-    let translation = this.cursorElementTranslation;
-    let direction = this.getDirection();
-    let position = this.getPosition();
-
-    if (translation && direction && position) {
-      // Find intersection on plane.
-      let distance = translation.z + position.z;
-      let intersectionX = distance / direction.z * direction.x + position.x + translation.x;
-      let intersectionY = -(distance / direction.z * direction.y + position.y + translation.y);
-      // Use pythagoras to find depth at intersection.
-      let intersectionZx = Math.sqrt(Math.pow(distance / direction.z * direction.x, 2) + Math.pow(distance, 2));
-      let intersectionZy = Math.sqrt(Math.pow(distance / direction.z * direction.y, 2) + Math.pow(distance, 2));
-      let intersectionZ = Math.max(intersectionZx, intersectionZy) - 10; // bias cursor depth to avoid z-fighting.
-      this.intersectionX = intersectionX;
-      this.intersectionY = intersectionY;
-
-      this.cursor.classList.add('is-visible');
-      this.cursor.style.transform = `translate3d(0, 0, -${intersectionZ}px)`;
-    } else {
-      this.cursor.classList.remove('is-visible');
-      this.cursor.style.transform = '';
-    }
-
-    requestAnimationFrame(this.positionCursor.bind(this));
-  }
-
-  mouseIntoIframe(eventName) {
-    if (this.cursorElement !== this.viewportManager.contentContainer) {
-      return;
-    }
-    this.frameCommunicator.send('mouse.' + eventName, {
-      top: this.intersectionY / this.viewportManager.monoScale,
-      left: this.intersectionX / this.viewportManager.monoScale
-    });
-  }
-
-  cursorMouseUp() {
-    let el = this.cursorElement;
-
-    if (el) {
-      this.cursorDownElement = null;
-
-      this.utils.emitMouseEvent('mouseup', el);
-      this.utils.emitMouseEvent('click', el);
-
-      this.mouseIntoIframe('mouseup');
-    }
-
-    return Promise.resolve();
-  }
-
   handleMouseLeave(e) {
     var el = e.target;
     if (el && el.mock) {
@@ -828,30 +366,20 @@ export default class FrameManager {
   }
 
   init(runtime) {
+    console.log('Initializing frame manager.');
     this.frameCommunicator = runtime.frameCommunicator;
     this.settings = runtime.settings;
     this.utils = runtime.utils;
     this.viewportManager = runtime.viewportManager;
 
-    // Preload the sound effects so we can play them later.
-    Promise.all([
-      neatAudio.fetchSound(runtime.settings.www_hud_hide_src),
-      neatAudio.fetchSound(runtime.settings.www_hud_show_src)
-    ]).then(sounds => {
-      this.sfx.hudHide = sounds[0];
-      this.sfx.hudShow = sounds[1];
-    }, err => {
-      console.error('Could not fetch sound:', err.stack);
-    });
-
     // Creates listeners for HUD element states and positions.
     window.addEventListener('resize', this.positionFrames.bind(this));
-    this.hud.addEventListener('click', this);
-    document.addEventListener('click', this.handleLinkClick.bind(this));
-    this.urlbar.addEventListener('submit', this.handleUrlEntry.bind(this));
+
+    /*
     this.urlInput.addEventListener('focus', this.focusUrlbar.bind(this));
     this.urlInput.addEventListener('blur', this.handleBlurUrlBar.bind(this));
     this.closehudButton.addEventListener('click', this.hideHud.bind(this));
+    */
 
     // Listeners for mimicked mouse events from gaze-based cursor.
     window.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
@@ -865,18 +393,6 @@ export default class FrameManager {
 
     // Hides the HUD and loading indicators on first load.
     this.hideHud(true);
-    this.hideLoadingIndicator();
-
-    /**
-     * Loads JSON for Directory.
-     */
-    fetch(runtime.settings.www_directory_src)
-    .then(response => {
-      return response.json();
-    })
-    .then(data => {
-      this.buildDirectory(data);
-    });
 
     runtime.gamepadInput.assign({
       input: {
@@ -949,9 +465,6 @@ export default class FrameManager {
       }
     });
 
-    requestAnimationFrame(this.intersectCursor.bind(this));
-    requestAnimationFrame(this.positionCursor.bind(this));
-
     runtime.keyboardInput.assign({
       'ctrl =': () => this.activeFrame.zoomIn(),
       'ctrl -': () => this.activeFrame.zoomOut(),
@@ -968,9 +481,6 @@ export default class FrameManager {
       'ctrl tab': () => this.nextFrame(),
       'ctrl shift tab': () => this.prevFrame(),
       'backspace': () => this.backspace(),
-      ' ': () => this.toggleHud(),
-      'c.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
-      'c.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
       'alt arrowup': () => {
         this.frameCommunicator.send('scroll.step', {
           scrollTop: -scrollConfig.step
@@ -999,6 +509,7 @@ export default class FrameManager {
       }
     });
 
+  /*
     if (runtime.settings.play_audio_on_browser_start) {
       neatAudio.fetchSound(runtime.settings.www_browser_start_src).then(sound => {
         this.sfx.browserStart = sound;
@@ -1007,5 +518,6 @@ export default class FrameManager {
         this.sfx.play('browserStart');
       });
     }
+  */
   }
 }
