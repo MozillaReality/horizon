@@ -2,8 +2,8 @@ export default class Matrix {
   /**
    * Returns matrix array from CSS matrix and matrix3d transform strings.
    *
-   * @param  {String} m3d
-   * @return {Array} Matrix values from CSS transform.
+   * @param  {String} matrixString The matrix string.
+   * @returns {Array} Matrix values from CSS transform.
    */
   matrixFromCss(matrixString) {
     let values = matrixString.match(/matrix(?:3d)?\((.*)\)/i)[1];
@@ -17,12 +17,11 @@ export default class Matrix {
   /**
    * Returns matrix array from Quaternion
    *
-   * @param  {Number} x X component
-   * @param  {Number} x Y component
-   * @param  {Number} x Z component
-   * @param  {Number} x W component
-   *
-   * @return {Array} Matrix values from quaternion.
+   * @param {Number} x X component
+   * @param {Number} y Y component
+   * @param {Number} z Z component
+   * @param {Number} w W component
+   * @returns {Array} Matrix values from quaternion.
    */
   matrixFromQuaternion(x, y, z, w) {
     let m = Array(16);
@@ -55,10 +54,10 @@ export default class Matrix {
    * Returns CSS matrix3d string from matrix array.
    *
    * @param  {Array} e 6 or 16 element matrix array.
-   * @return {String} CSS transform string.
+   * @returns {String} CSS transform string.
    */
   cssMatrixFromElements(e) {
-    let matrixStr = (e.length === 16) ? 'matrix3d' : 'matrix';
+    let matrixStr = e.length === 16 ? 'matrix3d' : 'matrix';
     return matrixStr + '(' + e.join(',') + ')';
   }
 
@@ -70,7 +69,7 @@ export default class Matrix {
    * @param {Number} q.y Y Component
    * @param {Number} q.z Z Component
    * @param {Number} q.w W Component
-   * @return {String} transform string
+   * @returns {String} transform string
    */
   cssMatrixFromOrientation(q) {
     if (!q) {
