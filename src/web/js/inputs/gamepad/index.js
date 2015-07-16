@@ -5,8 +5,8 @@ import GamepadScroll from './scroll.js';
 export default class GamepadInput {
 
   constructor() {
-    this._debug = false;
-    this._pollingInterval = {};
+    this.debug = false;
+    this.pollingInterval = {};
     this.config = {};
     this.gamepads = {};
   }
@@ -15,20 +15,20 @@ export default class GamepadInput {
    * Polls the gamepad state, updating the `Gamepads` instance's `state`
    * property with the latest gamepad data.
    */
-  _update() {
+  update() {
     this.gamepads.update();
-    window.requestAnimationFrame(this._update.bind(this));
+    window.requestAnimationFrame(this.update.bind(this));
   }
 
   /**
    * Stops the loop(s) that are polling the gamepad state.
    */
   _stopUpdate() {
-    if (this._pollingInterval) {
-      window.clearInterval(this._pollingInterval);
+    if (this.pollingInterval) {
+      window.clearInterval(this.pollingInterval);
     }
 
-    window.cancelAnimationFrame(this._update.bind(this));
+    window.cancelAnimationFrame(this.update.bind(this));
   }
 
   init(runtime) {
@@ -48,25 +48,25 @@ export default class GamepadInput {
     // <https://crbug.com/344556>, we start polling every 100ms
     // until the first gamepad is connected.
     if (Gamepads.utils.browser !== 'firefox') {
-      this._pollingInterval = window.setInterval(() => {
+      this.pollingInterval = window.setInterval(() => {
         if (this.gamepads.poll().length) {
-          this._update();
-          window.clearInterval(this._pollingInterval);
+          this.update();
+          window.clearInterval(this.pollingInterval);
         }
       }, 200);
     }
 
     window.addEventListener('gamepadconnected', e => {
-      if (this._debug) {
+      if (this.debug) {
         console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
           e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length,
           e.gamepad.axes.length);
       }
-      this._update();
+      this.update();
     });
 
     window.addEventListener('gamepaddisconnected', e => {
-      if (this._debug) {
+      if (this.debug) {
         console.log('Gamepad removed at index %d: %s.', e.gamepad.index, e.gamepad.id);
       }
     });

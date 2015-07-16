@@ -30,7 +30,7 @@ export default class GamepadScroll {
   }
 
   /**
-   * Resets scrolling (called from `_scroll` and `_update`).
+   * Resets scrolling (called from `scroll` and `update`).
    *
    * (Called by event listener for `frame_mozbrowserlocationchange`.)
    */
@@ -40,7 +40,7 @@ export default class GamepadScroll {
   }
 
   /**
-   * Stops scrolling (called from `_scroll` and `_update`).
+   * Stops scrolling (called from `scroll` and `update`).
    *
    * @param {String} direction Direction to scroll ('x', 'y').
    * @param {Number} velocity Velocity to scroll (value of gamepad axis).
@@ -57,7 +57,7 @@ export default class GamepadScroll {
   }
 
   /**
-   * Starts scrolling (called from `_scroll`).
+   * Starts scrolling (called from `scroll`).
    *
    * @param {String} direction Direction to scroll ('x', 'y').
    * @param {Number} velocity Velocity to scroll (value of gamepad axis).
@@ -82,14 +82,14 @@ export default class GamepadScroll {
       this.timeStart = Date.now();
       this.time = Date.now();
 
-      this._update();
+      this.update();
     }
   }
 
   /**
    * Animation loop for sending scroll events (called from `start`).
    */
-  _update() {
+  update() {
     this.timeSinceLastUpdate = Date.now() - this.time;
 
     // Trigger hyperscrolling when the stick is held down for a while.
@@ -112,14 +112,12 @@ export default class GamepadScroll {
     }
 
     // We give it some smooth easing in and a subtle easing out.
-    this.realVelocity.x = (
+    this.realVelocity.x =
       this.warp * this.velocity.x * this.config.smoothingFactor +
-      this.realVelocity.x * (1 - this.config.smoothingFactor)
-    );
-    this.realVelocity.y = (
+      this.realVelocity.x * (1 - this.config.smoothingFactor);
+    this.realVelocity.y =
       this.warp * this.velocity.y * this.config.smoothingFactor +
-      this.realVelocity.y * (1 - this.config.smoothingFactor)
-    );
+      this.realVelocity.y * (1 - this.config.smoothingFactor);
 
     this.offset.x += this.realVelocity.x * this.timeSinceLastUpdate;
     this.offset.y += this.realVelocity.y * this.timeSinceLastUpdate;
@@ -158,7 +156,7 @@ export default class GamepadScroll {
     }
 
     if (this.active || this.velocitySpeed > this.config.velocityThreshold) {
-      window.requestAnimationFrame(this._update.bind(this));
+      window.requestAnimationFrame(this.update.bind(this));
     }
   }
 
@@ -168,7 +166,7 @@ export default class GamepadScroll {
    * @param {String} direction Direction to scroll ('x', 'y').
    * @param {Number} velocity Velocity to scroll (value of gamepad axis).
    */
-  _scroll(direction, velocity) {
+  scroll(direction, velocity) {
     if (Math.abs(velocity) < this.config.axisThreshold) {
       this.stop(direction);
     } else {
@@ -185,7 +183,7 @@ export default class GamepadScroll {
    *                       changed (per `gamepadaxismove` event).
    */
   scrollX(axis, value) {
-    this._scroll('x', value);
+    this.scroll('x', value);
   }
 
   /**
@@ -197,7 +195,7 @@ export default class GamepadScroll {
    *                       changed (per `gamepadaxismove` event).
    */
   scrollY(axis, value) {
-    this._scroll('y', value);
+    this.scroll('y', value);
   }
 
   /**
