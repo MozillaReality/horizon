@@ -30,7 +30,7 @@ gulp.task('lint', function() {
   // Note: To have the process exit with an error code (1) on
   // lint error, return the stream and pipe to failOnError last.
   return gulp.src([
-      WEB_ROOT + 'js/*.js'
+      WEB_ROOT + 'js/**/*.js'
     ])
     .pipe(eslint())
     .pipe(eslint.format());
