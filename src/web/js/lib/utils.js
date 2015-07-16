@@ -30,7 +30,8 @@ export default class Utils {
   /**
    * Returns the form element of the the focussed element, if possible.
    *
-   * @param {Element} el
+   * @param {Element} el The element to search from.
+   * @returns {Element} The closest form element.
    */
   getFocusedForm(el) {
     el = el || document.activeElement;
@@ -46,6 +47,7 @@ export default class Utils {
    *
    * @param {String} eventName Name of event to fire (e.g., 'click', 'mouseover', 'mouseout').
    * @param {Element} el Element on which to emit mouse event.
+   * @returns {Event} The custom mouse event.
    */
   emitMouseEvent(eventName, el) {
     var evt = new MouseEvent(eventName, {
@@ -61,6 +63,7 @@ export default class Utils {
    * Sleeps for some milliseconds to enable easy chaining of Promises.
    *
    * @param {Number} duration Time in milliseconds to sleep (e.g., 1500 for 1.5 seconds).
+   * @returns {Promise} A promse which resolves after sleeping.
    */
   sleep(duration = 0) {
     return new Promise(resolve => {

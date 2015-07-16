@@ -22,7 +22,7 @@ export default class Url {
     return formattedUrl;
   }
 
-  _getScheme(input) {
+  getScheme(input) {
     // This function returns one of followings
     // - scheme + ':' (ex. http:)
     // - scheme + '://' (ex. http://)
@@ -31,11 +31,11 @@ export default class Url {
   }
 
   hasScheme(input) {
-    return !!this._getScheme(input);
+    return !!this.getScheme(input);
   }
 
   isURL(input) {
-    return !UrlHelper.isNotURL(input);
+    return !this.isNotURL(input);
   }
 
   isNotURL(input) {
@@ -53,7 +53,7 @@ export default class Url {
 
     var str = input.trim();
     if (case1Reg.test(str) || !case2Reg.test(str) ||
-        this._getScheme(str) === str) {
+        this.getScheme(str) === str) {
       return true;
     }
     if (case3Reg.test(str)) {
