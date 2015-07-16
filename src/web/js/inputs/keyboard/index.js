@@ -39,7 +39,8 @@ export default class KeyboardInput {
 
   /**
    * Checks if an event target matches one of the selectors in FOCUSABLE_ELEMENTS.
-   * @param {Event}
+   * @param {Event} e The keyboard event.
+   * @returns {Boolean} Whether or not the field is focused.
    */
   isFieldFocused(e) {
     return (e ? e.target : document.activeElement).matches(FOCUSABLE_ELEMENTS);
@@ -47,7 +48,7 @@ export default class KeyboardInput {
 
   /**
    * Keydown event handler.
-   * @param {Event}
+   * @param {Event} e The keyboard event.
    */
   handleEvent(e) {
     if (this.isFieldFocused(e)) {
@@ -79,7 +80,7 @@ export default class KeyboardInput {
 
   /**
    * Assigns new hotkeys.
-   * @param {Object} New hotkeys mapped to callbacks.
+   * @param {Object} definitions New hotkeys mapped to callbacks.
    */
   assign(definitions) {
     for (var i in definitions) {
