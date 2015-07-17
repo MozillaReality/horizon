@@ -202,7 +202,6 @@ export default class FrameManager {
     if (this.activeFrame) {
       var url = new URL(this.activeFrame.location);
       this.urlInput.value = url.hostname;
-      this.updateTitle(this.activeFrame.title);
     } else {
       this.urlInput.value = '';
     }
@@ -252,15 +251,6 @@ export default class FrameManager {
     }
     this.urlInput.focus();
     this.urlInput.select();
-  }
-
-  /**
-   * Updates title text.
-   *
-   * @param {String} text Title of page loaded in the active frame.
-   */
-  updateTitle(text) {
-    this.titleText.textContent = text;
   }
 
   /**
