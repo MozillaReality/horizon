@@ -7,6 +7,12 @@ const hmdScale = -100;
 const pixelsPerMeter = 96 / 2.54;
 const formSubmitThreshold = 1500;  // Time to wait for mousedown (buttondown) before triggering a form submit.
 
+const mouseConfig = {
+  activeClassName: 'active',
+  hoverClassName: 'hover',
+  focusClassName: 'focus',
+};
+
 export default class Cursor extends React.Component {
   constructor(props) {
     super(props);
@@ -24,6 +30,12 @@ export default class Cursor extends React.Component {
     this.cursorMouseLeaveQueue = [];
 
     document.addEventListener('click', this.handleLinkClick.bind(this));
+
+    // Listeners for mimicked mouse events from gaze-based cursor.
+    window.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+    window.addEventListener('mouseenter', this.handleMouseEnter.bind(this));
+    window.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    window.addEventListener('mouseup', this.handleMouseUp.bind(this));
   }
 
   get cursor() {
@@ -300,6 +312,36 @@ export default class Cursor extends React.Component {
     }
 
     return Promise.resolve();
+  }
+
+  handleMouseLeave(e) {
+    var el = e.target;
+    if (el && el.mock) {
+      // Blur and remove hover/active classes from the element we were previously focussed on/cursored over.
+      el.classList.remove(mouseConfig.hoverClassName, mouseConfig.activeClassName, mouseConfig.focusClassName);
+    }
+  }
+
+  handleMouseEnter(e) {
+    var el = e.target;
+    if (el && el.mock) {
+      el.classList.add(mouseConfig.hoverClassName);
+    }
+  }
+
+  handleMouseDown(e) {
+    var el = e.target;
+    if (el && el.mock) {
+      el.classList.remove(mouseConfig.hoverClassName);
+      el.classList.add(mouseConfig.activeClassName, mouseConfig.focusClassName);
+    }
+  }
+
+  handleMouseUp(e) {
+    var el = e.target;
+    if (el && el.mock) {
+      el.classList.remove(mouseConfig.hoverClassName, mouseConfig.activeClassName, mouseConfig.focusClassName);
+    }
   }
 
   componentDidMount() {
