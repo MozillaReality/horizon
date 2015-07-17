@@ -48,7 +48,7 @@ export default class Cursor extends React.Component {
    * @returns {Promise} Resolve if cursor can be active.
    */
   allowCursor() {
-    if (this.props.hudVisible || !this.props.activeFrameProps.viewmode === 'stereo') {
+    if (this.props.hudVisible || this.props.activeFrameProps.viewmode === 'mono') {
       return Promise.resolve();
     } else {
       return Promise.reject();
@@ -180,7 +180,7 @@ export default class Cursor extends React.Component {
     if (this.cursorElement !== contentContainer) {
       return;
     }
-    this.frameCommunicator.send('mouse.' + eventName, {
+    this.runtime.frameCommunicator.send('mouse.' + eventName, {
       top: this.intersectionY / this.monoScale,
       left: this.intersectionX / this.monoScale
     });

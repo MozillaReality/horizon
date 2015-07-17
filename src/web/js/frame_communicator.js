@@ -20,8 +20,11 @@ fc.send('scroll.to', {
 */
 
 export default class FrameCommunicator {
-  constructor(name) {
+  constructor(name, handlers) {
     this.name = name;
+    if (handlers.getActiveFrameElement) {
+      this.getActiveFrameElement = handlers.getActiveFrameElement;
+    }
   }
 
   init(runtime) {
@@ -29,7 +32,7 @@ export default class FrameCommunicator {
   }
 
   get activeFrameElement() {
-    return this.runtime.frameManager.activeFrame.element;
+    return this.getActiveFrameElement();
   }
 
   send(type, data, targetOrigin) {

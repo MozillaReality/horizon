@@ -22,7 +22,9 @@ export default class Browser extends React.Component {
     runtime.utils = new Utils();
     runtime.contentScripts = new ContentScripts();
     runtime.debugging = new Debugging();
-    runtime.frameCommunicator = new FrameCommunicator('browser');
+    runtime.frameCommunicator = new FrameCommunicator('browser', {
+      getActiveFrameElement: () => this.activeFrameElement
+    });
     runtime.gamepadInput = new GamepadInput();
     runtime.keyboardInput = new KeyboardInput();
     runtime.viewportManager = new ViewportManager({
@@ -61,6 +63,10 @@ export default class Browser extends React.Component {
 
   get activeFrame() {
     return this.state.frames[this.activeFrameIndex];
+  }
+
+  get activeFrameElement() {
+    return this.refs[`frame${this.activeFrameIndex}`].iframe;
   }
 
   /**
