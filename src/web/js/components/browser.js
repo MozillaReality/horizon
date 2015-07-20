@@ -47,6 +47,7 @@ export default class Browser extends React.Component {
 
     this.state = {
       hudVisible: false,
+      hudUrl: null,
       frames: [
         {
           viewmode: 'mono',
@@ -148,10 +149,13 @@ export default class Browser extends React.Component {
     });
   }
 
-  onUrlEntry(e) {
+  onUrlChange(e) {
+    this.setState({hudUrl: e.target.value});
+  }
+
+  onUrlSubmit(e) {
     e.preventDefault();
-    var urlInput = React.findDOMNode(this.refs.urlInput);
-    this.navigate(urlInput.value);
+    this.navigate(this.state.hudUrl);
     this.urlInput.blur();
   }
 
@@ -167,6 +171,7 @@ export default class Browser extends React.Component {
     var frames = this.state.frames;
     frames[this.activeFrameIndex].location = e.detail;
     this.setState({
+      hudUrl: e.detail,
       frames: frames
     });
   }
@@ -240,7 +245,8 @@ export default class Browser extends React.Component {
               ref="frameWrapper">
             {
               this.state.frames.map((frameProps, idx) =>
-                 <Frame
+                <Frame
+                  key={idx}
                   ref={`frame${idx}`}
                   id={`frame${idx}`}
                   frameProps={frameProps}
@@ -260,7 +266,9 @@ export default class Browser extends React.Component {
               runtime={this.runtime}
               activeFrameProps={this.activeFrame}
               hudVisible={this.state.hudVisible}
-              onUrlEntry={this.onUrlEntry.bind(this)}/>
+              hudUrl={this.state.hudUrl}
+              onUrlChange={this.onUrlChange.bind(this)}
+              onUrlSubmit={this.onUrlSubmit.bind(this)} />
           </div>
           <Cursor
             runtime={this.runtime}
