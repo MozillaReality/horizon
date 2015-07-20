@@ -1,17 +1,17 @@
-import Cursor from './cursor.js';
-import Frame from './frame.js';
-import Hud from './hud.js';
-import cx from './../lib/class_set.js';
-
 import ContentScripts from './../content_scripts.js';
 import Debugging from './../debugging.js';
 import FrameCommunicator from './../frame_communicator.js';
 import ViewportManager from './../viewport_manager.js';
+
 import GamepadInput from './../inputs/gamepad/index.js';
 import KeyboardInput from './../inputs/keyboard/index.js';
-import Utils from './../lib/utils.js';
 
-const DEFAULT_URL = 'http://mozvr.com/posts/quick-vr-prototypes/';
+import Cursor from './cursor.js';
+import Frame from './frame.js';
+import Hud from './hud.js';
+import Settings from '../settings.js';
+import Utils from './../lib/utils.js';
+import cx from './../lib/class_set.js';
 
 export default class Browser extends React.Component {
 
@@ -31,10 +31,7 @@ export default class Browser extends React.Component {
       onHmdFrame: this.onHmdFrame.bind(this),
       enterBrowserVR: this.enterVR.bind(this)
     });
-    runtime.settings = {
-      www_browser_start_src: '/media/browser_start.wav',
-      play_audio_on_browser_start: false
-    };
+    runtime.settings = Settings;
 
     runtime.contentScripts.init(runtime);
     runtime.debugging.init(runtime);
@@ -53,7 +50,7 @@ export default class Browser extends React.Component {
       frames: [
         {
           viewmode: 'mono',
-          url: DEFAULT_URL,
+          url: Settings.start_page_url,
           icons: []
         }
       ]
@@ -115,7 +112,7 @@ export default class Browser extends React.Component {
     var frames = this.state.frames;
     this.activeFrameIndex = frames.length;
     frames.push({
-      url: url || DEFAULT_URL,
+      url: url || Settings.start_page_url,
       icons: []
     });
     this.setState({frames: frames});

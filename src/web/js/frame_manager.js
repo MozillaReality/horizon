@@ -1,3 +1,7 @@
+import neatAudio from '../../../node_modules/neat-audio/neat-audio.js';
+
+import Settings from './settings.js';
+
 const scrollConfig = {
   step: 50,
 };
@@ -119,7 +123,7 @@ export default class FrameManager {
    *
    * @returns {Object} App
    */
-  newFrame(location = 'http://mozvr.com/posts/quick-vr-prototypes/', openInForeground = true) {
+  newFrame(location = Settings.start_page_url, openInForeground = true) {
     var app = new window.Frame({
       id: this.nextId(),
       url: location,
@@ -322,7 +326,6 @@ export default class FrameManager {
   init(runtime) {
     console.log('Initializing frame manager.');
     this.frameCommunicator = runtime.frameCommunicator;
-    this.settings = runtime.settings;
     this.utils = runtime.utils;
     this.viewportManager = runtime.viewportManager;
 
@@ -457,15 +460,13 @@ export default class FrameManager {
       }
     });
 
-  /*
-    if (runtime.settings.play_audio_on_browser_start) {
-      neatAudio.fetchSound(runtime.settings.www_browser_start_src).then(sound => {
+    if (Settings.audio_play_on_start) {
+      neatAudio.fetchSound('/media/browser_start.wav').then(sound => {
         this.sfx.browserStart = sound;
 
         // Sound chime when browser has (re)started.
         this.sfx.play('browserStart');
       });
     }
-  */
   }
 }

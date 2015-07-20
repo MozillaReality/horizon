@@ -3,6 +3,7 @@ global HMDVRDevice, PositionSensorVRDevice
 */
 
 import Matrix from './lib/matrix.js';
+import Settings from './settings.js';
 
 var matrix = new Matrix();
 
@@ -109,7 +110,7 @@ export default class ViewportManager {
       let val = {};
 
       for (let p in position) {
-        val[p] = position[p] * this.settings.hmd_scale; /* scale position from HMD to match CSS values */
+        val[p] = position[p] * Settings.hmd_scale; /* scale position from HMD to match CSS values */
       }
       /* -y to account for css y orientation */
       val.y *= -1;
@@ -132,7 +133,6 @@ export default class ViewportManager {
   }
 
   init(runtime) {
-    this.settings = runtime.settings;
     runtime.keyboardInput.assign({
       'ctrl z': () => this.resetSensor(),
       'ctrl f': () => this.enterBrowserVR()
