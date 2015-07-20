@@ -195,10 +195,6 @@ button {
   transform: translate3d(0, 0, var(--hud-depth));
 }
 
-.hud.closed {
-  display: none;
-}
-
 *:-moz-full-screen .hud {
   left: 0;
   top: 0;
@@ -380,8 +376,7 @@ button {
 }
 
 
-.stop.hidden,
-.reload.hidden {
+.hidden {
   display: none;
 }
 
