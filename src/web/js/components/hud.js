@@ -45,7 +45,7 @@ export default class Hud extends React.Component {
 
   get iconStyle() {
     var icons = this.props.activeFrameProps.icons;
-    var location = this.props.activeFrameProps.location;
+    var location = this.props.hudUrl;
     var href;
     if (!location && !icons.length) {
       return null;
@@ -85,8 +85,8 @@ export default class Hud extends React.Component {
       <Tiles
         runtime={this.props.runtime} />
 
-      <form id='urlbar' className='urlbar threed' action='#' onSubmit={this.props.onUrlEntry}>
-        <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' value={this.props.activeFrameProps.location} />
+      <form id='urlbar' className='urlbar threed' action='#' onSubmit={this.props.onUrlSubmit}>
+        <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' onChange={this.props.onUrlChange} value={this.props.hudUrl} />
       </form>
 
       <div id='backfwd' className='backfwd threed'>
