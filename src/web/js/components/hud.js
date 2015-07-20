@@ -1,6 +1,5 @@
 import neatAudio from '../../../../node_modules/neat-audio/neat-audio.js';
 
-import Settings from '../settings.js';
 import Tiles from './tiles.js';
 import cx from './../lib/class_set.js';
 

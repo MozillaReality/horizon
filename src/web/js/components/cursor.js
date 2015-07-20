@@ -1,9 +1,9 @@
 import Matrix from './../lib/matrix.js';
 import vec4 from '../../../../node_modules/gl-vec4';
+import Settings from './../settings.js';
 
 var matrix = new Matrix();
 
-const hmdScale = -100;
 const pixelsPerMeter = 96 / 2.54;
 const formSubmitThreshold = 1500;  // Time to wait for mousedown (buttondown) before triggering a form submit.
 
@@ -85,7 +85,7 @@ export default class Cursor extends React.Component {
       return false;
     }
 
-    let scale = pixelsPerMeter * hmdScale;
+    let scale = pixelsPerMeter * Settings.hmd_scale;
     if (hmd.position) {
       return {
         x: -hmd.position.x * scale,
