@@ -2,6 +2,7 @@ var fs = require('fs');
 
 var firefoxConnect = require('node-firefox-connect');
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 
 var babelify = require('babelify');
 var browserify = require('browserify');
@@ -114,7 +115,7 @@ gulp.task('babelify-content-scripts', function() {
   .on('error', function (err) {
     console.log('[babelify] Error occurred: ', err.message);
   })
-  .pipe(moldSourceMap.transformSourcesRelativeTo(CONTENT_SCRIPTS_ROOT))
+  .pipe(process.env.PRODUCTION ? gutil.noop() : moldSourceMap.transformSourcesRelativeTo(CONTENT_SCRIPTS_ROOT))
   .pipe(fs.createWriteStream(DIST_CONTENT_SCRIPTS_ROOT + 'application/content.js'));
 });
 
@@ -141,7 +142,7 @@ gulp.task('babelify', function() {
   .on('error', function (err) {
     console.log('[babelify] Error occurred: ', err.message);
   })
-  .pipe(moldSourceMap.transformSourcesRelativeTo(WEB_ROOT))
+  .pipe(process.env.PRODUCTION ? gutil.noop() : moldSourceMap.transformSourcesRelativeTo(WEB_ROOT))
   .pipe(fs.createWriteStream(DIST_WEB_ROOT + 'js/main.js'));
 });
 
