@@ -10,6 +10,7 @@ import Cursor from './cursor.js';
 import Frame from './frame.js';
 import Hud from './hud.js';
 import Settings from '../settings.js';
+import UriHelper from './../lib/uri_helper.js';
 import Utils from './../lib/utils.js';
 import cx from './../lib/class_set.js';
 
@@ -155,7 +156,7 @@ export default class Browser extends React.Component {
 
   onUrlSubmit(e) {
     e.preventDefault();
-    this.navigate(this.state.hudUrl);
+    this.navigate(UriHelper.read(this.state.hudUrl));
     this.urlInput.blur();
   }
 
