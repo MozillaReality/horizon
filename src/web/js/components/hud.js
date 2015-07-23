@@ -43,6 +43,10 @@ export default class Hud extends React.Component {
     }
   }
 
+  get urlInput() {
+    return React.findDOMNode(this.refs.urlInput);
+  }
+
   get iconStyle() {
     var icons = this.props.activeFrameProps.icons;
     var location = this.props.hudUrl;

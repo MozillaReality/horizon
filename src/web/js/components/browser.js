@@ -11,6 +11,7 @@ import Frame from './frame.js';
 import Hud from './hud.js';
 import Settings from '../settings.js';
 import Utils from './../lib/utils.js';
+import UrlUtil from '../../../../node_modules/urlutil.js/src/urlutil.js';
 import cx from './../lib/class_set.js';
 
 export default class Browser extends React.Component {
@@ -141,6 +142,10 @@ export default class Browser extends React.Component {
   }
 
   navigate(url) {
+    if (UrlUtil.isNotURL(url)) {
+      url = Settings.search_url.replace('{q}', encodeURIComponent(url));
+    }
+
     var frames = this.state.frames;
     frames[this.activeFrameIndex].url = url;
     this.setState({
@@ -156,7 +161,7 @@ export default class Browser extends React.Component {
   onUrlSubmit(e) {
     e.preventDefault();
     this.navigate(this.state.hudUrl);
-    this.urlInput.blur();
+    this.refs.hud.urlInput.blur();
   }
 
   onTitleChange(frameProps, e) {
@@ -263,6 +268,7 @@ export default class Browser extends React.Component {
 
           <div className='camera threed' ref='camera'>
             <Hud
+              ref='hud'
               runtime={this.runtime}
               activeFrameProps={this.activeFrame}
               hudVisible={this.state.hudVisible}
