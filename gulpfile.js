@@ -64,6 +64,35 @@ gulp.task('copy-web-app', function() {
     .pipe(gulp.dest(DIST_WEB_ROOT));
 });
 
+gulp.task('copy-web-css', function() {
+  return gulp.src([
+      WEB_ROOT + 'css/**'
+    ])
+    .pipe(gulp.dest(DIST_WEB_ROOT + 'css/'));
+});
+
+gulp.task('copy-web-fonts', function() {
+  return gulp.src([
+      WEB_ROOT + 'fonts/**'
+    ])
+    .pipe(gulp.dest(DIST_WEB_ROOT));
+});
+
+gulp.task('copy-web-media', function() {
+  return gulp.src([
+      WEB_ROOT + 'media/**'
+    ])
+    .pipe(gulp.dest(DIST_WEB_ROOT));
+});
+
+gulp.task('copy-web-root', function() {
+  return gulp.src([
+      WEB_ROOT + '*'
+    ])
+    .pipe(gulp.dest(DIST_WEB_ROOT));
+});
+
+
 gulp.task('copy-web-modules', function() {
  return gulp.src([
       './node_modules/react/dist/react.js'
@@ -182,6 +211,30 @@ gulp.task('build', function(cb) {
   runSequence(['clobber'], ['copy-web-app', 'copy-web-modules', 'copy-addon-core', 'generate-content-scripts'], ['babelify', 'lint'], cb);
 });
 
+gulp.task('build:addon', function (cb) {
+  runSequence(['copy-addon-core', 'generate-content-scripts'], cb);
+});
+
+gulp.task('build:css', function (cb) {
+  runSequence(['copy-web-css'], cb);
+});
+
+gulp.task('build:js', function(cb) {
+  runSequence(['copy-web-modules'], ['babelify', 'lint'], cb);
+});
+
+gulp.task('build:fonts', function (cb) {
+  runSequence(['copy-web-fonts'], 'reload', cb);
+});
+
+gulp.task('build:media', function (cb) {
+  runSequence(['copy-web-media'], 'reload', cb);
+});
+
+gulp.task('build:root', function (cb) {
+  runSequence(['copy-web-root'], cb);
+});
+
 
 /**
  * Reload the Horizon app (via remote debugging runtime).
@@ -224,14 +277,42 @@ gulp.task('buildandreload', function (cb) {
   runSequence('build', 'reload', cb);
 });
 
+gulp.task('buildandreload:addon', function (cb) {
+  runSequence('build:addon', 'reload', cb);
+});
+
+gulp.task('buildandreload:css', function (cb) {
+  runSequence('build:css', 'reload', cb);
+});
+
+gulp.task('buildandreload:js', function (cb) {
+  runSequence('build:js', 'reload', cb);
+});
+
+gulp.task('buildandreload:root', function (cb) {
+  runSequence('build:root', 'reload', cb);
+});
+
+gulp.task('buildandreload:fonts', function (cb) {
+  runSequence('build:fonts', 'reload', cb);
+});
+
+gulp.task('buildandreload:media', function (cb) {
+  runSequence('build:media', 'reload', cb);
+});
+
 
 /**
  * Watch for changes on the file system, and rebuild if so.
  */
 gulp.task('watch', function() {
-  // TODO: We should probably prevent Horizon app from being reloaded if only
-  // the `src/addon/` files change.
-  gulp.watch([SRC_ROOT + '{*,**/*}'], ['buildandreload']);
+  gulp.watch([SRC_ROOT + '{addon,content_scripts}/**'], ['buildandreload:addon']);
+  gulp.watch([WEB_ROOT + 'css/**'], ['buildandreload:css']);
+  gulp.watch([WEB_ROOT + 'js/**'], ['buildandreload:js']);
+
+  gulp.watch([WEB_ROOT + 'fonts/**'], ['buildandreload:fonts']);
+  gulp.watch([WEB_ROOT + 'media/**'], ['buildandreload:media']);
+  gulp.watch([WEB_ROOT + '*'], ['buildandreload:root']);
 });
 
 
