@@ -94,29 +94,7 @@ export default class Hud extends React.Component {
         <button className='fa fa-arrow-right nav forward' data-action='forward' id='forward'></button>
       </div>
 
-      <div id='stopreload' className='stopreload threed'>
-        <button
-          className={cx({
-            'fa fa-repeat nav reload': true,
-            hidden: this.props.activeFrameProps.loading
-          })}
-          data-action='reload' id='reload'></button>
-        <button
-          className={cx({
-            'fa fa-repeat nav stop': true,
-            hidden: !this.props.activeFrameProps.loading
-          })}
-          data-action='stop' id='stop'></button>
-      </div>
-
       <button id='closehud' className='nav closehud threed'>Close HUD</button>
-
-      <div
-        id='loading'
-        className={cx({
-          visible: this.props.activeFrameProps.loading,
-          'loading threed': true
-        })}>LOADING</div>
     </div>;
   }
 }

@@ -269,7 +269,29 @@ export default class Browser extends React.Component {
               hudUrl={this.state.hudUrl}
               onUrlChange={this.onUrlChange.bind(this)}
               onUrlSubmit={this.onUrlSubmit.bind(this)} />
+
+            <div id='stopreload' className='stopreload threed'>
+              <button
+                className={cx({
+                  'fa fa-repeat nav reload': true,
+                  hidden: this.activeFrame.loading || !this.state.hudVisible
+                })}
+                data-action='reload' id='reload'></button>
+              <button
+                className={cx({
+                  'fa fa-times nav stop': true,
+                  hidden: !this.activeFrame.loading
+                })}
+                data-action='stop' id='stop'></button>
+            </div>
+
+            <div id='loading'
+              className={cx({
+                visible: this.activeFrame.loading,
+                'loading threed': true
+              })}>LOADING</div>
           </div>
+
           <Cursor
             runtime={this.runtime}
             hudVisible={this.state.hudVisible}

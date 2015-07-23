@@ -216,7 +216,7 @@ button {
   padding: 0.6em;
   text-align: center;
   text-transform: uppercase;
-  transform: translate(-50%, -50%) translate3d(0, 12cm, 4cm);
+  transform: translate(-50%, -50%) translate3d(0, 13cm, var(--hud-depth));
   width: 6cm;
   animation: hide 0.1s ease forwards;
 }
@@ -369,7 +369,7 @@ button {
 }
 
 .stopreload {
-  transform: translate(-50%, 0) translate3d(3cm, 13cm, 0);
+  transform: translate(-50%, 0) translate3d(3cm, 13cm, var(--hud-depth));
 }
 
 .stop,
