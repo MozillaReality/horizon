@@ -90,10 +90,7 @@
       2,
       "single"
     ],
-    "semi": [
-      0,
-      "never"
-    ],
+    "semi": 2,
     "space-after-keywords": 2,
     "space-before-blocks": 2,
     "space-in-brackets": [2, "never"],
