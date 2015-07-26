@@ -63,7 +63,7 @@ export default class FrameManager {
         // On back, forward or reload, hide the Hud and trigger the selected action on the active frame.
         this.toggleHud();
         this.activeFrame['on_' + e.target.dataset.action](e);
-        return
+        return;
     }
 
     this.activeFrame['on_' + e.target.dataset.action](e);
