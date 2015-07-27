@@ -34,14 +34,12 @@ export default class Frame extends React.Component {
     }
   }
 
-  // TODO: Implement in react.
   on_back() {
-    this.element.goBack();
+    this.iframe.goBack();
   }
 
-  // TODO: Implement in react.
   on_forward() {
-    this.element.goForward();
+    this.iframe.goForward();
   }
 
   // TODO: Implement in react.

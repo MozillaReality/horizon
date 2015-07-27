@@ -24,7 +24,7 @@ export default class Browser extends React.Component {
     runtime.contentScripts = new ContentScripts();
     runtime.debugging = new Debugging();
     runtime.frameCommunicator = new FrameCommunicator('browser', {
-      getActiveFrameElement: () => this.activeFrameElement
+      getActiveFrameElement: () => this.activeFrameRef.iframe
     });
     runtime.gamepadInput = new GamepadInput();
     runtime.keyboardInput = new KeyboardInput();
@@ -64,8 +64,8 @@ export default class Browser extends React.Component {
     return this.state.frames[this.activeFrameIndex];
   }
 
-  get activeFrameElement() {
-    return this.refs[`frame${this.activeFrameIndex}`].iframe;
+  get activeFrameRef() {
+    return this.refs[`frame${this.activeFrameIndex}`];
   }
 
   /**
@@ -179,6 +179,7 @@ export default class Browser extends React.Component {
       hudUrl: e.detail,
       frames: frames
     });
+    this.updateNavigationState();
   }
 
   onIconChange(frameProps, {detail}) {
@@ -203,6 +204,35 @@ export default class Browser extends React.Component {
     this.setState({
       frames: frames
     });
+  }
+
+  onBack() {
+    if (this.activeFrame.canGoBack) {
+      this.activeFrameRef.on_back();
+      this.setState({
+        hudVisible: false
+      });
+    }
+  }
+
+  onForward() {
+    if (this.activeFrame.canGoForward) {
+      this.activeFrameRef.on_forward();
+      this.setState({
+        hudVisible: false
+      });
+    }
+  }
+
+  onReload() {
+    this.activeFrameRef.on_reload();
+    this.setState({
+      hudVisible: false
+    });
+  }
+
+  onStop() {
+    this.activeFrameRef.on_stop();
   }
 
   onMetaChange(frameProps, {detail}) {
@@ -230,6 +260,26 @@ export default class Browser extends React.Component {
     if (projection === 'mono') {
       this.onMono();
     }
+  }
+
+  updateNavigationState() {
+    var frames = this.state.frames;
+
+    var canGoBack = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoBack());
+    canGoBack.then(result => {
+      frames[this.activeFrameIndex].canGoBack = result;
+    });
+
+    var canGoForward = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoForward());
+    canGoForward.then(result => {
+      frames[this.activeFrameIndex].canGoForward = result;
+    });
+
+    return Promise.all([canGoBack, canGoForward]).then(() => {
+      this.setState({
+        frames: frames
+      });
+    });
   }
 
   render() {
@@ -274,7 +324,9 @@ export default class Browser extends React.Component {
               hudVisible={this.state.hudVisible}
               hudUrl={this.state.hudUrl}
               onUrlChange={this.onUrlChange.bind(this)}
-              onUrlSubmit={this.onUrlSubmit.bind(this)} />
+              onUrlSubmit={this.onUrlSubmit.bind(this)}
+              onBack={this.onBack.bind(this)}
+              onForward={this.onForward.bind(this)} />
 
             <div id='stopreload' className='stopreload threed'>
               <button
@@ -282,12 +334,14 @@ export default class Browser extends React.Component {
                   'fa fa-repeat nav reload': true,
                   hidden: this.activeFrame.loading || !this.state.hudVisible
                 })}
+                onClick={this.onReload.bind(this)}
                 data-action='reload' id='reload'></button>
               <button
                 className={cx({
                   'fa fa-times nav stop': true,
                   hidden: !this.activeFrame.loading
                 })}
+                onClick={this.onStop.bind(this)}
                 data-action='stop' id='stop'></button>
             </div>
 
