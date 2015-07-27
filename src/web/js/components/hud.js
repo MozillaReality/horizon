@@ -75,8 +75,7 @@ export default class Hud extends React.Component {
       className={cx({
         hud: true,
         threed: true,
-        hidden: !this.props.hudVisible,
-        loading: this.props.activeFrameProps.loading
+        hidden: !this.props.hudVisible
       })}>
       <div id='background' className='background threed pointer-none'></div>
 
