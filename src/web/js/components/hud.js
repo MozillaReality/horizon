@@ -93,8 +93,12 @@ export default class Hud extends React.Component {
       </form>
 
       <div id='backfwd' className='backfwd threed'>
-        <button className='fa fa-arrow-left nav back' data-action='back' id='back'></button>
-        <button className='fa fa-arrow-right nav forward' data-action='forward' id='forward'></button>
+        <button className='fa fa-arrow-left nav back' data-action='back' id='back'
+          disabled={!this.props.activeFrameProps.canGoBack}
+          onClick={this.props.onBack}></button>
+        <button className='fa fa-arrow-right nav forward' data-action='forward' id='forward'
+          disabled={!this.props.activeFrameProps.canGoForward}
+          onClick={this.props.onForward}></button>
       </div>
 
       <button id='closehud' className='nav closehud threed'>Close HUD</button>
