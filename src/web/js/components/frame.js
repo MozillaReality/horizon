@@ -34,17 +34,16 @@ export default class Frame extends React.Component {
     }
   }
 
-  on_back() {
+  onBack() {
     this.iframe.goBack();
   }
 
-  on_forward() {
+  onForward() {
     this.iframe.goForward();
   }
 
-  // TODO: Implement in react.
-  on_stop() {
-    this.element.stop();
+  onStop() {
+    this.iframe.stop();
   }
 
   /**
@@ -53,32 +52,31 @@ export default class Frame extends React.Component {
    * @param {(Event|null)} e The mozbrowser event.
    * @param {Boolean} hardReload Whether or not to perform a hard reload.
    */
-   // TODO: Implement in react.
-  on_reload(e, hardReload = false) {
-    this.element.reload(hardReload);
+  onReload(e, hardReload = false) {
+    this.iframe.reload(hardReload);
   }
 
   // TODO: Implement in react.
   close() {
-    this.element.parentNode.removeChild(this.element);
+    this.iframe.parentNode.removeChild(this.iframe);
   }
 
   // TODO: Implement in react.
   zoomIn() {
     this.zoomValue = Math.min(this.zoomValue + zoomConfig.step, zoomConfig.max);
-    this.element.zoom(this.zoomValue);
+    this.iframe.zoom(this.zoomValue);
   }
 
   // TODO: Implement in react.
   zoomOut() {
     this.zoomValue = Math.max(this.zoomValue - zoomConfig.step, zoomConfig.min);
-    this.element.zoom(this.zoomValue);
+    this.iframe.zoom(this.zoomValue);
   }
 
   // TODO: Implement in react.
   resetZoom() {
     this.zoomValue = zoomConfig.defaultValue;
-    this.element.zoom(this.zoomValue);
+    this.iframe.zoom(this.zoomValue);
   }
 
   /**

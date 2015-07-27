@@ -208,7 +208,7 @@ export default class Browser extends React.Component {
 
   onBack() {
     if (this.activeFrame.canGoBack) {
-      this.activeFrameRef.on_back();
+      this.activeFrameRef.onBack();
       this.setState({
         hudVisible: false
       });
@@ -217,7 +217,7 @@ export default class Browser extends React.Component {
 
   onForward() {
     if (this.activeFrame.canGoForward) {
-      this.activeFrameRef.on_forward();
+      this.activeFrameRef.onForward();
       this.setState({
         hudVisible: false
       });
@@ -225,14 +225,14 @@ export default class Browser extends React.Component {
   }
 
   onReload() {
-    this.activeFrameRef.on_reload();
+    this.activeFrameRef.onReload();
     this.setState({
       hudVisible: false
     });
   }
 
   onStop() {
-    this.activeFrameRef.on_stop();
+    this.activeFrameRef.onStop();
   }
 
   onMetaChange(frameProps, {detail}) {
