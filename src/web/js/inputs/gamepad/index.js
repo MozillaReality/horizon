@@ -4,10 +4,10 @@ import GamepadScroll from './scroll.js';
 
 export default class GamepadInput {
 
-  constructor() {
+  constructor(config) {
     this.debug = false;
     this.pollingInterval = {};
-    this.config = {};
+    this.config = config || {};
     this.gamepads = {};
   }
 
@@ -73,10 +73,26 @@ export default class GamepadInput {
   }
 
   /**
-   * Assigns gamepad configurations.
+   * Assigns gamepad configurations (at initialisation).
    * @param {Object} config Options object to use for creating `Gamepads` instance.
    */
   assign(config) {
     this.config = config || {};
+  }
+
+  /**
+   * Adds new gamepad index mappings (after initialisation).
+   * @param {Object} indices Indices object to use for updating `Gamepads` indices.
+   */
+  assignIndices(indices) {
+    if (!this.gamepads.indices) {
+      this.gamepads.indices = {};
+    }
+
+    // Extend the existing objects so we preserve the existing index mappings.
+    Object.keys(indices).forEach(index => {
+      this.gamepads.indices[index] = Object.assign(
+        this.gamepads.indices[index] || {}, indices[index]);
+    });
   }
 }

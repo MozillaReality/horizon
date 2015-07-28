@@ -21,9 +21,10 @@
   /* icons size */
   --icon-size: 25px;
 
-  /* colors */
+  /* colours */
   --color-blue-vibrant: hsl(200, 89%, 50%);
   --color-blue-vibrant-faded: hsla(200, 89%, 70%, .75);
+  --color-pink-vibrant: hsl(336, 89%, 50%);
 }
 
 
@@ -284,6 +285,8 @@ button {
 
 .directory__tile:active,
 .directory__tile.active {
+  background-color: var(--color-pink-vibrant);
+  color: #fff;
 }
 
 .directory__tile .type {

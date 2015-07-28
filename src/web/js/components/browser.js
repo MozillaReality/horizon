@@ -26,7 +26,16 @@ export default class Browser extends React.Component {
     runtime.frameCommunicator = new FrameCommunicator('browser', {
       getActiveFrameElement: () => this.activeFrameRef.iframe
     });
-    runtime.gamepadInput = new GamepadInput();
+    runtime.gamepadInput = new GamepadInput({
+      input: {
+        axisThreshold: 0
+      },
+      scroll: {
+        axisThreshold: 0.15,
+        smoothingFactor: 0.4,
+        velocityThreshold: 0.05
+      }
+    });
     runtime.keyboardInput = new KeyboardInput();
     runtime.viewportManager = new ViewportManager({
       onHmdFrame: this.onHmdFrame.bind(this),
@@ -41,6 +50,73 @@ export default class Browser extends React.Component {
     runtime.keyboardInput.init(runtime);
     runtime.viewportManager.init(runtime);
     this.runtime = runtime;
+
+    runtime.gamepadInput.assignIndices({
+      'standard': {
+        // XBox Vendor button.
+        'b10': () => this.toggleHud(),
+
+        // Use Start button too, since Vendor button doesn't work on
+        // Windows: http://bugzil.la/1167457
+        'b4': () => this.toggleHud(),
+
+        // Use the Back button to reset sensor.
+        'b5': () => runtime.viewportManager.resetSensor(),
+
+        // Left analogue stick for horizontal scrolling.
+        'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+          runtime.gamepadInput.scroll.scrollX(axis, value)
+        ),
+
+        // Left analogue stick for vertical scrolling.
+        'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+          runtime.gamepadInput.scroll.scrollY(axis, value)
+        ),
+
+        // Use the "X" button to navigate back.
+        'b13': () => this.activeFrameRef.onBack(),
+
+        // Use the "B" button to navigate forward.
+        'b12': () => this.activeFrameRef.onForward(),
+      },
+      '54c-268-PLAYSTATION(R)3 Controller': {
+        // Vendor.
+        'b16': () => this.toggleHud(),
+
+        // Start.
+        'b3': () => this.toggleHud(),
+
+        // Select.
+        'b0': () => runtime.viewportManager.resetSensor(),
+
+        // Left analogue stick.
+        'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+          runtime.gamepadInput.scroll.scrollX(axis, value)
+        ),
+        'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+          runtime.gamepadInput.scroll.scrollY(axis, value)
+        ),
+
+        // ☐ to navigate backward.
+        'b15': () => this.activeFrameRef.onBack(),
+
+        // ◯ to navigate forward.
+        'b13': () => this.activeFrameRef.onForward(),
+      },
+      // XBOX Wired controller (Windows)
+      'xinput': {
+        'b9': () => this.toggleHud(),
+        'b8': () => runtime.viewportManager.resetSensor(),
+        'a0': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+          runtime.gamepadInput.scroll.scrollX(axis, value)
+        ),
+        'a1': (gamepad, axis, value) => this.requireMonoFrameOpen().then(
+          runtime.gamepadInput.scroll.scrollY(axis, value)
+        ),
+        'b2': () => this.activeFrameRef.onBack(),
+        'b1': () => this.activeFrameRef.onForward(),
+      }
+    });
 
     runtime.keyboardInput.assign({
       ' ': () => this.toggleHud()
@@ -96,6 +172,19 @@ export default class Browser extends React.Component {
     this.setState({
       frames: frames
     });
+  }
+
+  /**
+   * Returns a promise if the active frame is mono.
+   *
+   * @returns {Promise} Resolved if frame is mono; rejected if HUD is stereo.
+   */
+  requireMonoFrameOpen() {
+    if (this.activeFrame.viewmode === 'mono') {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
   }
 
   toggleHud() {
