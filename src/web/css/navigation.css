@@ -110,10 +110,6 @@ button {
   background-color: hsl(228, 15%, 19%);
 }
 
-#fs-container:-moz-full-screen * {
-  cursor: none;
-}
-
 @keyframes fs-container-lighten {
   from { background-color: hsl(228, 20%, 13%); }
   to { background-color: hsl(228, 15%, 19%); }

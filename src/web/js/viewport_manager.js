@@ -88,10 +88,19 @@ export default class ViewportManager {
     }
   }
 
+  requestPointerLock(element) {
+    element.requestPointerLock = element.requestPointerLock ||
+      element.mozRequestPointerLock ||
+      element.webkitRequestPointerLock;
+
+    element.requestPointerLock();
+  }
+
   enterVr(container) {
     this.launchFs(container, {
       vrDisplay: this.vrDevices.headset
     });
+    this.requestPointerLock(container);
   }
 
   onFrame() {
