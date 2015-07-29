@@ -119,7 +119,31 @@ export default class Browser extends React.Component {
     });
 
     runtime.keyboardInput.assign({
-      ' ': () => this.toggleHud()
+      ' ': () => this.toggleHud(),
+      'ctrl =': () => this.onZoomIn(),
+      'ctrl -': () => this.onZoomOut(),
+      'ctrl 0': () => this.onResetZoom(),
+      'f5': () => this.activeFrameRef.onReload(),
+      'ctrl r': () => this.activeFrameRef.onReload(),
+      'ctrl shift r': () => this.activeFrameRef.onReload(true),
+      // TODO: Coming soon to a Horizon near you (issue #262).
+      // 'ctrl t': () => this.newFrame(),
+      // 'ctrl w': () => this.onClose(),
+      // 'ctrl tab': () => this.nextFrame(),
+      // 'ctrl shift tab': () => this.prevFrame(),
+      'ctrl l': () => this.focusUrlInput(true),
+      'escape': () => this.onStop(),
+      'ctrl ArrowLeft': () => this.onBack(),
+      'ctrl ArrowRight': () => this.onForward(),
+      'backspace': () => this.onBackspace(),
+      'c.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+      'c.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
+      'alt arrowup': () => this.onScrollUp(),
+      'alt arrowdown': () => this.onScrollDown(),
+      'alt arrowleft': () => this.onScrollUp(),
+      'alt arrowright': () => this.onScrollDown(),
+      'ctrl arrowup': () => this.onScrollHome(),
+      'ctrl arrowdown': () => this.onScrollEnd(),
     });
 
     this.state = {
@@ -197,6 +221,18 @@ export default class Browser extends React.Component {
     this.setState({
       hudVisible: !this.state.hudVisible
     });
+  }
+
+  /**
+   * Handles the focus hotkey.
+   */
+  focusUrlInput(force = false) {
+    if (force && !this.state.hudVisible) {
+      this.toggleHud();
+    }
+
+    this.refs.hud.urlInput.focus();
+    this.refs.hud.urlInput.select();
   }
 
   newFrame(url) {
@@ -318,6 +354,52 @@ export default class Browser extends React.Component {
 
   onStop() {
     this.activeFrameRef.onStop();
+  }
+
+  onZoomIn() {
+    this.activeFrameRef.onZoomIn();
+  }
+
+  onZoomOut() {
+    this.activeFrameRef.onZoomOut();
+  }
+
+  onResetZoom() {
+    this.activeFrameRef.onResetZoom();
+  }
+
+  /**
+   * Handles backspace.
+   *
+   * If HUD is open, close HUD.
+   * Else, trigger back action in active frame.
+   */
+  onBackspace() {
+    if (this.state.hudVisible) {
+      this.hideHud();
+    } else {
+      this.onBack();
+    }
+  }
+
+  onScrollUp(step = Settings.scrollStep) {
+    this.runtime.frameCommunicator.send('scroll.step', {
+      scrollTop: -step
+    });
+  }
+
+  onScrollDown(step = Settings.scrollStep) {
+    this.runtime.frameCommunicator.send('scroll.step', {
+      scrollTop: step
+    });
+  }
+
+  onScrollHome() {
+    this.runtime.frameCommunicator.send('scroll.home');
+  }
+
+  onScrollEnd() {
+    this.runtime.frameCommunicator.send('scroll.end');
   }
 
   onMetaChange(frameProps, {detail}) {
