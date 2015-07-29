@@ -130,7 +130,7 @@ gulp.task('install-content-scripts-into-dist', function() {
     .pipe(gulp.dest(DIST_CONTENT_SCRIPTS_ROOT));
 });
 
-gulp.task('babelify-content-scripts', function() {
+gulp.task('babelify-content-scripts', function(cb) {
   return browserify({
     entries: [
       CONTENT_SCRIPTS_ROOT + 'application/content.js',
@@ -142,7 +142,10 @@ gulp.task('babelify-content-scripts', function() {
   }))
   .bundle()
   .on('error', function (err) {
-    console.log('[babelify] Error occurred: ', err.message);
+    console.error('[babelify] Error occurred:\n', err.stack);
+
+    // But don't error out the stream.
+    cb();
   })
   .pipe(process.env.PRODUCTION ? gutil.noop() : moldSourceMap.transformSourcesRelativeTo(CONTENT_SCRIPTS_ROOT))
   .pipe(fs.createWriteStream(DIST_CONTENT_SCRIPTS_ROOT + 'application/content.js'));
@@ -156,7 +159,7 @@ gulp.task('generate-content-scripts', function(cb) {
 /**
  * converts javascript to es5. this allows us to use harmony classes and modules.
  */
-gulp.task('babelify', function() {
+gulp.task('babelify', function(cb) {
   return browserify({
     entries: [
       WEB_ROOT + 'js/app.js',
@@ -169,7 +172,10 @@ gulp.task('babelify', function() {
   }))
   .bundle()
   .on('error', function (err) {
-    console.log('[babelify] Error occurred: ', err.message);
+    console.error('[babelify] Error occurred:\n', err.stack);
+
+    // But don't error out the stream.
+    cb();
   })
   .pipe(process.env.PRODUCTION ? gutil.noop() : moldSourceMap.transformSourcesRelativeTo(WEB_ROOT))
   .pipe(fs.createWriteStream(DIST_WEB_ROOT + 'js/main.js'));
