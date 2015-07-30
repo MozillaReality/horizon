@@ -51,7 +51,7 @@ export default class Hud extends React.Component {
     var icons = this.props.activeFrameProps.icons;
     var location = this.props.hudUrl;
     var href;
-    if (!location && !icons.length) {
+    if (!location || !icons.length) {
       return null;
     }
 
