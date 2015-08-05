@@ -52,7 +52,7 @@ export default class Browser extends React.Component {
       frames: [
         {
           viewmode: 'mono',
-          url: Settings.start_page_url,
+          url: Settings.startPageUrl,
           icons: []
         }
       ]
@@ -114,7 +114,7 @@ export default class Browser extends React.Component {
     var frames = this.state.frames;
     this.activeFrameIndex = frames.length;
     frames.push({
-      url: url || Settings.start_page_url,
+      url: url || Settings.startPageUrl,
       icons: []
     });
     this.setState({frames: frames});
@@ -143,7 +143,7 @@ export default class Browser extends React.Component {
 
   navigate(url) {
     if (UrlUtil.isNotURL(url)) {
-      url = Settings.search_url.replace('{q}', encodeURIComponent(url));
+      url = Settings.searchUrl.replace('{q}', encodeURIComponent(url));
     }
 
     var frames = this.state.frames;

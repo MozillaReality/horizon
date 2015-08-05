@@ -9,7 +9,7 @@ export default class Directory extends React.Component {
     };
 
     // Loads JSON for Directory.
-    fetch(Settings.json_directory_url)
+    fetch(Settings.jsonDirectoryUrl)
     .then(response => {
       return response.json();
     })
