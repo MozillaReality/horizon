@@ -119,8 +119,9 @@ export default class ViewportManager {
       let val = {};
 
       for (let p in position) {
-        val[p] = position[p] * Settings.hmd_scale; /* scale position from HMD to match CSS values */
+        val[p] = position[p] * Settings.hmdScale; /* scale position from HMD to match CSS values */
       }
+
       /* -y to account for css y orientation */
       val.y *= -1;
       cssPosition = `translate3d(${val.x}cm, ${val.y}cm, ${val.z}cm)`;
