@@ -85,7 +85,7 @@ export default class Cursor extends React.Component {
       return false;
     }
 
-    let scale = pixelsPerMeter * Settings.hmd_scale;
+    let scale = pixelsPerMeter * Settings.hmdScale;
     if (hmd.position) {
       return {
         x: -hmd.position.x * scale,
