@@ -33,9 +33,19 @@ export default class Hud extends React.Component {
     }, err => {
       console.error('Could not fetch sound:', err.stack);
     });
+
+    this.state = {
+      url: ''
+    };
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.hudUrl) {
+      this.setState({
+        url: nextProps.hudUrl
+      });
+    }
+
     if (nextProps.hudVisible && this.props.hudVisible !== nextProps.hudVisible) {
       this.sfx.play('hudShow');
     } else if (!nextProps.hudVisible && this.props.hudVisible !== nextProps.hudVisible) {
@@ -69,6 +79,30 @@ export default class Hud extends React.Component {
     };
   }
 
+  handleUrlFocus() {
+    this.urlInput.select();
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    this.props.onUrlSubmit(this.state.url);
+  }
+
+  handleUrlChange(e) {
+    let url;
+    // we reset back to current url if input is cleared
+    if (e.target.value === '') {
+      url = this.props.hudUrl;
+      this.urlInput.blur();
+    } else {
+      url = e.target.value;
+    }
+
+    this.setState({
+      url: url
+    });
+  }
+
   render() {
 
     return <div id='hud'
@@ -87,8 +121,11 @@ export default class Hud extends React.Component {
       <Tiles
         runtime={this.props.runtime} />
 
-      <form id='urlbar' className='urlbar threed' action='#' onSubmit={this.props.onUrlSubmit}>
-        <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' onChange={this.props.onUrlChange} value={this.props.hudUrl} />
+      <form id='urlbar' className='urlbar threed' action='#'
+        onSubmit={this.handleSubmit.bind(this)}>
+        <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' value={this.state.url}
+          onFocus={this.handleUrlFocus.bind(this)}
+          onChange={this.handleUrlChange.bind(this)} />
       </form>
 
       <div id='backfwd' className='backfwd threed'>
