@@ -144,6 +144,8 @@ export default class Browser extends React.Component {
   navigate(url) {
     if (UrlUtil.isNotURL(url)) {
       url = Settings.searchUrl.replace('{q}', encodeURIComponent(url));
+    } else {
+      url = UrlUtil.getUrlFromInput(url);
     }
 
     var frames = this.state.frames;
@@ -154,14 +156,8 @@ export default class Browser extends React.Component {
     });
   }
 
-  onUrlChange(e) {
-    this.setState({hudUrl: e.target.value});
-  }
-
-  onUrlSubmit(e) {
-    e.preventDefault();
-    this.navigate(this.state.hudUrl);
-    this.refs.hud.urlInput.blur();
+  onUrlSubmit(url) {
+    this.navigate(url);
   }
 
   onTitleChange(frameProps, e) {
@@ -323,7 +319,6 @@ export default class Browser extends React.Component {
               activeFrameProps={this.activeFrame}
               hudVisible={this.state.hudVisible}
               hudUrl={this.state.hudUrl}
-              onUrlChange={this.onUrlChange.bind(this)}
               onUrlSubmit={this.onUrlSubmit.bind(this)}
               onBack={this.onBack.bind(this)}
               onForward={this.onForward.bind(this)} />
