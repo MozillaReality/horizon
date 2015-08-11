@@ -208,7 +208,7 @@ button {
   padding: 0.6em;
   text-align: center;
   text-transform: uppercase;
-  transform: translate(-50%, -50%) translate3d(0, 13cm, var(--hud-depth));
+  transform: translate(-50%, -50%) translate3d(0, 13cm, calc(var(--hud-depth) + 2cm));
   width: 6cm;
   animation: hide 0.1s ease forwards;
 }
