@@ -20,6 +20,23 @@ export default class Cursor extends React.Component {
     // use CSS variable for mono content scale value.
     this.monoScale = window.getComputedStyle(document.documentElement).getPropertyValue('--content-scale');
 
+    props.runtime.gamepadInput.assignIndices({
+      'standard': {
+        // Use the "A" button to click on elements (and hold to submit forms).
+        'b11.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+        'b11.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
+      },
+      '54c-268-PLAYSTATION(R)3 Controller': {
+        'b14.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+        'b14.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
+      },
+      // XBOX Wired controller (Windows)
+      'xinput': {
+        'b0.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
+        'b0.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this)),
+      },
+    });
+
     props.runtime.keyboardInput.assign({
       'c.down': () => this.allowCursor().then(this.cursorMouseDown.bind(this)),
       'c.up': () => this.allowCursor().then(this.cursorMouseUp.bind(this))
@@ -186,21 +203,6 @@ export default class Cursor extends React.Component {
     });
   }
 
-  cursorMouseUp() {
-    let el = this.cursorElement;
-
-    if (el) {
-      this.cursorDownElement = null;
-
-      this.runtime.utils.emitMouseEvent('mouseup', el);
-      this.runtime.utils.emitMouseEvent('click', el);
-
-      this.mouseIntoIframe('mouseup');
-    }
-
-    return Promise.resolve();
-  }
-
   /**
    * Handles loading new URLs into active frame.
    *
@@ -309,6 +311,21 @@ export default class Cursor extends React.Component {
           }
         }
       });
+    }
+
+    return Promise.resolve();
+  }
+
+  cursorMouseUp() {
+    let el = this.cursorElement;
+
+    if (el) {
+      this.cursorDownElement = null;
+
+      this.runtime.utils.emitMouseEvent('mouseup', el);
+      this.runtime.utils.emitMouseEvent('click', el);
+
+      this.mouseIntoIframe('mouseup');
     }
 
     return Promise.resolve();
