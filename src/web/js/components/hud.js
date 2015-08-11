@@ -2,6 +2,7 @@ import neatAudio from '../../../../node_modules/neat-audio/neat-audio.js';
 
 import Tiles from './tiles.js';
 import cx from './../lib/class_set.js';
+import PermissionPrompt from './permission_prompt.js';
 
 const hudHideSound = '/media/hud_hide.wav';
 const hudShowSound = '/media/hud_show.wav';
@@ -112,6 +113,8 @@ export default class Hud extends React.Component {
         hidden: !this.props.hudVisible
       })}>
       <div id='background' className='background threed pointer-none'></div>
+
+      <PermissionPrompt />
 
       <div id='title' className='title threed pointer-none'>
         <span id='title__icon' className='title__icon' style={this.iconStyle}></span>

@@ -98,15 +98,20 @@ export default class Browser extends React.Component {
     });
   }
 
-  toggleHud() {
+  /**
+   * Toggles the current state of the hud.
+   * @param {Boolean} [force] When true opens the hud, when false closes the hud. If not used, normal toggle behavior ensues.
+   */
+  toggleHud(force) {
     // Steal focus from whichever element is currently focussed.
+    // Do not blur the current element if force is set and there's nothing to do.
     var el = document.activeElement;
-    if (el) {
+    if (el && force !== undefined) {
       el.blur();
     }
 
     this.setState({
-      hudVisible: !this.state.hudVisible
+      hudVisible: force !== undefined ? force : !this.state.hudVisible
     });
   }
 
@@ -321,7 +326,8 @@ export default class Browser extends React.Component {
               hudUrl={this.state.hudUrl}
               onUrlSubmit={this.onUrlSubmit.bind(this)}
               onBack={this.onBack.bind(this)}
-              onForward={this.onForward.bind(this)} />
+              onForward={this.onForward.bind(this)}
+              toggleHud={this.toggleHud.bind(this)} />
 
             <div id='stopreload' className='stopreload threed'>
               <button
