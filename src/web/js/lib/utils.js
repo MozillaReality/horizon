@@ -60,20 +60,6 @@ export default class Utils {
   }
 
   /**
-   * Sleeps for some milliseconds to enable easy chaining of Promises.
-   *
-   * @param {Number} duration Time in milliseconds to sleep (e.g., 1500 for 1.5 seconds).
-   * @returns {Promise} A promse which resolves after sleeping.
-   */
-  sleep(duration = 0) {
-    return new Promise(resolve => {
-      window.setTimeout(() => {
-        resolve();
-      }, duration);
-    });
-  }
-
-  /**
    * Returns an anchor element if its 'click' event can he hijacked by Horizon.
    *
    * @param {Event} e A 'click' event (delegated on document).
