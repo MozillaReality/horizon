@@ -1,12 +1,18 @@
 /**
  * A list of selectors for which we ignore keyboard events for.
  */
-const FOCUSABLE_ELEMENTS = [
+const focusableElements = [
   'input:not([disabled]):not([readonly])',
   'select:not([disabled]):not([readonly])',
   'textarea:not([disabled]):not([readonly])',
   '[contenteditable]'
 ];
+
+const keyPhase = {
+  down: 1,
+  up: 2,
+  focused: 3
+};
 
 export default class KeyboardInput {
 
@@ -38,12 +44,12 @@ export default class KeyboardInput {
   }
 
   /**
-   * Checks if an event target matches one of the selectors in FOCUSABLE_ELEMENTS.
+   * Checks if an event target matches one of the selectors in focusableElements.
    * @param {Event} e The keyboard event.
    * @returns {Boolean} Whether or not the field is focused.
    */
   isFieldFocused(e) {
-    return (e ? e.target : document.activeElement).matches(FOCUSABLE_ELEMENTS);
+    return (e ? e.target : document.activeElement).matches(focusableElements);
   }
 
   /**
@@ -51,7 +57,7 @@ export default class KeyboardInput {
    * @param {Event} e The keyboard event.
    */
   handleEvent(e) {
-    if (this.isFieldFocused(e)) {
+    if (this.isFieldFocused(e) && this.keyPhase === keyPhase.focused) {
       return;
     }
 
@@ -65,8 +71,14 @@ export default class KeyboardInput {
 
     var inputChordsToTry = [inputChord, inputChord + '.down'];
 
-    if (e.type === 'keyup') {
-      inputChordsToTry = [inputChord + '.up'];
+    switch (e.type) {
+      case 'keydown':
+        this.keyPhase = keyPhase.down;
+        break;
+      case 'keyup':
+        inputChordsToTry = [inputChord + '.up'];
+        this.keyPhase = this.isFieldFocused(e) ? keyPhase.focused : keyPhase.up;
+        break;
     }
 
     inputChordsToTry.forEach(chord => {
