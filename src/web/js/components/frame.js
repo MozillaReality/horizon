@@ -49,32 +49,27 @@ export default class Frame extends React.Component {
   /**
    * Reloads the current page.
    *
-   * @param {(Event|null)} e The mozbrowser event.
    * @param {Boolean} hardReload Whether or not to perform a hard reload.
    */
-  onReload(e, hardReload = false) {
+  onReload(hardReload = false) {
     this.iframe.reload(hardReload);
   }
 
-  // TODO: Implement in react.
-  close() {
+  onClose() {
     this.iframe.parentNode.removeChild(this.iframe);
   }
 
-  // TODO: Implement in react.
-  zoomIn() {
+  onZoomIn() {
     this.zoomValue = Math.min(this.zoomValue + zoomConfig.step, zoomConfig.max);
     this.iframe.zoom(this.zoomValue);
   }
 
-  // TODO: Implement in react.
-  zoomOut() {
+  onZoomOut() {
     this.zoomValue = Math.max(this.zoomValue - zoomConfig.step, zoomConfig.min);
     this.iframe.zoom(this.zoomValue);
   }
 
-  // TODO: Implement in react.
-  resetZoom() {
+  onResetZoom() {
     this.zoomValue = zoomConfig.defaultValue;
     this.iframe.zoom(this.zoomValue);
   }
