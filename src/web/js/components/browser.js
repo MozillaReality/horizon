@@ -119,13 +119,16 @@ export default class Browser extends React.Component {
     });
 
     runtime.keyboardInput.assign({
-      ' ': () => this.toggleHud()
+      ' ': () => this.toggleHud(),
+      'ctrl t': () => this.newFrame(),
+      'ctrl w': () => this.closeFrame(this.state.activeFrameIndex)
     });
 
     this.state = {
       viewmode: 'mono',
       hudVisible: false,
       hudUrl: null,
+      activeFrameIndex: 0,
       frames: [
         {
           viewmode: 'mono',
@@ -134,15 +137,14 @@ export default class Browser extends React.Component {
         }
       ]
     };
-    this.activeFrameIndex = 0;
   }
 
   get activeFrame() {
-    return this.state.frames[this.activeFrameIndex];
+    return this.state.frames[this.state.activeFrameIndex];
   }
 
   get activeFrameRef() {
-    return this.refs[`frame${this.activeFrameIndex}`];
+    return this.refs[`frame${this.state.activeFrameIndex}`];
   }
 
   /**
@@ -155,7 +157,7 @@ export default class Browser extends React.Component {
     React.findDOMNode(this.refs.contentCamera).style.transform = '';
 
     var frames = this.state.frames;
-    frames[this.activeFrameIndex].viewmode = 'stereo';
+    frames[this.state.activeFrameIndex].viewmode = 'stereo';
     this.setState({
       viewmode: 'stereo',
       frames: frames
@@ -168,7 +170,7 @@ export default class Browser extends React.Component {
   onMono() {
     console.log('Entering mono.');
     var frames = this.state.frames;
-    frames[this.activeFrameIndex].viewmode = 'mono';
+    frames[this.state.activeFrameIndex].viewmode = 'mono';
     this.setState({
       viewmode: 'mono',
       frames: frames
@@ -202,12 +204,31 @@ export default class Browser extends React.Component {
 
   newFrame(url) {
     var frames = this.state.frames;
-    this.activeFrameIndex = frames.length;
     frames.push({
+      viewmode: 'mono',
       url: url || Settings.startPageUrl,
       icons: []
     });
-    this.setState({frames: frames});
+    this.setState({
+      viewmode: frames[frames.length - 1].viewmode,
+      activeFrameIndex: frames.length - 1,
+      frames: frames
+   });
+  }
+
+  closeFrame(index) {
+    if (!index) {
+      index = this.state.activeFrameIndex;
+    }
+    var frames = this.state.frames;
+    frames.splice(index, 1);
+    index = index < frames.length - 1 ? index : frames.length - 1;
+
+    this.setState({
+      viewmode: frames[index].viewmode,
+      activeFrameIndex: index,
+      frames: frames
+    });
   }
 
   /**
@@ -225,9 +246,8 @@ export default class Browser extends React.Component {
    */
   onHmdFrame(transform, hmdState) {
     React.findDOMNode(this.refs.camera).style.transform = transform;
-    if (this.activeFrame.viewmode === 'mono') {
-      React.findDOMNode(this.refs.contentCamera).style.transform = transform;
-    }
+    var contentCamera = React.findDOMNode(this.refs.contentCamera);
+    contentCamera.style.transform = this.state.viewmode === 'mono' ? transform : '';
     this.runtime.hmdState = hmdState;
   }
 
@@ -239,7 +259,7 @@ export default class Browser extends React.Component {
     }
 
     var frames = this.state.frames;
-    frames[this.activeFrameIndex].url = url;
+    frames[this.state.activeFrameIndex].url = url;
     this.setState({
       hudVisible: false,
       frames: frames
@@ -252,7 +272,7 @@ export default class Browser extends React.Component {
 
   onTitleChange(frameProps, e) {
     var frames = this.state.frames;
-    frames[this.activeFrameIndex].title = e.detail;
+    frames[this.state.activeFrameIndex].title = e.detail;
     this.setState({
       frames: frames
     });
@@ -260,7 +280,7 @@ export default class Browser extends React.Component {
 
   onLocationChange(frameProps, e) {
     var frames = this.state.frames;
-    frames[this.activeFrameIndex].location = e.detail;
+    frames[this.state.activeFrameIndex].location = e.detail;
     this.setState({
       hudUrl: e.detail,
       frames: frames
@@ -270,7 +290,7 @@ export default class Browser extends React.Component {
 
   onIconChange(frameProps, {detail}) {
     var frames = this.state.frames;
-    frames[this.activeFrameIndex].icons.push(detail);
+    frames[this.state.activeFrameIndex].icons.push(detail);
     this.setState({
       frames: frames
     });
@@ -278,7 +298,7 @@ export default class Browser extends React.Component {
 
   onLoadStart() {
     var frames = this.state.frames;
-    frames[this.activeFrameIndex].loading = true;
+    frames[this.state.activeFrameIndex].loading = true;
     this.setState({
       frames: frames
     });
@@ -286,7 +306,7 @@ export default class Browser extends React.Component {
 
   onLoadEnd() {
     var frames = this.state.frames;
-    frames[this.activeFrameIndex].loading = false;
+    frames[this.state.activeFrameIndex].loading = false;
     this.setState({
       frames: frames
     });
@@ -353,12 +373,12 @@ export default class Browser extends React.Component {
 
     var canGoBack = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoBack());
     canGoBack.then(result => {
-      frames[this.activeFrameIndex].canGoBack = result;
+      frames[this.state.activeFrameIndex].canGoBack = result;
     });
 
     var canGoForward = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoForward());
     canGoForward.then(result => {
-      frames[this.activeFrameIndex].canGoForward = result;
+      frames[this.state.activeFrameIndex].canGoForward = result;
     });
 
     return Promise.all([canGoBack, canGoForward]).then(() => {
