@@ -123,6 +123,7 @@ export default class Browser extends React.Component {
     });
 
     this.state = {
+      viewmode: 'mono',
       hudVisible: false,
       hudUrl: null,
       frames: [
@@ -153,10 +154,10 @@ export default class Browser extends React.Component {
     // Manually clear transform.
     React.findDOMNode(this.refs.contentCamera).style.transform = '';
 
-    document.body.dataset.projection = 'stereo';
     var frames = this.state.frames;
     frames[this.activeFrameIndex].viewmode = 'stereo';
     this.setState({
+      viewmode: 'stereo',
       frames: frames
     });
   }
@@ -166,10 +167,10 @@ export default class Browser extends React.Component {
    */
   onMono() {
     console.log('Entering mono.');
-    document.body.dataset.projection = 'mono';
     var frames = this.state.frames;
     frames[this.activeFrameIndex].viewmode = 'mono';
     this.setState({
+      viewmode: 'mono',
       frames: frames
     });
   }
@@ -437,6 +438,7 @@ export default class Browser extends React.Component {
           </div>
 
           <Cursor
+            visible={this.state.viewmode === 'mono' || this.state.hudVisible}
             runtime={this.runtime}
             hudVisible={this.state.hudVisible}
             activeFrameProps={this.activeFrame}
