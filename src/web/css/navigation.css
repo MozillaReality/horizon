@@ -76,6 +76,10 @@ button {
   pointer-events: none;
 }
 
+.visible {
+  visibility: visible !important;
+}
+
 
 /**
  * VR classes
@@ -159,11 +163,6 @@ button {
 /**
  * Cursor
  */
-.hudVisible .cursor,
-[data-projection="mono"] .cursor.is-visible {
-  visibility: visible;
-}
-
 .cursor {
   width: 0;
   height: 0;

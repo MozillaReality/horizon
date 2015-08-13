@@ -1,6 +1,7 @@
 import Matrix from './../lib/matrix.js';
 import vec4 from '../../../../node_modules/gl-vec4';
 import Settings from './../settings.js';
+import cx from './../lib/class_set.js';
 
 var matrix = new Matrix();
 
@@ -367,7 +368,11 @@ export default class Cursor extends React.Component {
   }
 
   render() {
-    return <div id='cursor' ref='cursor' className='cursor threed'>
+    return <div id='cursor' ref='cursor'
+      className={cx({
+        'cursor threed': true,
+        'visible': this.props.visible
+      })}>
         <div className='cursor-arrow threed'></div>
       </div>;
   }
