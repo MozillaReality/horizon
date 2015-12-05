@@ -12,13 +12,7 @@
     "url": "git://github.com/mozvr/horizon.git"
   },
   "author": "Mozilla",
-  "licenses": [
-    {
-      "type": "MPL",
-      "version": "2.0",
-      "url": "http://mozilla.org/MPL/2.0/"
-    }
-  ],
+  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/mozvr/horizon/issues"
   },
