@@ -168,7 +168,8 @@ gulp.task('babelify', function(cb) {
     debug: !!!process.env.PRODUCTION
   })
   .transform(babelify.configure({
-    sourceMap: !!!process.env.PRODUCTION
+    sourceMap: !!!process.env.PRODUCTION,
+    presets: ['react', 'es2015']
   }))
   .bundle()
   .on('error', function (err) {
