@@ -26,11 +26,11 @@ An experimental browser written using web standards. This browser can be run ins
 
 To start the server and file watchers run the following on the command line:
 
-    gulp
+    npm start
 
 If you wish to serve the site from a different port:
 
-    PORT=8000 gulp
+    PORT=8000 npm start
 
 
 ### Running inside of a graphene build
@@ -60,7 +60,7 @@ You can run the built binary like so:
 This will build and package the add-on into the .xpi file.
 
 ```
-gulp addon
+npm run addon
 ```
 
 To run as an add-on, you will need to simply drop the add-on onto Firefox, or navigate to it with File -> Open.
