@@ -7,9 +7,13 @@ var gutil = require('gulp-util');
 var babelify = require('babelify');
 var browserify = require('browserify');
 var del = require('del');
+var detectBinary = require('graphene-marionette-runner').detectBinary;
+var es = require('event-stream');
 var eslint = require('gulp-eslint');
+var minimist = require('minimist');
 var moldSourceMap = require('mold-source-map');
 var runSequence = require('run-sequence');
+var shell = require('gulp-shell');
 var zip = require('gulp-zip');
 var webserver = require('gulp-webserver');
 
@@ -209,6 +213,48 @@ gulp.task('make-addon-zip', function() {
  * Runs travis tests
  */
 gulp.task('travis', ['lint', 'babelify']);
+
+
+/**
+ * Runs integration tests
+ */
+gulp.task('test', function(cb) {
+  if (!fs.existsSync('./horizon')) {
+    throw new Error('Horizon binary not found, please read the README.');
+  }
+
+  var options = minimist(process.argv.slice(2));
+  var scripts = options.file;
+  var binary;
+  var testFilePattern = 'test/**/*_test.js';
+  if (options.file && options.file.length) {
+    testFilePattern = options.file;
+  }
+
+  gulp.src(testFilePattern, {read: false})
+    .pipe(es.map((function (data, callback) {
+      detectBinary('./horizon', {product: 'horizon'}, function(err, _binary) {
+        binary = _binary;
+        callback(null, data.path + ' ');
+      });
+    })))
+    .pipe(es.wait(function(err, testPaths) {
+      var port = process.env.PORT || 8000;
+      var host = process.env.HOST || '0.0.0.0';
+
+      gulp.src('')
+        .pipe(shell([
+          'marionette-mocha ' +
+          ' --host-log stdout ' +
+          ' --host $(pwd)/node_modules/graphene-marionette-runner/host/index.js ' +
+          ' --runtime ' + binary +
+          ' --start-manifest http://' + host + ':' + port + '/manifest.webapp ' +
+          testPaths
+        ]))
+        .pipe(es.wait(cb));
+    }));
+});
+
 
 
 /**

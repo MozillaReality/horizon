@@ -82,6 +82,15 @@ The easiest way to use developer tools with this project is to select the "Remot
 * By default you should be able to connect to the running browser at: localhost:6000
 
 
+## Integration Tests
+
+Run integration tests with `gulp test`. You need to have a horizon gecko binary symlinked in the root of the repository. Example of symlinking the build:
+
+```
+ln -s ../gecko/obj-horizon/dist/Horizon.app horizon
+```
+
+
 ## Maintainers
 
 Run this command to publish a new tag to GitHub and version to npm:

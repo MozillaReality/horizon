@@ -43,7 +43,8 @@ export default class KeyboardInput {
    * @returns {Boolean} Whether or not the field is focused.
    */
   isFieldFocused(e) {
-    return (e ? e.target : document.activeElement).matches(FOCUSABLE_ELEMENTS);
+    var target = e.target || document.activeElement;
+    return target && target.matches(FOCUSABLE_ELEMENTS);
   }
 
   /**
@@ -71,8 +72,8 @@ export default class KeyboardInput {
 
     inputChordsToTry.forEach(chord => {
       if (this.definitions[chord]) {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault && e.preventDefault();
+        e.stopPropagation && e.stopPropagation();
         this.definitions[chord]();
       }
     });
