@@ -5,6 +5,7 @@
   "scripts": {
     "install": "gulp install",
     "start": "gulp",
+    "addon": "gulp addon",
     "release": "release-it"
   },
   "repository": {
