@@ -12,6 +12,7 @@
     "browser": {},
     "embed-apps": {},
     "systemXHR": {},
+    "settings":{ "access": "readwrite" },
     "webapps-manage": {}
   }
 }

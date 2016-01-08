@@ -10,6 +10,7 @@ import Cursor from './cursor.js';
 import Frame from './frame.js';
 import Hud from './hud.js';
 import Settings from '../settings.js';
+import Devtools from '../devtools.js';
 import Utils from './../lib/utils.js';
 import UrlUtil from '../../../../node_modules/urlutil.js/src/urlutil.js';
 import cx from './../lib/class_set.js';
@@ -23,6 +24,7 @@ export default class Browser extends React.Component {
     runtime.utils = new Utils();
     runtime.contentScripts = new ContentScripts();
     runtime.debugging = new Debugging();
+    runtime.devtools = new Devtools();
     runtime.frameCommunicator = new FrameCommunicator('browser', {
       getActiveFrameElement: () => this.activeFrameRef.iframe
     });
@@ -45,6 +47,7 @@ export default class Browser extends React.Component {
 
     runtime.contentScripts.init(runtime);
     runtime.debugging.init(runtime);
+    runtime.devtools.init(runtime);
     runtime.frameCommunicator.init(runtime);
     runtime.gamepadInput.init(runtime);
     runtime.keyboardInput.init(runtime);
