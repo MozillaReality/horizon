@@ -3,7 +3,7 @@ const Settings = {
   hmdScale: -100,
   pixelsPerMeter: 96 / 2.54,
   scrollStep: 50,  // Measured in pixels.
-  startPageUrl: 'http://mozvr.com/posts/quick-vr-prototypes/',
+  startPageUrl: 'http://localhost:8080',
   searchUrl: 'https://duckduckgo.com/?q={q}',
 };
 

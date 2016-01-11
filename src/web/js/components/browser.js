@@ -177,9 +177,6 @@ export default class Browser extends React.Component {
   onStereo() {
     console.log('Entering stereo.');
 
-    // Manually clear transform.
-    React.findDOMNode(this.refs.contentCamera).style.transform = '';
-
     document.body.dataset.projection = 'stereo';
     var frames = this.state.frames;
     frames[this.activeFrameIndex].viewmode = 'stereo';
@@ -262,10 +259,6 @@ export default class Browser extends React.Component {
    * @param {Object} hmdState The hmd state.
    */
   onHmdFrame(transform, hmdState) {
-    React.findDOMNode(this.refs.camera).style.transform = transform;
-    if (this.activeFrame.viewmode === 'mono') {
-      React.findDOMNode(this.refs.contentCamera).style.transform = transform;
-    }
     this.runtime.hmdState = hmdState;
   }
 
@@ -458,68 +451,62 @@ export default class Browser extends React.Component {
           className={cx({
             hudVisible: this.state.hudVisible
           })}>
-          <div id='content-camera'
-            className={this.activeFrame.viewmode === 'mono' ? 'camera threed' : ''}
-            ref='contentCamera'>
-            <div id='content-container'
+
+          <div id='content-container'
+            className={cx({
+              'content-container': true,
+              [`frame--${this.activeFrame.viewmode}`]: true
+            })}
+            ref="frameWrapper">
+          {
+            this.state.frames.map((frameProps, idx) =>
+              <Frame
+                key={idx}
+                ref={`frame${idx}`}
+                id={`frame${idx}`}
+                frameProps={frameProps}
+                url={frameProps.url}
+                mozbrowsericonchange={this.onIconChange.bind(this)}
+                mozbrowserlocationchange={this.onLocationChange.bind(this)}
+                mozbrowsertitlechange={this.onTitleChange.bind(this)}
+                mozbrowserloadstart={this.onLoadStart.bind(this)}
+                mozbrowserloadend={this.onLoadEnd.bind(this)}
+                mozbrowsermetachange={this.onMetaChange.bind(this)} />)
+          }
+          </div>
+
+          <Hud
+            ref='hud'
+            runtime={this.runtime}
+            activeFrameProps={this.activeFrame}
+            hudVisible={this.state.hudVisible}
+            hudUrl={this.state.hudUrl}
+            onUrlSubmit={this.onUrlSubmit.bind(this)}
+            onBack={this.onBack.bind(this)}
+            onForward={this.onForward.bind(this)} />
+
+          <div id='stopreload' className='stopreload threed'>
+            <button
               className={cx({
-                'content-container': true,
-                [`frame--${this.activeFrame.viewmode}`]: true,
-                threed: this.activeFrame.viewmode === 'mono'
+                'fa fa-repeat nav reload': true,
+                hidden: this.activeFrame.loading || !this.state.hudVisible
               })}
-              ref="frameWrapper">
-            {
-              this.state.frames.map((frameProps, idx) =>
-                <Frame
-                  key={idx}
-                  ref={`frame${idx}`}
-                  id={`frame${idx}`}
-                  frameProps={frameProps}
-                  url={frameProps.url}
-                  mozbrowsericonchange={this.onIconChange.bind(this)}
-                  mozbrowserlocationchange={this.onLocationChange.bind(this)}
-                  mozbrowsertitlechange={this.onTitleChange.bind(this)}
-                  mozbrowserloadstart={this.onLoadStart.bind(this)}
-                  mozbrowserloadend={this.onLoadEnd.bind(this)}
-                  mozbrowsermetachange={this.onMetaChange.bind(this)} />)
-            }
-            </div>
-          </div>
-
-          <div className='camera threed' ref='camera'>
-            <Hud
-              ref='hud'
-              runtime={this.runtime}
-              activeFrameProps={this.activeFrame}
-              hudVisible={this.state.hudVisible}
-              hudUrl={this.state.hudUrl}
-              onUrlSubmit={this.onUrlSubmit.bind(this)}
-              onBack={this.onBack.bind(this)}
-              onForward={this.onForward.bind(this)} />
-
-            <div id='stopreload' className='stopreload threed'>
-              <button
-                className={cx({
-                  'fa fa-repeat nav reload': true,
-                  hidden: this.activeFrame.loading || !this.state.hudVisible
-                })}
-                onClick={this.onReload.bind(this)}
-                data-action='reload' id='reload'></button>
-              <button
-                className={cx({
-                  'fa fa-times nav stop': true,
-                  hidden: !this.activeFrame.loading
-                })}
-                onClick={this.onStop.bind(this)}
-                data-action='stop' id='stop'></button>
-            </div>
-
-            <div id='loading'
+              onClick={this.onReload.bind(this)}
+              data-action='reload' id='reload'></button>
+            <button
               className={cx({
-                visible: this.activeFrame.loading,
-                'loading threed': true
-              })}>LOADING</div>
+                'fa fa-times nav stop': true,
+                hidden: !this.activeFrame.loading
+              })}
+              onClick={this.onStop.bind(this)}
+              data-action='stop' id='stop'></button>
           </div>
+
+          <div id='loading'
+            className={cx({
+              visible: this.activeFrame.loading,
+              'loading threed': true
+            })}>LOADING</div>
 
           <Cursor
             runtime={this.runtime}
