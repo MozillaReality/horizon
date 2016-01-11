@@ -366,7 +366,7 @@ gulp.task('default', function() {
  * Remove the distributable files.
  */
 gulp.task('clobber', function(cb) {
-  del('dist/**', cb);
+  return del('dist/**', cb);
 });
 
 /**

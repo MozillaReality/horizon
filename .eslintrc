@@ -20,7 +20,6 @@
     "jsx": true,
   },
   "rules": {
-    "react/jsx-uses-vars": 1,
     "block-scoped-var": 2,
     "camelcase": 0,
     "comma-dangle": 0,
