@@ -457,7 +457,7 @@ export default class Browser extends React.Component {
               'content-container': true,
               [`frame--${this.activeFrame.viewmode}`]: true
             })}
-            ref="frameWrapper">
+            ref='frameWrapper'>
           {
             this.state.frames.map((frameProps, idx) =>
               <Frame
