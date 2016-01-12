@@ -1,3 +1,5 @@
+import ReactDOM from 'react-dom';
+
 const zoomConfig = {
   min: 0.2,
   max: 3,
@@ -25,7 +27,7 @@ export default class Frame extends React.Component {
   }
 
   get iframe() {
-    return React.findDOMNode(this.refs.iframe);
+    return ReactDOM.findDOMNode(this.refs.iframe);
   }
 
   handleEvent(e) {

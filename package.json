@@ -42,6 +42,8 @@
     "run-sequence": "^1.0.2"
   },
   "dependencies": {
+    "aframe-core": "^0.1.3",
+    "aframe-react": "^1.0.3",
     "eslint-plugin-react": "^3.14.0",
     "gl-vec4": "^1.0.1",
     "neat-audio": "^0.2.1",

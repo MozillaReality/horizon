@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import ContentScripts from './../content_scripts.js';
 import Debugging from './../debugging.js';
 import FrameCommunicator from './../frame_communicator.js';
@@ -7,6 +8,7 @@ import GamepadInput from './../inputs/gamepad/index.js';
 import KeyboardInput from './../inputs/keyboard/index.js';
 
 import Cursor from './cursor.js';
+import Overlay from './overlay.js';
 import Frame from './frame.js';
 import Hud from './hud.js';
 import Settings from '../settings.js';
@@ -249,7 +251,7 @@ export default class Browser extends React.Component {
    * Enters VR mode.
    */
   enterVR() {
-    this.runtime.viewportManager.enterVr(React.findDOMNode(this.refs.fullscreenContainer));
+    this.runtime.viewportManager.enterVr(ReactDOM.findDOMNode(this.refs.fullscreenContainer));
   }
 
   /**
@@ -428,15 +430,18 @@ export default class Browser extends React.Component {
   updateNavigationState() {
     var frames = this.state.frames;
 
-    var canGoBack = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoBack());
-    canGoBack.then(result => {
-      frames[this.activeFrameIndex].canGoBack = result;
-    });
+    // var canGoBack = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoBack());
+    // canGoBack.then(result => {
+    //   frames[this.activeFrameIndex].canGoBack = result;
+    // });
 
-    var canGoForward = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoForward());
-    canGoForward.then(result => {
-      frames[this.activeFrameIndex].canGoForward = result;
-    });
+    // var canGoForward = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoForward());
+    // canGoForward.then(result => {
+    //   frames[this.activeFrameIndex].canGoForward = result;
+    // });
+
+    var canGoBack = false;
+    var canGoForward = false;
 
     return Promise.all([canGoBack, canGoForward]).then(() => {
       this.setState({
@@ -474,6 +479,8 @@ export default class Browser extends React.Component {
                 mozbrowsermetachange={this.onMetaChange.bind(this)} />)
           }
           </div>
+
+          <Overlay/>
 
           <Hud
             ref='hud'

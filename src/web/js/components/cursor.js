@@ -1,3 +1,5 @@
+import ReactDOM from 'react-dom';
+
 import Matrix from './../lib/matrix.js';
 import vec4 from '../../../../node_modules/gl-vec4';
 import Settings from './../settings.js';
@@ -56,7 +58,7 @@ export default class Cursor extends React.Component {
   }
 
   get cursor() {
-    return React.findDOMNode(this.refs.cursor);
+    return ReactDOM.findDOMNode(this.refs.cursor);
   }
 
   /**
