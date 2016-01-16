@@ -1,5 +1,3 @@
-import ReactDOM from 'react-dom';
-
 const zoomConfig = {
   min: 0.2,
   max: 3,
@@ -24,10 +22,6 @@ export default class Frame extends React.Component {
     this.isStereo = false;
 
     this.zoomValue = zoomConfig.defaultValue;
-  }
-
-  get iframe() {
-    return ReactDOM.findDOMNode(this.refs.iframe);
   }
 
   handleEvent(e) {
@@ -77,30 +71,15 @@ export default class Frame extends React.Component {
   }
 
   /**
-   * Swaps out the mozbrowser iframe after mounting.
-   * Needed due to custom attributes, and potentially using frames from mozbrowser events.
+   * Add necessary iframe listeners.
    */
   componentDidMount() {
     var frame = this.iframe;
-    var reactid = frame.dataset.reactid;
-    if (frame.tagName.toLowerCase() !== 'iframe') {
-      frame = document.createElement('iframe');
-      frame.setAttribute('remote', 'true');
-    }
-    frame.className = 'frame';
-    frame.dataset.reactid = reactid;
-
-    frame.setAttribute('mozbrowser', 'true');
-    frame.setAttribute('allowfullscreen', 'true');
-    frame.setAttribute('src', this.props.url);
-
     if (!frame.hasAttribute('data-listeners-added')) {
       frame.setAttribute('data-listeners-added', true);
       this.browserEvents.forEach(event =>
         frame.addEventListener(event, this));
     }
-
-    this.iframe.parentNode.replaceChild(frame, this.iframe);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -111,7 +90,13 @@ export default class Frame extends React.Component {
 
   render() {
     return <div className='frameWrapper'>
-        <div ref='iframe' />
+        <iframe
+          remote
+          mozbrowser
+          allowFullScreen
+          ref={c => {this.iframe = c;}}
+          className='frame'
+          src={this.props.url}/>
       </div>;
   }
 }

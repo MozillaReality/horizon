@@ -429,15 +429,15 @@ export default class Browser extends React.Component {
   updateNavigationState() {
     var frames = this.state.frames;
 
-    // var canGoBack = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoBack());
-    // canGoBack.then(result => {
-    //   frames[this.activeFrameIndex].canGoBack = result;
-    // });
+    var canGoBack = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoBack());
+    canGoBack.then(result => {
+      frames[this.activeFrameIndex].canGoBack = result;
+    });
 
-    // var canGoForward = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoForward());
-    // canGoForward.then(result => {
-    //   frames[this.activeFrameIndex].canGoForward = result;
-    // });
+    var canGoForward = this.runtime.utils.evaluateDOMRequest(this.activeFrameRef.iframe.getCanGoForward());
+    canGoForward.then(result => {
+      frames[this.activeFrameIndex].canGoForward = result;
+    });
 
     var canGoBack = false;
     var canGoForward = false;
