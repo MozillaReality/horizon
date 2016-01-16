@@ -173,11 +173,12 @@ gulp.task('babelify', function(cb) {
   })
   .transform(babelify.configure({
     sourceMap: !!!process.env.PRODUCTION,
-    presets: ['react', 'es2015']
+    presets: ['react', 'es2015'],
+    ignore: /node_modules\/aframe/
   }))
   .bundle()
   .on('error', function (err) {
-    console.error('[babelify] Error occurred:\n', err.stack);
+    console.error('[babelify] Error occurred:\n', err);
 
     // But don't error out the stream.
     cb();
