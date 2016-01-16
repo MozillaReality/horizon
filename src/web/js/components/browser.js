@@ -8,7 +8,6 @@ import GamepadInput from './../inputs/gamepad/index.js';
 import KeyboardInput from './../inputs/keyboard/index.js';
 
 import Cursor from './cursor.js';
-import Overlay from './overlay.js';
 import Frame from './frame.js';
 import Hud from './hud.js';
 import Settings from '../settings.js';
@@ -479,8 +478,6 @@ export default class Browser extends React.Component {
                 mozbrowsermetachange={this.onMetaChange.bind(this)} />)
           }
           </div>
-
-          <Overlay/>
 
           <Hud
             ref='hud'

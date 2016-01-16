@@ -1,20 +1,6 @@
-import '../../../../node_modules/aframe-core';
-import {Entity, Scene} from '../../../../node_modules/aframe-react/';
+import 'aframe';
+import {Animation, Entity, Scene} from 'aframe-react';
 
-// import Camera from './aframe/Camera';
-// import Light from './aframe/Light';
-// import Sky from './aframe/Sky';
-/*
-<Scene>
-        <Camera></Camera>
-
-        <Light type="ambient" color="#888"/>
-        <Light type="directional" intensity="0.5" position="-1 1 0"/>
-        <Light type="directional" intensity="1" position="1 1 0"/>
-
-        <Entity geometry='primitive: box' material='color: red' position='0 0 -5'/>
-      </Scene>
- */
 export default class Overlay extends React.Component {
 
   constructor(props) {
@@ -23,7 +9,11 @@ export default class Overlay extends React.Component {
 
   render() {
     return (
-      <Scene></Scene>
+      <Scene>
+        <Entity geometry={{primitive: 'box'}} material="color: red" position="0 0 -5">
+          <Animation attribute="rotation" dur="5000" repeat="indefinite" to="0 360 360"/>
+        </Entity>
+      </Scene>
     );
   }
 }
