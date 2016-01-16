@@ -5,9 +5,7 @@ export default class Windows extends React.Component {
   }
 
   render() {
-    return (
-      <div>Windows</div>
-    );
+    return <div>Windows</div>;
   }
 }
 

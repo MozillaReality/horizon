@@ -8,13 +8,11 @@ export default class Overlay extends React.Component {
   }
 
   render() {
-    return (
-      <Scene>
-        <Entity geometry={{primitive: 'box'}} material="color: red" position="0 0 -5">
-          <Animation attribute="rotation" dur="5000" repeat="indefinite" to="0 360 360"/>
+    return <Scene>
+        <Entity geometry={{primitive: 'box'}} material='color: red' position='0 0 -5'>
+          <Animation attribute='rotation' dur='5000' repeat='indefinite' to='0 360 360'/>
         </Entity>
-      </Scene>
-    );
+      </Scene>;
   }
 }
 
