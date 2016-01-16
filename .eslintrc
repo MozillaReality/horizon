@@ -39,7 +39,7 @@
       2,
       "allow-null"
     ],
-    "global-strict": [
+    "strict": [
       2,
       "never"
     ],
@@ -93,18 +93,20 @@
     "semi": 2,
     "space-after-keywords": 2,
     "space-before-blocks": 2,
-    "space-in-brackets": [2, "never"],
+    "object-curly-spacing": [2, "never"],
+    "array-bracket-spacing": [2, "never"],
+    "computed-property-spacing": [2, "never"],
     "space-return-throw-case": 2,
-    "spaced-line-comment": 2,
+    "spaced-comment": 2,
     "strict": 0,
     "valid-typeof": 2,
     "wrap-iife": [
       2,
       "inside"
     ],
+    "jsx-quotes": 1,
     "react/display-name": 0,
     "react/jsx-boolean-value": 1,
-    "react/jsx-quotes": 1,
     "react/jsx-no-undef": 1,
     "react/jsx-sort-props": 0,
     "react/jsx-sort-prop-types": 0,
