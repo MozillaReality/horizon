@@ -505,6 +505,7 @@ button {
   right: 2em;
   text-transform: uppercase;
   top: 2em;
+  z-index: 100; /* renders button on top of a-frame canvas */
 }
 
 .btn--entervr:hover,

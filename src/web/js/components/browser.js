@@ -8,6 +8,7 @@ import ViewportManager from './../viewport_manager.js';
 import GamepadInput from './../inputs/gamepad/index.js';
 import KeyboardInput from './../inputs/keyboard/index.js';
 
+import Overlay from './overlay';
 import Cursor from './cursor.js';
 import Frame from './frame.js';
 import Hud from './hud.js';
@@ -519,6 +520,9 @@ export default class Browser extends React.Component {
             activeFrameProps={this.activeFrame}
             navigate={this.navigate.bind(this)} />
         </div>
+
+        <Overlay/>
+
         <button
           id='entervr'
           className='btn btn--entervr'
