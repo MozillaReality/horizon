@@ -13,6 +13,7 @@ var runSequence = require('run-sequence');
 var zip = require('gulp-zip');
 var webserver = require('gulp-webserver');
 var child = require('child_process');
+var path = require('path');
 
 const SRC_ROOT = './src/';
 const ADDON_ROOT = './src/addon/';
@@ -23,7 +24,8 @@ const DIST_ADDON_ROOT = './dist/addon/';
 const DIST_CONTENT_SCRIPTS_ROOT = './dist/content_scripts/';
 const DIST_WEB_ROOT = './dist/web/';
 const DIST_WEB_MODULE_ROOT = './dist/web/js/';
-const RUNTIME_PATH = '/Applications/B2G.app/Contents/MacOS/graphene';
+const APPLICATION_RUNTIME_PATH = '/Applications/B2G.app/Contents/MacOS/graphene';
+const LOCAL_GECKO_DEV_RUNTIME_PATH = path.resolve(__dirname + '/../gecko-dev/obj-horizon/dist/Horizon.app/Contents/MacOS/horizon');
 const PORT = process.env.PORT || 8000;
 
 /**
@@ -340,7 +342,14 @@ gulp.task('webserver', function() {
  * Starts graphene
  */
 gulp.task('application', function() {
-  var app = child.spawn(RUNTIME_PATH, [
+  var binaryPath = APPLICATION_RUNTIME_PATH;
+
+  if (fs.existsSync(LOCAL_GECKO_DEV_RUNTIME_PATH)) {
+    console.log('using local path!', LOCAL_GECKO_DEV_RUNTIME_PATH)
+    binaryPath = LOCAL_GECKO_DEV_RUNTIME_PATH;
+  }
+
+  var app = child.spawn(binaryPath, [
       '--start-manifest=http://localhost:' + PORT + '/manifest.webapp'
     ], {
       stdio: 'inherit'
