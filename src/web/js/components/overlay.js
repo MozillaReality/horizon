@@ -1,3 +1,5 @@
+import React from 'react';
+
 import 'aframe';
 import {Animation, Entity, Scene} from 'aframe-react';
 

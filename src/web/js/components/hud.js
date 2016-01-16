@@ -1,3 +1,4 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
 
 import neatAudio from '../../../../node_modules/neat-audio/neat-audio.js';

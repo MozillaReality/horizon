@@ -1,3 +1,5 @@
+import React from 'react';
+
 const zoomConfig = {
   min: 0.2,
   max: 3,

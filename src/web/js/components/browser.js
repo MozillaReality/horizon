@@ -1,3 +1,4 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
 import ContentScripts from './../content_scripts.js';
 import Debugging from './../debugging.js';
