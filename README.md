@@ -42,6 +42,7 @@ Once you have a clone of the project you need to add the following line to a .mo
 MOZ_HORIZON=1
 ac_add_options --enable-application=b2g/graphene
 ac_add_options --with-branding=b2g/branding/horizon
+mk_add_options MOZ_OBJDIR=obj-horizon
 ```
 
 Build the gecko project with:
