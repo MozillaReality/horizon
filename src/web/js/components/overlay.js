@@ -12,6 +12,7 @@ export default class Overlay extends React.Component {
 
   componentWillUpdate(nextProps) {
     if (nextProps.isVr) {
+      // starts rendering overlay in stereo
       var scene = ReactDOM.findDOMNode(this.refs.scene);
       scene.hideUI();
       scene.setStereoRenderer();
@@ -19,7 +20,7 @@ export default class Overlay extends React.Component {
   }
 
   render() {
-    return <Scene ref='scene'>
+    return <Scene ref='scene' visible={this.props.hudVisible}>
         <Entity geometry={{primitive: 'box'}} material='color: red' position='0 0 -5'>
           <Animation attribute='rotation' dur='5000' repeat='indefinite' to='0 360 360'/>
         </Entity>

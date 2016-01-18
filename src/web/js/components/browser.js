@@ -516,7 +516,9 @@ export default class Browser extends React.Component {
           activeFrameProps={this.activeFrame}
           navigate={this.navigate.bind(this)} />
 
-        <Overlay isVr={this.state.isVr}/>
+        <Overlay
+          isVr={this.state.isVr}
+          hudVisible={this.state.hudVisible} />
 
         <button
           id='entervr'
