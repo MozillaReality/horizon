@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE vrbrowser SYSTEM "chrome://vrbrowser/locale/translations.dtd">
+
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <setting pref="extensions.vrbrowser.browserenabled" type="bool" title="Enabled">
+    Is this thing enabled?
+  </setting>
+</vbox>

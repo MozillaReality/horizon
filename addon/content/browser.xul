@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://vrbrowser/skin/skin.css" type="text/css"?>
+<!DOCTYPE vrbrowser SYSTEM "chrome://vrbrowser/locale/translations.dtd">
+<overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script src="browser.js" />
+
+    <toolbarpalette id="BrowserToolbarPalette">
+      <toolbarbutton id="vrbrowser-toolbar-button" label="VRBrowser" tooltiptext="&runhorizon;" oncommand="vrbrowser.run()"/>
+    </toolbarpalette>
+</overlay>

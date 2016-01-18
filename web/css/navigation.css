@@ -1,0 +1,523 @@
+/**
+ * Variables
+ */
+
+:root {
+
+  /* default depth to place interface */
+  --hud-depth: -34cm;
+
+  /* default depth to mono iframe content */
+  --content-depth: calc(var(--hud-depth) - 4cm);
+  --content-depth-hud--open: calc(var(--hud-depth) - 8cm);
+
+  /* default zoom value for mono iframe content */
+  --content-scale: 1.5;
+
+  /* default content dimensions */
+  --content-width: 32cm;
+  --content-height: 26cm;
+
+  /* icons size */
+  --icon-size: 25px;
+
+  /* colours */
+  --color-blue-vibrant: hsl(200, 89%, 50%);
+  --color-blue-vibrant-faded: hsla(200, 89%, 70%, .75);
+  --color-pink-vibrant: hsl(336, 89%, 50%);
+}
+
+
+/**
+ * Common animations
+ */
+
+@keyframes show {
+  from { visibility: hidden; }
+  to { visibility: visible; }
+}
+
+@keyframes hide {
+  from { visibility: visible; }
+  to { visibility: hidden; }
+}
+
+
+/**
+ * Globals
+ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 1cm;
+}
+
+html,
+body {
+  background: hsl(228, 15%, 19%);
+  height: 100%;
+  width: 100%;
+}
+
+input, button, iframe {
+  border: 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+.pointer-none {
+  pointer-events: none;
+}
+
+
+/**
+ * VR classes
+ */
+
+.threed {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+*:-moz-full-screen .threed {
+  /* apply preserve-3d to that elements for layout in VR */
+  transform-style: preserve-3d;
+}
+
+.camera {
+  /*
+  this is the element that serves as the viewport into the scene.
+  hmd orientation and position is applied to this element.
+  transform-origin specifies of position of the viewport.
+  */
+  transform-origin: 0 0 0;
+}
+
+
+/**
+ * Content iframes
+ */
+
+/* fullscreen container */
+#fs-container {
+  background-color: hsl(228, 15%, 19%);
+}
+
+@keyframes fs-container-lighten {
+  from { background-color: hsl(228, 20%, 13%); }
+  to { background-color: hsl(228, 15%, 19%); }
+}
+
+@keyframes fs-container-darken {
+  from { background-color: hsl(228, 15%, 19%); }
+  to { background-color: hsl(228, 20%, 13%); }
+}
+
+/* content projection */
+.frame--mono, .frame--stereo {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.frame--mono:after {
+  content: 'Not a VR site';
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: white;
+  position: absolute;
+  background: rgba(0, 0, 200, 0.2);
+  top: 0;
+  left: 0;
+}
+
+/* content iframe */
+#content-container iframe {
+  background: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  /* Prevent iframe's pointer events from stealing focus away from the app.
+     Uncomment this if you want the user to be able to click on any scrollable
+     element and scroll within that element using a gamepad. */
+  pointer-events: none;
+}
+
+
+/**
+ * Cursor
+ */
+.hudVisible .cursor,
+[data-projection="mono"] .cursor.is-visible {
+  visibility: visible;
+}
+
+.cursor {
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  position: relative;
+  transform: translate3d(0, 0, var(--content-depth));
+  visibility: hidden;
+}
+
+.cursor-arrow {
+  border-top: 0.5cm solid transparent;
+  border-right: 1.2cm solid var(--color-blue-vibrant-faded);
+  border-bottom: 0.5cm solid transparent;
+  transform: rotate(55deg) translate(0cm, 0.25cm) rotateY(-35deg);
+}
+
+
+/**
+ * HUD
+ */
+
+.hud {
+  --hud-width: 28cm;
+  top: 18cm;
+  left: 18cm;
+  transform: translate3d(0, 0, var(--hud-depth));
+}
+
+*:-moz-full-screen .hud {
+  left: 0;
+  top: 0;
+}
+
+
+/**
+ * Loading
+ */
+
+.loading {
+  background: hsla(197, 97%, 59%, 0.76);
+  color: white;
+  font: 600 0.75rem/1em sans-serif;
+  padding: 0.6em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) translate3d(0, 13cm, calc(var(--hud-depth) + 2cm));
+  width: 6cm;
+  animation: hide 0.1s ease forwards;
+}
+
+.loading.visible {
+  animation: show 0.1s ease forwards;
+}
+
+
+/**
+ * Title
+ */
+
+.title {
+  background-color: black;
+  color: white;
+  font: 400 1.1rem/1 sans-serif;
+  letter-spacing: 0.06em;
+  line-height: 1em;
+  overflow: hidden;
+  padding: 0.75em 2em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) translate3d(0, -10cm, -2cm);
+  white-space: nowrap;
+  width: var(--hud-width);
+}
+
+.title__text {
+}
+
+.title__icon {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  display: none;
+  height: var(--icon-size);
+  margin-left: calc(var(--icon-size) * -1);
+  width: var(--icon-size);
+}
+
+
+/**
+ * Directory
+ */
+
+.directory {
+  transform: translate(-50%, -100%) translate3d(0, 8cm, 0);
+  width: 36.7cm;
+  font-size: 0;
+}
+
+.directory__tile {
+  background: #efefef;
+  color: black;
+  display: inline-block;
+  font: 500 1.1rem/1em sans-serif;
+  height: 7cm;
+  margin: 0.15cm;
+  overflow: hidden;
+  padding: 0.5cm;
+  position: relative;
+  text-align: left;
+  width: 7cm;
+  text-decoration: none;
+  transition: 0.2s background, 0.2s color;
+}
+
+.directory__tile:hover,
+.directory__tile.hover {
+  background-color: var(--color-blue-vibrant);
+  color: white;
+}
+
+.directory__tile:active,
+.directory__tile.active {
+  background-color: var(--color-pink-vibrant);
+  color: #fff;
+}
+
+.directory__tile .type {
+  color: #333;
+  display: inline-block;
+  font: 400 0.65em/1em sans-serif;
+  margin-top: 0.5cm;
+  pointer-events: none;
+}
+
+
+/**
+ * URL Bar
+ */
+
+.urlbar {
+  text-align: left;
+  transform: translate(-50%, 0) translate3d(0, 10cm, 0);
+  width: var(--hud-width);
+}
+
+.urlbar__input {
+  font: 500 1.2rem/1 sans-serif;
+  letter-spacing: 0.05em;
+  padding: 0.5em 1em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: .25s width ease;
+  background: #efefef;
+  width: 100%;
+}
+
+.urlbar__input:hover,
+.urlbar__input.hover {
+  background: var(--color-blue-vibrant);
+  color: white;
+}
+
+.urlbar__input:focus {
+  background: var(--color-blue-vibrant);
+  border-bottom: 0.25em solid white;
+  color: white;
+}
+
+
+/* NOTE: These selectors cannot be combined: https://developer.mozilla.org/en-US/docs/Web/CSS/::selection#Examples */
+.urlbar__input::selection {
+  background: hsla(0, 0%, 0%, 0.2);
+  color: white;
+}
+.urlbar__input::-moz-selection {
+  background: hsla(0, 0%, 0%, 0.2);
+  color: white;
+}
+
+
+/**
+ * Navigation controls
+ */
+
+.backfwd {
+  transform: translate(-50%, 0) translate3d(-9cm, 13cm, 0);
+}
+
+.back {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.forward {
+  left: 3cm;
+  position: absolute;
+  top: 0;
+}
+
+.stopreload {
+  transform: translate(-50%, 0) translate3d(3cm, 13cm, var(--hud-depth));
+}
+
+.stop,
+.reload {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+
+.hidden {
+  display: none !important;
+}
+
+/* button */.nav,
+.fa.nav {
+  -moz-user-select: none; /* Disable selection of navigation controls. */
+  background: white;
+  color: black;
+  font-size: 1.2cm;
+  line-height: 1em;
+  margin: 0;
+  padding: 0.5em;
+  border-radius: 1em;
+  transition: .1s opacity;
+}
+
+.nav:not([disabled]):hover,
+.nav:not([disabled]).hover {
+  background: var(--color-blue-vibrant);
+  color: white;
+  opacity: 1;
+}
+
+.nav[disabled] {
+  opacity: .25;
+  pointer-events: none;
+}
+
+.nav:not([disabled]):active,
+.nav:not([disabled]).active {
+  color: #fff;
+}
+
+
+/**
+ * Close HUD
+ */
+
+.closehud {
+  font: 600 0.75rem/1.2em sans-serif;
+  padding: 0.6em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translate(-50%, 0) translate3d(0, 17cm, 0);
+  width: 7cm;
+  display: none;
+}
+
+.closehud:hover,
+.closehud.hover {
+  background: black;
+  color: white;
+}
+
+.closehud:active,
+.closehud.active {
+  background: var(--color-blue-vibrant);
+  border: 0.25cm solid var(--color-blue-vibrant);
+  color: white;
+}
+
+/**
+ * HUD Animations
+ */
+.hudVisible#fs-container {
+  animation: fs-container-darken 0.5s ease forwards;
+}
+
+.hudVisible #backfwd,
+.hudVisible #closehud,
+.hudVisible #directory,
+.hudVisible #title,
+.hudVisible #urlbar {
+  animation: show 0.1s ease forwards;
+}
+
+.hudVisible #background {
+  animation: show 0.3s ease forwards;
+}
+
+#fs-container {
+  animation: fs-container-lighten 0.5s ease forwards;
+}
+
+#backfwd,
+#closehud,
+#directory,
+#title,
+#urlbar {
+  animation: hide 0.1s ease forwards;
+}
+
+#background {
+  animation: hide 0.3s ease forwards;
+}
+
+/**
+ * Background
+ *
+ * NOTE: We obscure the active site while the HUD is open, for the sake of
+ * legibility. An alternative would be to reduce opacity on the container,
+ * but that creates glitches on/vanishes 3D transformed elements.
+ *
+ */
+
+.background {
+  background: hsla(228, 20%, 13%, 0.9);
+  height: var(--content-height);
+  transform: translate(-50%, -50%) translate3d(0, 0, -4cm);
+  width: var(--content-width);
+}
+
+
+/**
+ * Other interface
+ */
+
+.btn--entervr {
+  background: hsl(0, 0%, 30%);
+  border: 0;
+  color: white;
+  font: 300 0.5rem/1 sans-serif;
+  letter-spacing: 0.1em;
+  padding: 0.25rem;
+  position: absolute;
+  right: 2em;
+  text-transform: uppercase;
+  top: 2em;
+  z-index: 100; /* renders button on top of a-frame canvas */
+}
+
+.btn--entervr:hover,
+.btn--entervr.hover {
+  background: hsl(0, 0%, 45%);
+  cursor: pointer;
+}
+
+.btn--entervr:active,
+.btn--entervr.active,
+.btn--entervr:focus,
+.btn--entervr.focus {
+  background-color: var(--color-blue-vibrant);
+  color: #fff;
+}

@@ -1,0 +1,11 @@
+{
+  "role": "addon",
+  "name": "Horizon Content Scripts",
+  "customizations": [{
+    "filter": ".*",
+    "css": [],
+    "scripts": [
+      "content.js"
+    ]
+  }]
+}

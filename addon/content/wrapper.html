@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Horizon</title>
+  <style type="text/css">
+  /* Styles from shell.css */
+  html {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  iframe {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    border: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+  </style>
+</head>
+<body>
+  <script type="text/javascript">
+    var manifestURL = 'http://mozvr.github.io/horizon/web/manifest.webapp';
+    var systemPageURL = 'http://mozvr.github.io/horizon/web/index.html';
+    var systemFrame = document.createElement('iframe');
+    systemFrame.setAttribute('id', 'systemapp');
+    systemFrame.setAttribute('mozbrowser', 'true');
+    systemFrame.setAttribute('mozapp', manifestURL);
+    systemFrame.setAttribute('allowfullscreen', 'true');
+    systemFrame.setAttribute('remote', 'true');
+    systemFrame.setAttribute('src', systemPageURL);
+    document.body.appendChild(systemFrame);
+  </script>
+</body>
+</html>
