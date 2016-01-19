@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 import neatAudio from '../../../../node_modules/neat-audio/neat-audio.js';
 
 import Tiles from './tiles.js';
@@ -54,7 +57,7 @@ export default class Hud extends React.Component {
   }
 
   get urlInput() {
-    return React.findDOMNode(this.refs.urlInput);
+    return ReactDOM.findDOMNode(this.refs.urlInput);
   }
 
   get iconStyle() {

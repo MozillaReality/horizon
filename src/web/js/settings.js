@@ -3,7 +3,7 @@ const Settings = {
   hmdScale: -100,
   pixelsPerMeter: 96 / 2.54,
   scrollStep: 50,  // Measured in pixels.
-  startPageUrl: 'http://mozvr.com/posts/quick-vr-prototypes/',
+  startPageUrl: 'http://mozvr.com/demos/sechelt/?sound=false',
   searchUrl: 'https://duckduckgo.com/?q={q}',
 };
 

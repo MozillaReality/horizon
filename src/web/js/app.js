@@ -1,4 +1,7 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import Browser from './components/browser.js';
 
 var runtime = {};
-React.render(<Browser runtime={runtime}/>, document.body);
+
+ReactDOM.render(<Browser runtime={runtime}/>, document.querySelector('#browser'));

@@ -1,3 +1,4 @@
+import React from 'react';
 import ContentScripts from './../content_scripts.js';
 import Debugging from './../debugging.js';
 import FrameCommunicator from './../frame_communicator.js';
@@ -6,10 +7,12 @@ import ViewportManager from './../viewport_manager.js';
 import GamepadInput from './../inputs/gamepad/index.js';
 import KeyboardInput from './../inputs/keyboard/index.js';
 
+import Overlay from './overlay';
 import Cursor from './cursor.js';
 import Frame from './frame.js';
 import Hud from './hud.js';
 import Settings from '../settings.js';
+import Devtools from '../devtools.js';
 import Utils from './../lib/utils.js';
 import UrlUtil from '../../../../node_modules/urlutil.js/src/urlutil.js';
 import cx from './../lib/class_set.js';
@@ -23,6 +26,7 @@ export default class Browser extends React.Component {
     runtime.utils = new Utils();
     runtime.contentScripts = new ContentScripts();
     runtime.debugging = new Debugging();
+    runtime.devtools = new Devtools();
     runtime.frameCommunicator = new FrameCommunicator('browser', {
       getActiveFrameElement: () => this.activeFrameRef.iframe
     });
@@ -45,6 +49,7 @@ export default class Browser extends React.Component {
 
     runtime.contentScripts.init(runtime);
     runtime.debugging.init(runtime);
+    runtime.devtools.init(runtime);
     runtime.frameCommunicator.init(runtime);
     runtime.gamepadInput.init(runtime);
     runtime.keyboardInput.init(runtime);
@@ -149,6 +154,7 @@ export default class Browser extends React.Component {
     this.state = {
       hudVisible: false,
       hudUrl: null,
+      isVr: false,
       frames: [
         {
           viewmode: 'mono',
@@ -173,9 +179,6 @@ export default class Browser extends React.Component {
    */
   onStereo() {
     console.log('Entering stereo.');
-
-    // Manually clear transform.
-    React.findDOMNode(this.refs.contentCamera).style.transform = '';
 
     document.body.dataset.projection = 'stereo';
     var frames = this.state.frames;
@@ -249,7 +252,8 @@ export default class Browser extends React.Component {
    * Enters VR mode.
    */
   enterVR() {
-    this.runtime.viewportManager.enterVr(React.findDOMNode(this.refs.fullscreenContainer));
+    this.runtime.viewportManager.enterVr(document.body);
+    this.setState({isVr: true});
   }
 
   /**
@@ -259,10 +263,6 @@ export default class Browser extends React.Component {
    * @param {Object} hmdState The hmd state.
    */
   onHmdFrame(transform, hmdState) {
-    React.findDOMNode(this.refs.camera).style.transform = transform;
-    if (this.activeFrame.viewmode === 'mono') {
-      React.findDOMNode(this.refs.contentCamera).style.transform = transform;
-    }
     this.runtime.hmdState = hmdState;
   }
 
@@ -442,6 +442,9 @@ export default class Browser extends React.Component {
       frames[this.activeFrameIndex].canGoForward = result;
     });
 
+    var canGoBack = false;
+    var canGoForward = false;
+
     return Promise.all([canGoBack, canGoForward]).then(() => {
       this.setState({
         frames: frames
@@ -451,79 +454,72 @@ export default class Browser extends React.Component {
 
   render() {
     return <div>
-        <div id='fs-container' ref='fullscreenContainer'
+        <div id='content-container'
           className={cx({
-            hudVisible: this.state.hudVisible
-          })}>
-          <div id='content-camera'
-            className={this.activeFrame.viewmode === 'mono' ? 'camera threed' : ''}
-            ref='contentCamera'>
-            <div id='content-container'
-              className={cx({
-                'content-container': true,
-                [`frame--${this.activeFrame.viewmode}`]: true,
-                threed: this.activeFrame.viewmode === 'mono'
-              })}
-              ref="frameWrapper">
-            {
-              this.state.frames.map((frameProps, idx) =>
-                <Frame
-                  key={idx}
-                  ref={`frame${idx}`}
-                  id={`frame${idx}`}
-                  frameProps={frameProps}
-                  url={frameProps.url}
-                  mozbrowsericonchange={this.onIconChange.bind(this)}
-                  mozbrowserlocationchange={this.onLocationChange.bind(this)}
-                  mozbrowsertitlechange={this.onTitleChange.bind(this)}
-                  mozbrowserloadstart={this.onLoadStart.bind(this)}
-                  mozbrowserloadend={this.onLoadEnd.bind(this)}
-                  mozbrowsermetachange={this.onMetaChange.bind(this)} />)
-            }
-            </div>
-          </div>
-
-          <div className='camera threed' ref='camera'>
-            <Hud
-              ref='hud'
-              runtime={this.runtime}
-              activeFrameProps={this.activeFrame}
-              hudVisible={this.state.hudVisible}
-              hudUrl={this.state.hudUrl}
-              onUrlSubmit={this.onUrlSubmit.bind(this)}
-              onBack={this.onBack.bind(this)}
-              onForward={this.onForward.bind(this)} />
-
-            <div id='stopreload' className='stopreload threed'>
-              <button
-                className={cx({
-                  'fa fa-repeat nav reload': true,
-                  hidden: this.activeFrame.loading || !this.state.hudVisible
-                })}
-                onClick={this.onReload.bind(this)}
-                data-action='reload' id='reload'></button>
-              <button
-                className={cx({
-                  'fa fa-times nav stop': true,
-                  hidden: !this.activeFrame.loading
-                })}
-                onClick={this.onStop.bind(this)}
-                data-action='stop' id='stop'></button>
-            </div>
-
-            <div id='loading'
-              className={cx({
-                visible: this.activeFrame.loading,
-                'loading threed': true
-              })}>LOADING</div>
-          </div>
-
-          <Cursor
-            runtime={this.runtime}
-            hudVisible={this.state.hudVisible}
-            activeFrameProps={this.activeFrame}
-            navigate={this.navigate.bind(this)} />
+            'content-container': true,
+            [`frame--${this.activeFrame.viewmode}`]: true
+          })}
+          ref='frameWrapper'>
+        {
+          this.state.frames.map((frameProps, idx) =>
+            <Frame
+              key={idx}
+              ref={`frame${idx}`}
+              id={`frame${idx}`}
+              frameProps={frameProps}
+              url={frameProps.url}
+              mozbrowsericonchange={this.onIconChange.bind(this)}
+              mozbrowserlocationchange={this.onLocationChange.bind(this)}
+              mozbrowsertitlechange={this.onTitleChange.bind(this)}
+              mozbrowserloadstart={this.onLoadStart.bind(this)}
+              mozbrowserloadend={this.onLoadEnd.bind(this)}
+              mozbrowsermetachange={this.onMetaChange.bind(this)} />)
+        }
         </div>
+
+        <Hud
+          ref='hud'
+          runtime={this.runtime}
+          activeFrameProps={this.activeFrame}
+          hudVisible={this.state.hudVisible}
+          hudUrl={this.state.hudUrl}
+          onUrlSubmit={this.onUrlSubmit.bind(this)}
+          onBack={this.onBack.bind(this)}
+          onForward={this.onForward.bind(this)} />
+
+        <div id='stopreload' className='stopreload threed'>
+          <button
+            className={cx({
+              'fa fa-repeat nav reload': true,
+              hidden: this.activeFrame.loading || !this.state.hudVisible
+            })}
+            onClick={this.onReload.bind(this)}
+            data-action='reload' id='reload'></button>
+          <button
+            className={cx({
+              'fa fa-times nav stop': true,
+              hidden: !this.activeFrame.loading
+            })}
+            onClick={this.onStop.bind(this)}
+            data-action='stop' id='stop'></button>
+        </div>
+
+        <div id='loading'
+          className={cx({
+            visible: this.activeFrame.loading,
+            'loading threed': true
+          })}>LOADING</div>
+
+        <Cursor
+          runtime={this.runtime}
+          hudVisible={this.state.hudVisible}
+          activeFrameProps={this.activeFrame}
+          navigate={this.navigate.bind(this)} />
+
+        <Overlay
+          isVr={this.state.isVr}
+          hudVisible={this.state.hudVisible} />
+
         <button
           id='entervr'
           className='btn btn--entervr'

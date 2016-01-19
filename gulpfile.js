@@ -12,6 +12,8 @@ var moldSourceMap = require('mold-source-map');
 var runSequence = require('run-sequence');
 var zip = require('gulp-zip');
 var webserver = require('gulp-webserver');
+var child = require('child_process');
+var path = require('path');
 
 const SRC_ROOT = './src/';
 const ADDON_ROOT = './src/addon/';
@@ -22,7 +24,9 @@ const DIST_ADDON_ROOT = './dist/addon/';
 const DIST_CONTENT_SCRIPTS_ROOT = './dist/content_scripts/';
 const DIST_WEB_ROOT = './dist/web/';
 const DIST_WEB_MODULE_ROOT = './dist/web/js/';
-
+const APPLICATION_RUNTIME_PATH = '/Applications/B2G.app/Contents/MacOS/graphene';
+const LOCAL_GECKO_DEV_RUNTIME_PATH = path.resolve(__dirname + '/../gecko-dev/obj-horizon/dist/Horizon.app/Contents/MacOS/horizon');
+const PORT = process.env.PORT || 8000;
 
 /**
  * runs jslint on all javascript files found in the src dir.
@@ -169,11 +173,12 @@ gulp.task('babelify', function(cb) {
   })
   .transform(babelify.configure({
     sourceMap: !!!process.env.PRODUCTION,
-    presets: ['react', 'es2015']
+    presets: ['react', 'es2015'],
+    ignore: /node_modules\/aframe/
   }))
   .bundle()
   .on('error', function (err) {
-    console.error('[babelify] Error occurred:\n', err.stack);
+    console.error('[babelify] Error occurred:\n', err);
 
     // But don't error out the stream.
     cb();
@@ -326,7 +331,7 @@ gulp.task('watch', function() {
 gulp.task('webserver', function() {
   gulp.src(DIST_WEB_ROOT)
     .pipe(webserver({
-      port: process.env.PORT || 8000,
+      port: PORT,
       host: process.env.HOST || '0.0.0.0',
       livereload: false,
       directoryListing: false,
@@ -335,18 +340,43 @@ gulp.task('webserver', function() {
 });
 
 /**
+ * Starts graphene
+ */
+gulp.task('application', function() {
+  var binaryPath = APPLICATION_RUNTIME_PATH;
+
+  if (fs.existsSync(LOCAL_GECKO_DEV_RUNTIME_PATH)) {
+    console.log('using local path!', LOCAL_GECKO_DEV_RUNTIME_PATH)
+    binaryPath = LOCAL_GECKO_DEV_RUNTIME_PATH;
+  }
+
+  var app = child.spawn(binaryPath, [
+      '--start-manifest=http://localhost:' + PORT + '/manifest.webapp'
+    ], {
+      stdio: 'inherit'
+    });
+
+  var exit = function(code) {
+    app.kill();
+    process.exit(code);
+  }
+
+  app.on('close', exit);
+});
+
+/**
  * The default task when `gulp` is run.
  * Adds a listener which will re-build on a file save.
  */
 gulp.task('default', function() {
-  runSequence('build', 'webserver', 'watch');
+  runSequence('build', 'webserver', 'watch', 'application');
 });
 
 /**
  * Remove the distributable files.
  */
 gulp.task('clobber', function(cb) {
-  del('dist/**', cb);
+  return del('dist/**', cb);
 });
 
 /**

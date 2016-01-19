@@ -13,14 +13,13 @@
     "React": true
   },
   "plugins": [
-    "eslint-plugin-react",
+    "react",
     "eslint-plugin-random"
   ],
   "ecmaFeatures": {
     "jsx": true,
   },
   "rules": {
-    "react/jsx-uses-vars": 1,
     "block-scoped-var": 2,
     "camelcase": 0,
     "comma-dangle": 0,
@@ -104,7 +103,7 @@
       2,
       "inside"
     ],
-    "jsx-quotes": 1,
+    "jsx-quotes": [2, "prefer-single"],
     "react/display-name": 0,
     "react/jsx-boolean-value": 1,
     "react/jsx-no-undef": 1,

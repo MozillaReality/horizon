@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Settings from '../settings.js';
 
 export default class Directory extends React.Component {
