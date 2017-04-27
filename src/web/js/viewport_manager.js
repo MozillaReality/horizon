@@ -13,9 +13,12 @@ export default class ViewportManager {
     this.lastPosition = null;
     this.getVrDevices().then(devices => {
       this.vrDevices = devices;
-    }).catch(function(err) {
+    }).catch(err => {
       console.warn(err);
     });
+    this.activeFullscreenElement = document.fullscreenElement ||
+      document.mozFullScreenElement ||
+      document.webkitFullscreenElement;
 
     this.onHmdFrame = handlers.onHmdFrame;
     this.enterBrowserVR = handlers.enterBrowserVR;
@@ -94,6 +97,14 @@ export default class ViewportManager {
       element.webkitRequestPointerLock;
 
     element.requestPointerLock();
+  }
+
+  isFs(element) {
+    return this.activeFullscreenElement === element;
+  }
+
+  inVr(element) {
+    return this.isFs(element);
   }
 
   enterVr(container) {
