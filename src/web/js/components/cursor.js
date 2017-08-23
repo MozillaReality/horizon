@@ -298,19 +298,6 @@ export default class Cursor extends React.Component {
       el.focus();
 
       this.mouseIntoIframe('mousedown');
-
-      this.runtime.utils.sleep(formSubmitThreshold).then(() => {
-        // If the click button has been depressed for a long time, assume a form submission.
-        if (el === this.cursorDownElement) {
-          // Check if the active element is in a form element.
-          let form = this.runtime.utils.getFocusedForm(el);
-          if (form) {
-            // If so, submit the form.
-            form.submit();
-            form.dispatchEvent(new Event('submit'));
-          }
-        }
-      });
     }
 
     return Promise.resolve();
