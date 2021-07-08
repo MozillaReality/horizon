@@ -88,18 +88,16 @@ export default class Hud extends React.Component {
     this.props.onUrlSubmit(this.state.url);
   }
 
-  handleUrlChange(e) {
-    let url;
-    // we reset back to current url if input is cleared
-    if (e.target.value === '') {
-      url = this.props.hudUrl;
+  handleKeyDown(e) {
+    if (e.key === 'Backspace' && this.urlInput.value === '') {
+      this.urlInput.value = this.props.hudUrl;
       this.urlInput.blur();
-    } else {
-      url = e.target.value;
     }
+  }
 
+  handleUrlChange(e) {
     this.setState({
-      url: url
+      url: e.target.value
     });
   }
 
@@ -125,6 +123,7 @@ export default class Hud extends React.Component {
         onSubmit={this.handleSubmit.bind(this)}>
         <input id='urlbar__input' className='urlbar__input' ref='urlInput' type='text' value={this.state.url}
           onFocus={this.handleUrlFocus.bind(this)}
+          onKeyDown={this.handleKeyDown.bind(this)}
           onChange={this.handleUrlChange.bind(this)} />
       </form>
 
